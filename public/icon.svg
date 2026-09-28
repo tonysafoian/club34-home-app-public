@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bg-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1c1917"/>
+      <stop offset="50%" stop-color="#141210"/>
+      <stop offset="100%" stop-color="#0c0a09"/>
+    </linearGradient>
+    <linearGradient id="gold-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fbbf24"/>
+      <stop offset="45%" stop-color="#f59e0b"/>
+      <stop offset="100%" stop-color="#d97706"/>
+    </linearGradient>
+    <linearGradient id="copper-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f59e0b"/>
+      <stop offset="100%" stop-color="#b45309"/>
+    </linearGradient>
+    <linearGradient id="core-glow" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fef3c7"/>
+      <stop offset="100%" stop-color="#f59e0b"/>
+    </linearGradient>
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="8" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+  </defs>
+
+  <!-- Base Circle -->
+  <rect width="512" height="512" rx="128" fill="url(#bg-grad)" />
+
+  <!-- Outer Ring Accent -->
+  <circle cx="256" cy="256" r="224" fill="none" stroke="url(#gold-grad)" stroke-width="4" stroke-opacity="0.35" />
+  <circle cx="256" cy="256" r="212" fill="none" stroke="url(#gold-grad)" stroke-width="1.5" stroke-opacity="0.2" stroke-dasharray="8 8" />
+
+  <!-- Architectural Pediment / Roof Apex -->
+  <path d="M 144 196 L 256 108 L 368 196 Z" fill="none" stroke="url(#gold-grad)" stroke-width="12" stroke-linejoin="round" />
+  <line x1="128" y1="206" x2="384" y2="206" stroke="url(#gold-grad)" stroke-width="12" stroke-linecap="round" />
+
+  <!-- Columns -->
+  <!-- Left Pillar -->
+  <line x1="176" y1="218" x2="176" y2="348" stroke="url(#gold-grad)" stroke-width="12" stroke-linecap="round" />
+  <!-- Center Left Pillar -->
+  <line x1="228" y1="218" x2="228" y2="276" stroke="url(#gold-grad)" stroke-width="10" stroke-linecap="round" opacity="0.9" />
+  <!-- Center Right Pillar -->
+  <line x1="284" y1="218" x2="284" y2="276" stroke="url(#gold-grad)" stroke-width="10" stroke-linecap="round" opacity="0.9" />
+  <!-- Right Pillar -->
+  <line x1="336" y1="218" x2="336" y2="348" stroke="url(#gold-grad)" stroke-width="12" stroke-linecap="round" />
+
+  <!-- Base Plinth -->
+  <line x1="140" y1="360" x2="372" y2="360" stroke="url(#gold-grad)" stroke-width="12" stroke-linecap="round" />
+  <line x1="120" y1="384" x2="392" y2="384" stroke="url(#gold-grad)" stroke-width="10" stroke-linecap="round" opacity="0.8" />
+
+  <!-- AI Core / Central Diamond Glyph -->
+  <g filter="url(#glow)">
+    <polygon points="256,296 280,326 256,356 232,326" fill="url(#core-glow)" />
+    <circle cx="256" cy="326" r="4" fill="#ffffff" />
+  </g>
+</svg>

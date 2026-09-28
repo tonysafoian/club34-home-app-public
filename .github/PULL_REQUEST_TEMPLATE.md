@@ -6,7 +6,7 @@ Briefly describe the purpose of this Pull Request and the problem it solves.
 - [ ] Home Assistant Bridge
 - [ ] Tesla Fleet API / EV Controls
 - [ ] Pool & Spa Management
-- [ ] Community Sports & Ball Module
+- [ ] Estate Activity & Recreation
 - [ ] UI / PWA Frontend Components
 - [ ] Database Schema / Drizzle Migrations
 - [ ] Documentation / Deployment

@@ -1,0 +1,99 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 620" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#141210"/>
+      <stop offset="100%" stop-color="#0c0a09"/>
+    </linearGradient>
+    <linearGradient id="card-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#24201c"/>
+      <stop offset="100%" stop-color="#1a1714"/>
+    </linearGradient>
+    <linearGradient id="janus-header" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f59e0b"/>
+      <stop offset="100%" stop-color="#b45309"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="1000" height="620" rx="16" fill="url(#bg)" stroke="#332c24" stroke-width="2"/>
+
+  <!-- Left: Background dashboard faded -->
+  <g opacity="0.35">
+    <rect x="30" y="30" width="480" height="260" rx="12" fill="#201b17" stroke="#332c24"/>
+    <rect x="30" y="310" width="480" height="270" rx="12" fill="#201b17" stroke="#332c24"/>
+  </g>
+
+  <!-- Right: Active Janus Drawer (Desktop Flyout) -->
+  <g transform="translate(540, 20)">
+    <rect width="430" height="580" rx="16" fill="#181512" stroke="#443c32" stroke-width="2"/>
+
+    <!-- Drawer Header -->
+    <rect x="0" y="0" width="430" height="65" rx="16" fill="url(#janus-header)"/>
+    <circle cx="36" cy="32" r="18" fill="#141210"/>
+    <polygon points="36,24 43,36 29,36" fill="#fbbf24"/>
+    <text x="66" y="30" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto" font-size="16" font-weight="bold" fill="#ffffff">Janus AI Concierge</text>
+    <text x="66" y="47" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto" font-size="11" fill="#fef3c7">Gemini 2.5 Flash • pgvector Memory Active</text>
+    
+    <circle cx="400" cy="32" r="14" fill="#ffffff" fill-opacity="0.2"/>
+    <text x="400" y="36" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto" font-size="14" fill="#ffffff" text-anchor="middle">×</text>
+
+    <!-- Chat Messages -->
+    
+    <!-- User Message 1 -->
+    <g transform="translate(100, 85)">
+      <rect width="310" height="48" rx="12" fill="#2c2722" stroke="#3d352d"/>
+      <text x="14" y="22" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto" font-size="12" fill="#f5f5f4">"Prep the house for dinner guests at 7 PM,</text>
+      <text x="14" y="38" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto" font-size="12" fill="#f5f5f4">and heat the spa to 102."</text>
+    </g>
+
+    <!-- Janus Tool Execution Card -->
+    <g transform="translate(20, 145)">
+      <rect width="390" height="95" rx="10" fill="#141210" stroke="#383027"/>
+      <rect x="12" y="12" width="90" height="20" rx="4" fill="#2c2214"/>
+      <text x="57" y="26" font-family="monospace" font-size="10" font-weight="bold" fill="#fbbf24" text-anchor="middle">TOOL EXECUTION</text>
+
+      <text x="12" y="48" font-family="monospace" font-size="11" fill="#34d399">✓ ha.select_scene("Evening Entertaining")</text>
+      <text x="12" y="66" font-family="monospace" font-size="11" fill="#34d399">✓ iaqualink.set_spa_target(102, heater=true)</text>
+      <text x="12" y="84" font-family="monospace" font-size="11" fill="#60a5fa">🔍 pgvector.recall("guest preferences: temperature")</text>
+    </g>
+
+    <!-- Janus Spoken Response -->
+    <g transform="translate(20, 255)">
+      <rect width="360" height="100" rx="12" fill="#221d19" stroke="#332c24"/>
+      <circle cx="20" cy="22" r="10" fill="#f59e0b"/>
+      <text x="20" y="26" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto" font-size="10" font-weight="bold" fill="#000" text-anchor="middle">J</text>
+      <text x="38" y="24" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto" font-size="11" font-weight="bold" fill="#fbbf24">Janus</text>
+      
+      <text x="20" y="46" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto" font-size="12" fill="#e7e5e4">All set! I have triggered the Evening Entertaining</text>
+      <text x="20" y="64" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto" font-size="12" fill="#e7e5e4">lighting scene, activated the courtyard fountain,</text>
+      <text x="20" y="82" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto" font-size="12" fill="#e7e5e4">and started heating the spa. It will be 102° by 6:45 PM.</text>
+    </g>
+
+    <!-- User Message 2 (Memory Recall) -->
+    <g transform="translate(100, 370)">
+      <rect width="310" height="34" rx="12" fill="#2c2722" stroke="#3d352d"/>
+      <text x="14" y="22" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto" font-size="12" fill="#f5f5f4">"What was the wine cellar target humidity again?"</text>
+    </g>
+
+    <!-- Janus Response 2 -->
+    <g transform="translate(20, 418)">
+      <rect width="360" height="60" rx="12" fill="#221d19" stroke="#332c24"/>
+      <text x="16" y="22" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto" font-size="11" font-weight="bold" fill="#fbbf24">Janus (Retrieved from Long-Term Memory)</text>
+      <text x="16" y="42" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto" font-size="12" fill="#e7e5e4">Your sommelier set the target to 65% at 56°F.</text>
+    </g>
+
+    <!-- Voice Input Bar at Bottom -->
+    <g transform="translate(15, 500)">
+      <rect width="400" height="60" rx="30" fill="#110f0d" stroke="#332c24"/>
+      <circle cx="36" cy="30" r="18" fill="#f59e0b"/>
+      <!-- Mic Icon -->
+      <rect x="33" y="22" width="6" height="10" rx="3" fill="#000000"/>
+      <path d="M 30 28 A 6 6 0 0 0 42 28" fill="none" stroke="#000" stroke-width="2"/>
+      <line x1="36" y1="34" x2="36" y2="38" stroke="#000" stroke-width="2"/>
+
+      <text x="68" y="35" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto" font-size="13" fill="#a8a29e">Ask Janus anything or speak command...</text>
+
+      <rect x="345" y="16" width="42" height="28" rx="14" fill="#2c2722"/>
+      <text x="366" y="34" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto" font-size="12" fill="#f5f5f4" text-anchor="middle">→</text>
+    </g>
+  </g>
+</svg>

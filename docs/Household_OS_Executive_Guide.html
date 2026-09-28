@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Household OS — The Operating System for Modern Estates</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap');
+
+    :root {
+      --bg: #0c0a09;
+      --card-bg: #1c1917;
+      --border: #292524;
+      --gold: #d97706;
+      --gold-light: #fbbf24;
+      --gold-soft: rgba(245, 158, 11, 0.12);
+      --text: #f5f5f4;
+      --text-muted: #a8a29e;
+      --emerald: #10b981;
+      --blue: #3b82f6;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      line-height: 1.6;
+      padding-bottom: 60px;
+    }
+
+    /* Print Controls Bar */
+    .no-print-bar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(20, 18, 16, 0.95);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid #332c24;
+      padding: 12px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .btn-print {
+      background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+      color: #000;
+      font-weight: 700;
+      font-size: 13px;
+      padding: 8px 18px;
+      border-radius: 9999px;
+      border: none;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 12px rgba(245, 158, 11, 0.25);
+    }
+
+    .btn-print:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 16px rgba(245, 158, 11, 0.4);
+    }
+
+    .doc-container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 40px 24px;
+    }
+
+    /* Page Setup for Luxury Print */
+    .page-section {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 48px;
+      margin-bottom: 40px;
+      position: relative;
+    }
+
+    .page-badge {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      color: var(--gold-light);
+      background: var(--gold-soft);
+      border: 1px solid rgba(245, 158, 11, 0.3);
+      padding: 4px 12px;
+      border-radius: 9999px;
+      margin-bottom: 24px;
+    }
+
+    h1.hero-title {
+      font-family: 'Cinzel', serif;
+      font-size: 44px;
+      font-weight: 700;
+      line-height: 1.15;
+      color: #ffffff;
+      margin-bottom: 16px;
+      letter-spacing: -0.01em;
+    }
+
+    p.hero-subtitle {
+      font-size: 18px;
+      color: var(--text-muted);
+      line-height: 1.5;
+      margin-bottom: 36px;
+    }
+
+    .pillar-trio {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      padding-top: 24px;
+      border-top: 1px solid var(--border);
+      margin-bottom: 32px;
+    }
+
+    .trio-item h4 {
+      font-size: 16px;
+      font-weight: 700;
+      color: #ffffff;
+      margin-bottom: 6px;
+    }
+
+    .trio-item p {
+      font-size: 13px;
+      color: var(--text-muted);
+      line-height: 1.4;
+    }
+
+    .section-title {
+      font-family: 'Cinzel', serif;
+      font-size: 26px;
+      color: #ffffff;
+      margin-bottom: 10px;
+    }
+
+    .section-subtitle {
+      font-size: 14px;
+      color: var(--text-muted);
+      margin-bottom: 30px;
+    }
+
+    /* Feature Grid */
+    .feature-list {
+      display: grid;
+      gap: 24px;
+    }
+
+    .feature-item {
+      display: flex;
+      gap: 20px;
+      align-items: flex-start;
+      padding: 20px;
+      background: rgba(12, 10, 9, 0.6);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+    }
+
+    .feature-num {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--gold-light);
+      background: var(--gold-soft);
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .feature-content h3 {
+      font-size: 16px;
+      font-weight: 700;
+      color: #ffffff;
+      margin-bottom: 6px;
+    }
+
+    .feature-content p {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+
+    .feature-content ul {
+      list-style-type: none;
+      padding: 0;
+    }
+
+    .feature-content li {
+      font-size: 12px;
+      color: #d6d3d1;
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .feature-content li::before {
+      content: "•";
+      color: var(--gold-light);
+      font-weight: bold;
+    }
+
+    .img-box {
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      margin: 24px 0 32px 0;
+      background: #000;
+    }
+
+    .img-box img {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    .img-caption {
+      font-size: 11px;
+      color: var(--text-muted);
+      text-align: center;
+      padding: 8px;
+      background: #141210;
+      border-top: 1px solid var(--border);
+    }
+
+    .footer-bar {
+      margin-top: 40px;
+      padding-top: 20px;
+      border-top: 1px solid var(--border);
+      font-size: 12px;
+      color: #78716c;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    /* Print media styling */
+    @media print {
+      body {
+        background: #ffffff !important;
+        color: #1c1917 !important;
+        padding: 0 !important;
+      }
+      .no-print-bar {
+        display: none !important;
+      }
+      .doc-container {
+        max-width: 100% !important;
+        padding: 0 !important;
+      }
+      .page-section {
+        background: #ffffff !important;
+        color: #1c1917 !important;
+        border: none !important;
+        padding: 20px 0 !important;
+        page-break-after: always;
+        break-after: page;
+      }
+      h1.hero-title, .section-title, .feature-content h3, .trio-item h4 {
+        color: #1c1917 !important;
+      }
+      p.hero-subtitle, .feature-content p, .trio-item p, .section-subtitle {
+        color: #57534e !important;
+      }
+      .feature-item {
+        background: #f5f5f4 !important;
+        border: 1px solid #e7e5e4 !important;
+      }
+      .feature-content li {
+        color: #292524 !important;
+      }
+      .page-badge {
+        color: #b45309 !important;
+        background: #fef3c7 !important;
+        border-color: #fde68a !important;
+      }
+      .feature-num {
+        background: #fef3c7 !important;
+        color: #b45309 !important;
+      }
+      .img-box {
+        border-color: #e7e5e4 !important;
+      }
+      .img-caption {
+        background: #f5f5f4 !important;
+        color: #78716c !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Screen-Only Action Header -->
+  <div class="no-print-bar">
+    <div style="display:flex; align-items:center; gap:10px;">
+      <svg width="24" height="24" viewBox="0 0 512 512">
+        <circle cx="256" cy="256" r="240" fill="#f59e0b"/>
+        <path d="M 144 200 L 256 120 L 368 200 Z" fill="none" stroke="#000" stroke-width="20"/>
+        <line x1="180" y1="220" x2="180" y2="340" stroke="#000" stroke-width="20"/>
+        <line x1="332" y1="220" x2="332" y2="340" stroke="#000" stroke-width="20"/>
+        <line x1="140" y1="360" x2="372" y2="360" stroke="#000" stroke-width="20"/>
+      </svg>
+      <span style="font-weight:700; font-size:14px; letter-spacing:0.05em;">HOUSEHOLD OS — EXECUTIVE GUIDE</span>
+    </div>
+    <button class="btn-print" onclick="window.print()">
+      🖨️ Print or Save as PDF
+    </button>
+  </div>
+
+  <div class="doc-container">
+
+    <!-- PAGE 1: TITLE & EXECUTIVE SUMMARY -->
+    <section class="page-section">
+      <span class="page-badge">Household Operating System</span>
+      <h1 class="hero-title">The Operating System for Modern Estates.</h1>
+      <p class="hero-subtitle">
+        Household OS is the unified, private estate operating deck — seamlessly integrating Crestron lighting, commercial climate, pool hydrology, Tesla fleet, backup power, and a resident AI concierge that connects daily life.
+      </p>
+
+      <div class="pillar-trio">
+        <div class="trio-item">
+          <h4>One Unified Deck</h4>
+          <p>Replaces 15+ fragmented vendor apps with a single, responsive command dashboard.</p>
+        </div>
+        <div class="trio-item">
+          <h4>Every Subsystem</h4>
+          <p>Lighting, locks, climate, pool, irrigation, EV fleet, generator, and AI cameras.</p>
+        </div>
+        <div class="trio-item">
+          <h4>Local-First Privacy</h4>
+          <p>Your estate telemetry stays private on your local network without cloud data brokers.</p>
+        </div>
+      </div>
+
+      <div class="img-box">
+        <img src="assets/screenshots/dashboard-command-deck.svg" alt="Executive Command Deck" />
+        <div class="img-caption">Figure 1: The Unified Executive Command Deck displaying climate setpoints, Crestron scenes, Tesla fleet, pool temp, and generator status.</div>
+      </div>
+
+      <div class="footer-bar">
+        <span>Household OS v1.0.0</span>
+        <span>Page 1 of 5</span>
+      </div>
+    </section>
+
+    <!-- PAGE 2: HOME SYSTEMS & AUTOMATION -->
+    <section class="page-section">
+      <span class="page-badge">Pillar I</span>
+      <h2 class="section-title">Home Systems &amp; Physical Infrastructure</h2>
+      <p class="section-subtitle">Every system in the residence, controlled from one place — no more juggling vendor apps.</p>
+
+      <div class="feature-list">
+        <!-- 01 -->
+        <div class="feature-item">
+          <div class="feature-num">01</div>
+          <div class="feature-content">
+            <h3>One Command Deck for the Entire Estate</h3>
+            <p>Crestron lighting scenes, thermostats, fireplaces, sauna, bath towel warmers, and pool pumps — on a single touch screen.</p>
+            <ul>
+              <li>Live status with instant scene activation and setpoint sliders</li>
+              <li>Installs as a native web app on iPhones, iPads, wall touchscreens, and laptops</li>
+              <li>Replaces Crestron, Alarm.com, iAquaLink, Watts, and Govee vendor apps</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- 02 -->
+        <div class="feature-item">
+          <div class="feature-num">02</div>
+          <div class="feature-content">
+            <h3>Pool &amp; Spa Hydrology, Simplified</h3>
+            <p>Variable-speed pumps, gas heaters, water features, and spa mode with real-time temperature tracking.</p>
+            <ul>
+              <li>One-tap spa heat-up with predictive countdown to target temperature</li>
+              <li>Live 24-hour temperature history chart instead of guessing readiness</li>
+              <li>Integrated directly with Zodiac / iAquaLink without vendor UI latency</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- 03 -->
+        <div class="feature-item">
+          <div class="feature-num">03</div>
+          <div class="feature-content">
+            <h3>Interactive Estate Topology &amp; Smart Irrigation</h3>
+            <p>A visual 2D map of every Rain Bird irrigation zone across lawns, groves, and gardens.</p>
+            <ul>
+              <li>Visual property layout — tap directly on zones rather than memorizing numbers</li>
+              <li>Automatic weather intelligence suspends watering when rain is forecast</li>
+              <li>Emergency master shutoff valve in case of line breaks or repairs</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- 04 -->
+        <div class="feature-item">
+          <div class="feature-num">04</div>
+          <div class="feature-content">
+            <h3>Tesla EV Fleet on the Same Screen</h3>
+            <p>Fleet API integration: battery percentages, charging rates, cabin climate pre-conditioning, and family maps.</p>
+            <ul>
+              <li>Lock, unlock, and trigger cabin cooling/heating from the dashboard</li>
+              <li>Live location map tied directly into the family arrival tracker</li>
+              <li>No more switching between separate automotive apps and home controls</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="img-box">
+        <img src="assets/screenshots/estate-irrigation-map.svg" alt="Estate Irrigation Map" />
+        <div class="img-caption">Figure 2: Visual 2D property canvas mapping irrigation zones and weather-adaptive hydrology controls.</div>
+      </div>
+
+      <div class="footer-bar">
+        <span>Household OS v1.0.0</span>
+        <span>Page 2 of 5</span>
+      </div>
+    </section>
+
+    <!-- PAGE 3: ENERGY & SECURITY -->
+    <section class="page-section">
+      <span class="page-badge">Pillar II</span>
+      <h2 class="section-title">Energy Telemetry &amp; Perimeter Security</h2>
+      <p class="section-subtitle">Real-time electrical intelligence and security awareness across the estate perimeter.</p>
+
+      <div class="feature-list">
+        <!-- 05 -->
+        <div class="feature-item">
+          <div class="feature-num">05</div>
+          <div class="feature-content">
+            <h3>Energy Insight &amp; Standby Backup Power</h3>
+            <p>Generac standby generator health, Emporia Vue 16-channel circuit breaker tracking, and utility rate tariffs.</p>
+            <ul>
+              <li>Circuit-level monitoring identifies heavy electrical loads (HVAC chillers, EV chargers, pool pumps)</li>
+              <li>Automatic generator readiness tracking with fuel level and utility status</li>
+              <li>Predictive monthly cost forecasting catches billing surprises before they arrive</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- 06 -->
+        <div class="feature-item">
+          <div class="feature-num">06</div>
+          <div class="feature-content">
+            <h3>Perimeter Security at a Glance</h3>
+            <p>Verkada / UniFi AI cameras, perimeter motor gates, alarm states, and motorized door locks.</p>
+            <ul>
+              <li>Perimeter camera activity feed with vehicle and visitor recognition</li>
+              <li>Door lock synchronizer shows locked/unlocked state for all 8 exterior doors</li>
+              <li>Driveway gate controls with visitor arrival alerts and single-tap opening</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer-bar">
+        <span>Household OS v1.0.0</span>
+        <span>Page 3 of 5</span>
+      </div>
+    </section>
+
+    <!-- PAGE 4: JANUS AI & DAILY LIFE -->
+    <section class="page-section">
+      <span class="page-badge">Pillar III</span>
+      <h2 class="section-title">Daily Life, Family Hub &amp; Janus AI</h2>
+      <p class="section-subtitle">The resident AI assistant that remembers preferences across conversations and manages daily family logistics.</p>
+
+      <div class="feature-list">
+        <!-- 07 -->
+        <div class="feature-item">
+          <div class="feature-num">07</div>
+          <div class="feature-content">
+            <h3>Janus — Resident Estate AI Concierge</h3>
+            <p>A built-in AI concierge with long-term semantic memory (`pgvector`) that executes real physical hardware actions.</p>
+            <ul>
+              <li>Available on every screen via an instant voice or text drawer</li>
+              <li>Schedules calendar events, queries Notion, triggers Crestron lighting scenes</li>
+              <li>Persistent long-term memory: tell Janus once, and it remembers forever</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- 08 -->
+        <div class="feature-item">
+          <div class="feature-num">08</div>
+          <div class="feature-content">
+            <h3>Weekly Groceries on Autopilot</h3>
+            <p>Household staples cart auto-assembles every week for quick family approval.</p>
+            <ul>
+              <li>Amazon Fresh, grocery staples, and DoorDash in one ordering interface</li>
+              <li>Instant approval flow over WhatsApp or SMS without opening the app</li>
+              <li>Saves recurring family chore hours every single week</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- 09 -->
+        <div class="feature-item">
+          <div class="feature-num">09</div>
+          <div class="feature-content">
+            <h3>Family Planning Hub</h3>
+            <p>One unified space for upcoming family vacations, movie night queues, and master calendars.</p>
+            <ul>
+              <li>Trip tracker with destinations, flight dates, hotel links, and packing lists</li>
+              <li>Curated entertainment queue with streaming recommendations</li>
+              <li>Shared Google Calendar view styled specifically for estate family members</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- 10 -->
+        <div class="feature-item">
+          <div class="feature-num">10</div>
+          <div class="feature-content">
+            <h3>Daily Executive Briefings</h3>
+            <p>Automated morning and evening briefings written like an executive chief of staff.</p>
+            <ul>
+              <li>Morning weather, day-ahead schedule, and travel alerts delivered automatically</li>
+              <li>Nightly home security lockup status and energy consumption summary</li>
+              <li>Synthesized by Janus from real data — calendars, weather radar, errands</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="img-box">
+        <img src="assets/screenshots/janus-voice-ai.svg" alt="Janus AI Concierge" />
+        <div class="img-caption">Figure 3: Janus executing multi-system estate commands and retrieving stored preferences with semantic memory.</div>
+      </div>
+
+      <div class="footer-bar">
+        <span>Household OS v1.0.0</span>
+        <span>Page 4 of 5</span>
+      </div>
+    </section>
+
+    <!-- PAGE 5: REBRANDABILITY & RELIABILITY -->
+    <section class="page-section">
+      <span class="page-badge">Pillar IV</span>
+      <h2 class="section-title">White-Label Branding &amp; Self-Healing Reliability</h2>
+      <p class="section-subtitle">Bespoke estate personalization and resilient offline-first engineering.</p>
+
+      <div class="feature-list">
+        <!-- 11 -->
+        <div class="feature-item">
+          <div class="feature-num">11</div>
+          <div class="feature-content">
+            <h3>White-Label Re-Brandability</h3>
+            <p>Make Household OS your own with custom property naming, family crest uploads, and luxury color themes.</p>
+            <ul>
+              <li>Name your property (e.g. <em>Villa Paradiso</em>, <em>Oakridge Estate</em>)</li>
+              <li>Upload custom family crest or estate emblem (SVG, PNG, JPG)</li>
+              <li>6 luxury color themes: Classic Amber, Emerald Sanctuary, Pacific Azure, Obsidian Violet, Royal Bordeaux, Nordic Slate</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- 12 -->
+        <div class="feature-item">
+          <div class="feature-num">12</div>
+          <div class="feature-content">
+            <h3>Self-Healing &amp; Always-On Architecture</h3>
+            <p>Engineered for mission-critical reliability with automated circuit breakers and local fallback.</p>
+            <ul>
+              <li>Continuous health checks for internet links, Crestron processors, and pool controllers</li>
+              <li>Circuit breakers isolate temporary vendor outages from slowing down the app</li>
+              <li>Runs self-hosted on Docker, Linux, or Mini PC for 100% offline local control</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="img-box">
+        <img src="assets/screenshots/white-label-branding.svg" alt="White Label Rebranding Customizer" />
+        <div class="img-caption">Figure 4: The Estate Branding &amp; Appearance customizer with live emblem preview and luxury palette swatches.</div>
+      </div>
+
+      <div class="footer-bar">
+        <span>Open-Source Under MIT License • Household OS</span>
+        <span>Page 5 of 5</span>
+      </div>
+    </section>
+
+  </div>
+
+</body>
+</html>

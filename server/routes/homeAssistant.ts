@@ -475,7 +475,7 @@ function prettifyEntityId(id: string): string {
   return parts.map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
 }
 
-const JANUS_LOGO_URL = process.env.APP_LOGO_URL || '/club34-icon.png';
+const JANUS_LOGO_URL = process.env.APP_LOGO_URL || '/icon.svg';
 const DISPLAY_DEVICES = [
   "media_player.family_room_display",
   "media_player.kitchen_display_1",
