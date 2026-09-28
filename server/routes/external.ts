@@ -436,7 +436,7 @@ type ToolDef = { type: string; function: { name: string; description: string; pa
 const TOOLS = ALL_TOOLS as readonly ToolDef[];
 
 router.get("/capabilities", asyncH("capabilities", async () => ({
-  name: "Janus/Janus External API",
+  name: "Janus External API",
   version: "v1",
   base_path: "/api/v1/external",
   auth: { type: "header", header: "x-api-key" },

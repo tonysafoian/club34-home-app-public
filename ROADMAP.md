@@ -1,4 +1,4 @@
-# 🗺️ Janus (Janus) Roadmap
+# 🗺️ Janus Roadmap
 
 Our mission is to build the world's most capable, elegant, and privacy-conscious open-source estate operating system. This roadmap outlines key milestones and upcoming capabilities.
 

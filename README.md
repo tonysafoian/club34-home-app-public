@@ -1,4 +1,4 @@
-# 🏛️ Janus (Janus)
+# 🏛️ Janus — Home Automation
 
 <div align="center">
 
