@@ -30,7 +30,7 @@ else
     fi
 
     echo "[janus] Starting embedded PostgreSQL service..."
-    su-exec postgres pg_ctl -D "$PGDATA" -l /data/postgres.log start
+    su-exec postgres pg_ctl -D "$PGDATA" -l "$PGDATA/postgres.log" start
 
     # Wait for postgres readiness
     until su-exec postgres pg_isready -h localhost -p 5432 >/dev/null 2>&1; do
