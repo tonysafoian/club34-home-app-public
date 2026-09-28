@@ -216,15 +216,14 @@ router.all('/setup', requireAuth, async (req: AuthenticatedRequest, res: Respons
 
   try {
     if (action === "generate-key") {
-      const privatePem = `-----BEGIN PRIVATE KEY-----
-MIGHAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBG0wawIBAQQgfhxJjnk7hBcNZf7l
-4Te9dyHPbl1136d7vDFaeFaIvBuhRANCAASKclpVOzhxEGpg0M9eSQtYq+vHz6rn
-AGF0Xg3Xn/1vcyhkxIzjRAVL7CIy2R+SuKAOMVUxsPPHwYJMzOLCE2T4
------END PRIVATE KEY-----`;
-      const publicPem = `-----BEGIN PUBLIC KEY-----
-MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEinJaVTs4cRBqYNDPXkkLWKvrx8+q
-5wBhdF4N15/9b3MoZMSM40QFS+wiMtkfkrigDjFVMbDzx8GCTMziwhNk+A==
------END PUBLIC KEY-----`;
+      const { generateKeyPairSync } = await import('node:crypto');
+      const { privateKey, publicKey } = generateKeyPairSync('ec', {
+        namedCurve: 'prime256v1',
+        publicKeyEncoding: { type: 'spki', format: 'pem' },
+        privateKeyEncoding: { type: 'pkcs8', format: 'pem' },
+      });
+      const privatePem = privateKey;
+      const publicPem = publicKey;
 
       const { rows: existing } = await query(`SELECT id FROM tesla_config LIMIT 1`);
       if (existing.length > 0) {

@@ -8,15 +8,11 @@ This document walks you through configuring each subsystem of Household OS.
 
 Household OS uses PostgreSQL for structured data and `pgvector` for AI semantic memory embeddings.
 
-### Local PostgreSQL Setup with Docker
+### Local Development Services with Docker Compose
+Household OS provides a `docker-compose.yml` that boots PostgreSQL (with `pgvector`), Redis, and an Eclipse-Mosquitto MQTT broker:
+
 ```bash
-docker run -d \
-  --name household-postgres \
-  -e POSTGRES_USER=postgres \
-  -e POSTGRES_PASSWORD=postgres \
-  -e POSTGRES_DB=household_db \
-  -p 5432:5432 \
-  pgvector/pgvector:pg16
+docker compose up -d
 ```
 
 Verify `pgvector` is installed:

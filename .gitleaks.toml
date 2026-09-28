@@ -1,0 +1,6 @@
+# Gitleaks configuration for open-source repository
+[allowlist]
+description = "Allowlist for synthetic test fixtures"
+paths = [
+  '''server/lib/__tests__/encryption\.test\.ts'''
+]

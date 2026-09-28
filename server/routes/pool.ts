@@ -15,7 +15,7 @@ const router = Router();
 
 const ZODIAC_BASE = 'https://prod.zodiac-io.com';
 const IAQUALINK_BASE = 'https://r-api.iaqualink.net';
-const IAQUALINK_API_KEY = 'EOOEMOW4YR6QNB07';
+const IAQUALINK_API_KEY = process.env.IAQUALINK_API_KEY || '';
 const AWS_REGION = 'us-east-1';
 const AWS_SERVICE = 'execute-api';
 
