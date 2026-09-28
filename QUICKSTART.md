@@ -64,8 +64,8 @@ GEMINI_API_KEY=your_gemini_api_key_here
 # Install npm dependencies
 npm install
 
-# Push the Drizzle schema migrations to PostgreSQL
-npm run db:push
+# Push the schema migrations to PostgreSQL
+npm run migrate
 ```
 
 ### 5. Seed Example Data (Optional)

@@ -94,7 +94,7 @@ docker compose up -d
 # 3. Configure environment, install dependencies, and launch dev server
 cp .env.example .env
 npm install
-npm run db:push
+npm run migrate
 npm run dev
 ```
 
