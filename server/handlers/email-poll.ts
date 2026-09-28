@@ -106,7 +106,7 @@ let JANUS_EMAIL_SYSTEM_PROMPT: string;
 try {
   JANUS_EMAIL_SYSTEM_PROMPT = fs.readFileSync(path.resolve(process.cwd(), "supabase/functions/_shared/SOUL.md"), "utf8");
 } catch {
-  JANUS_EMAIL_SYSTEM_PROMPT = "You are Janus, the AI assistant for Club 34.";
+  JANUS_EMAIL_SYSTEM_PROMPT = "You are Janus, the AI assistant for Janus.";
 }
 
 const JANUS_EMAIL = "assistant@example.com";
@@ -446,7 +446,7 @@ export const ALL_TOOLS = [
   { type: "function", function: { name: "check_tesla_status", description: "Check Tesla vehicles.", parameters: { type: "object", properties: {}, additionalProperties: false } } },
   { type: "function", function: { name: "check_verkada_security", description: "Check security system.", parameters: { type: "object", properties: {}, additionalProperties: false } } },
   { type: "function", function: { name: "check_generator_status", description: "Check generator.", parameters: { type: "object", properties: {}, additionalProperties: false } } },
-  { type: "function", function: { name: "query_activity_log", description: "Recent activity from Club 34's central app-activity log (home, network, ball, security, automations, logins, and more). Pass an optional keyword to filter.", parameters: { type: "object", properties: { event_type: { type: "string", description: "Optional keyword to filter the feed" }, hours: { type: "number" } }, additionalProperties: false } } },
+  { type: "function", function: { name: "query_activity_log", description: "Recent activity from Janus's central app-activity log (home, network, ball, security, automations, logins, and more). Pass an optional keyword to filter.", parameters: { type: "object", properties: { event_type: { type: "string", description: "Optional keyword to filter the feed" }, hours: { type: "number" } }, additionalProperties: false } } },
   LOAD_SKILL_TOOL,
   { type: "function", function: { name: "archive_email", description: "Archive the current email in Tony's inbox. Use during triage to archive low-priority emails.", parameters: { type: "object", properties: {}, additionalProperties: false } } },
 ];

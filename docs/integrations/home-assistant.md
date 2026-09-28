@@ -1,12 +1,12 @@
 # 🏠 Home Assistant Integration Guide
 
-Household OS acts as an executive command layer on top of [Home Assistant](https://www.home-assistant.io/), providing high-level scene orchestration, estate mapping, and conversational voice control.
+Janus acts as an executive command layer on top of [Home Assistant](https://www.home-assistant.io/), providing high-level scene orchestration, estate mapping, and conversational voice control.
 
 ---
 
 ## 🔑 1. Generating a Long-Lived Access Token
 
-To connect Household OS to your Home Assistant instance:
+To connect Janus to your Home Assistant instance:
 
 1. Log into your Home Assistant web dashboard.
 2. Click on your user profile icon (bottom-left corner of the sidebar).
@@ -36,11 +36,11 @@ HA_TOKEN=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 
 ## 📡 3. Communication Architecture
 
-Household OS uses a hybrid **WebSocket + REST** protocol:
+Janus uses a hybrid **WebSocket + REST** protocol:
 
 1. **Persistent WebSocket (`/api/websocket`)**:
    - Subscribes to the `state_changed` event stream.
-   - Any physical switch flicked, door sensor opened, or temperature shift in your home is streamed to Household OS in real time and pushed to the browser dashboard via WebSocket.
+   - Any physical switch flicked, door sensor opened, or temperature shift in your home is streamed to Janus in real time and pushed to the browser dashboard via WebSocket.
 
 2. **REST API (`/api/services/<domain>/<service>`)**:
    - Used for executing service commands (e.g. `light.turn_on`, `climate.set_temperature`, `cover.close_cover`).
@@ -49,7 +49,7 @@ Household OS uses a hybrid **WebSocket + REST** protocol:
 
 ## 🏷️ 4. Entity Mapping
 
-Household OS automatically groups Home Assistant entities by domain:
+Janus automatically groups Home Assistant entities by domain:
 
 | Domain | Supported Features |
 | :--- | :--- |

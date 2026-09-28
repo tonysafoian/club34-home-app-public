@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Palette, Upload, RotateCcw, Check, Sparkles, Building2, Image as ImageIcon } from 'lucide-react';
 import { useBranding, THEME_COLOR_PRESETS, ThemeColorPreset } from '@/hooks/useBranding';
-import { Club34Logo } from '@/components/brand/Club34Logo';
+import { JanusLogo } from '@/components/brand/JanusLogo';
 import { useToast } from '@/hooks/use-toast';
 
 export default function BrandingSettingsCard() {
@@ -30,7 +30,7 @@ export default function BrandingSettingsCard() {
     setEstateName(nameInput);
     toast({
       title: 'Estate Name Updated',
-      description: `Renamed to "${nameInput.trim() || 'Household OS'}"`,
+      description: `Renamed to "${nameInput.trim() || 'Janus'}"`,
     });
   };
 
@@ -85,7 +85,7 @@ export default function BrandingSettingsCard() {
     if (fileInputRef.current) fileInputRef.current.value = '';
     toast({
       title: 'Logo Reset',
-      description: 'Restored default Household OS emblem.',
+      description: 'Restored default Janus emblem.',
     });
   };
 
@@ -120,7 +120,7 @@ export default function BrandingSettingsCard() {
         {/* Live Preview Card */}
         <div className="p-4 rounded-xl border border-border/50 bg-secondary/30 flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-3">
-            <Club34Logo size="lg" variant="icon" />
+            <JanusLogo size="lg" variant="icon" />
             <div>
               <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">Live Emblem Preview</p>
               <h3 className="text-lg font-bold font-display tracking-tight text-foreground">{estateName}</h3>
@@ -128,7 +128,7 @@ export default function BrandingSettingsCard() {
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <Button size="sm" className="club34-gradient text-primary-foreground font-medium shadow-sm">
+            <Button size="sm" className="janus-gradient text-primary-foreground font-medium shadow-sm">
               <Sparkles className="h-3.5 w-3.5 mr-1.5" /> Primary Button
             </Button>
           </div>
@@ -144,7 +144,7 @@ export default function BrandingSettingsCard() {
               id="estateName"
               value={nameInput}
               onChange={(e) => setNameInput(e.target.value)}
-              placeholder="e.g. Villa Paradiso, Safoian Estate, Household OS"
+              placeholder="e.g. Villa Paradiso, Safoian Estate, Janus"
               className="max-w-md bg-background"
             />
             <Button type="submit" variant="secondary" size="sm">

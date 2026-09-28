@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Loader2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { Club34Logo } from '@/components/brand/Club34Logo';
+import { JanusLogo } from '@/components/brand/JanusLogo';
 import { resolveApiUrl } from '@/lib/api/fetchWithAuth';
 
 export function AuthPage() {
@@ -65,11 +65,11 @@ export function AuthPage() {
         }}
       >
         <div className="flex flex-col items-center pt-10 pb-6 px-8">
-          <div className="mb-5 club34-glow-soft rounded-full">
-            <Club34Logo size="xl" variant="icon" />
+          <div className="mb-5 janus-glow-soft rounded-full">
+            <JanusLogo size="xl" variant="icon" />
           </div>
-          <h1 className="font-display text-4xl font-semibold club34-text-gradient tracking-tight">
-            Club 34
+          <h1 className="font-display text-4xl font-semibold janus-text-gradient tracking-tight">
+            Janus
           </h1>
           <p className="mt-2 text-sm font-body" style={{ color: 'rgba(236,229,219,0.55)' }}>
             Welcome home

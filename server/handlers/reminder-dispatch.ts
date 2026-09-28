@@ -37,7 +37,7 @@ async function sendReminderEmail(
       <div style="background: #f5f5f5; border-left: 4px solid #4A90D9; padding: 16px; border-radius: 4px; margin: 16px 0;">
         <p style="font-size: 16px; color: #333; margin: 0;">${reminderText.replace(/\n/g, "<br>")}</p>
       </div>
-      <p style="color: #888; font-size: 12px;">— Janus, Club 34 AI Assistant</p>
+      <p style="color: #888; font-size: 12px;">— Janus, Janus AI Assistant</p>
     </div>`;
 
   const subjectEncoded = `=?UTF-8?B?${Buffer.from(subject).toString("base64")}?=`;

@@ -30,7 +30,7 @@ export interface ClockDef {
 //   • ESP-ME3 (Clock 2, "Pool Equipment 2", IP 10.0.22.154) — 7 zones
 //       switch.rain_bird_sprinkler_1_2 … switch.rain_bird_sprinkler_7_2
 //
-// TODO(3rd-controller): Club34 historically assumed a 3rd clock ("Garage Timer",
+// TODO(3rd-controller): Janus historically assumed a 3rd clock ("Garage Timer",
 // IP 10.0.22.209, pool deck & NE plantings, ~12 zones) for ~29 zones total, but
 // that controller is NOT exposed in Home Assistant — it has no switch.* entities,
 // so its zones can never connect and have no runtime/flow data. It is kept below

@@ -64,7 +64,7 @@ async function fetchReading(): Promise<AvClosetReading | null> {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        requestId: `club34-${Date.now()}`,
+        requestId: `janus-${Date.now()}`,
         payload: { sku: AV_CLOSET_SKU, device: AV_CLOSET_DEVICE },
       }),
       signal: controller.signal,

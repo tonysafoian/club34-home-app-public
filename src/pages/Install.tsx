@@ -1,7 +1,7 @@
 import { usePWAInstall } from '@/hooks/usePWAInstall';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Club34Logo } from '@/components/brand/Club34Logo';
+import { JanusLogo } from '@/components/brand/JanusLogo';
 import { Download, CheckCircle, Share, PlusSquare } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
@@ -27,14 +27,14 @@ export default function Install() {
         style={{ background: 'radial-gradient(circle, #c56a1d0d 0%, transparent 70%)' }}
       />
 
-      <Card className="w-full max-w-md glass relative z-10 club34-glow-soft">
+      <Card className="w-full max-w-md glass relative z-10 janus-glow-soft">
         <CardHeader className="text-center space-y-4">
-          <div className="mx-auto club34-glow rounded-full">
-            <Club34Logo size="xl" variant="icon" />
+          <div className="mx-auto janus-glow rounded-full">
+            <JanusLogo size="xl" variant="icon" />
           </div>
           <div>
-            <CardTitle className="text-3xl font-display club34-text-gradient">
-              Install Club 34
+            <CardTitle className="text-3xl font-display janus-text-gradient">
+              Install Janus
             </CardTitle>
             <CardDescription className="mt-2 font-body text-muted-foreground">
               Add to your home screen for instant access
@@ -46,7 +46,7 @@ export default function Install() {
             <div className="flex flex-col items-center gap-3 py-4">
               <CheckCircle className="h-12 w-12 text-primary" />
               <p className="text-sm text-muted-foreground text-center">
-                Club 34 is already installed on this device.
+                Janus is already installed on this device.
               </p>
               <Button onClick={() => navigate('/')} className="mt-2">
                 Open App
@@ -55,7 +55,7 @@ export default function Install() {
           ) : canInstall ? (
             <div className="flex flex-col items-center gap-4">
               <p className="text-sm text-muted-foreground text-center">
-                Install Club 34 as an app for faster access, offline support, and a full-screen experience.
+                Install Janus as an app for faster access, offline support, and a full-screen experience.
               </p>
               <Button onClick={handleInstall} size="lg" className="w-full gap-2">
                 <Download className="h-5 w-5" />
@@ -85,7 +85,7 @@ export default function Install() {
           ) : (
             <div className="flex flex-col items-center gap-3 py-4">
               <p className="text-sm text-muted-foreground text-center">
-                Open this page in Chrome or Safari to install Club 34 as an app.
+                Open this page in Chrome or Safari to install Janus as an app.
               </p>
             </div>
           )}

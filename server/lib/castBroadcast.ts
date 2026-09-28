@@ -155,7 +155,7 @@ export async function generateAndUploadTTS(
   const internalKey =
     process.env.JWT_SECRET ||
     process.env.SESSION_SECRET ||
-    'club34-dev-secret-change-in-production';
+    'janus-dev-secret-change-in-production';
 
   try {
     const uploadRes = await fetchT(

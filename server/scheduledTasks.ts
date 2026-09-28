@@ -50,7 +50,7 @@ async function reverseGeocode(lat: number, lng: number): Promise<string> {
   try {
     const res = await fetchT(
       `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json&zoom=16`,
-      { headers: { 'User-Agent': 'Club34/1.0' } },
+      { headers: { 'User-Agent': 'Janus/1.0' } },
       5000
     );
     if (!res.ok) return `${lat.toFixed(4)}, ${lng.toFixed(4)}`;

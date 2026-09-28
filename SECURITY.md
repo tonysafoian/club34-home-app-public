@@ -2,7 +2,7 @@
 
 ## Supported Versions
 
-Household OS receives security patches on the latest major/minor release.
+Janus receives security patches on the latest major/minor release.
 
 | Version | Supported          |
 | ------- | ------------------ |
@@ -11,16 +11,16 @@ Household OS receives security patches on the latest major/minor release.
 
 ## Reporting a Vulnerability
 
-We take the security of smart homes and private residential estates extremely seriously. If you discover a vulnerability or security flaw in Household OS, please report it responsibly so we can remediate it before public disclosure.
+We take the security of smart homes and private residential estates extremely seriously. If you discover a vulnerability or security flaw in Janus, please report it responsibly so we can remediate it before public disclosure.
 
 ### How to Report
 
 1. **GitHub Private Vulnerability Reporting (Preferred)**:
-   Navigate to the [Security Advisory tab](https://github.com/tonysafoian/club34-home-app-public/security/advisories) on GitHub and click **"Report a vulnerability"**. This opens an encrypted, private thread directly with the maintainers.
+   Navigate to the [Security Advisory tab](https://github.com/tonysafoian/janus-home-app/security/advisories) on GitHub and click **"Report a vulnerability"**. This opens an encrypted, private thread directly with the maintainers.
 
 2. **Direct Email**:
    If you prefer email or cannot use GitHub advisories, send an encrypted or plaintext report to:
-   **`tony@safoian.com`** with the subject line `[SECURITY] Household OS Vulnerability Report`.
+   **`tony@safoian.com`** with the subject line `[SECURITY] Janus Vulnerability Report`.
 
 ### What to Include
 
@@ -39,7 +39,7 @@ Please provide:
 
 ## Security Architecture & Defenses
 
-Household OS is engineered with defense-in-depth principles:
+Janus is engineered with defense-in-depth principles:
 - **Local-First IoT**: Hardware telemetry stays on your local network. No third-party cloud data broker is required.
 - **Outbound SSRF Guards**: All user-configured outbound endpoints (e.g. Home Assistant URLs) are validated through strict SSRF filters blocking RFC1918 private IP ranges, loopback (`127.0.0.1`), link-local, and cloud metadata (`169.254.169.254`).
 - **Gitleaks CI Enforcement**: Automated pre-commit hooks and GitHub Actions CI actively scan every commit for secrets, API tokens, and confidential material.

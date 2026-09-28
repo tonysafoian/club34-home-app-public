@@ -253,7 +253,7 @@ function Stepper({ row, runId, currentUserId, disabled, onOptimisticUpdate, onRo
   return (
     <div
       className={`flex items-center gap-1 rounded-lg p-0.5 transition-all ${
-        isPicked ? 'club34-gradient club34-glow-soft' : 'bg-secondary'
+        isPicked ? 'janus-gradient janus-glow-soft' : 'bg-secondary'
       }`}
       data-testid={`stepper-${itemId}`}
     >
@@ -694,7 +694,7 @@ export default function ThisWeekOrder({ onLockAndSubmit }: ThisWeekOrderProps) {
       <div className="rounded-xl border border-border/60 bg-card p-5 space-y-3">
         <div className="flex items-start justify-between gap-3">
           <div className="flex items-center gap-3">
-            <div className="flex items-center justify-center w-10 h-10 rounded-xl club34-gradient shrink-0">
+            <div className="flex items-center justify-center w-10 h-10 rounded-xl janus-gradient shrink-0">
               <span className="text-xl font-black font-display text-primary-foreground leading-none">34</span>
             </div>
             <div>
@@ -855,7 +855,7 @@ export default function ThisWeekOrder({ onLockAndSubmit }: ThisWeekOrderProps) {
         <div className="hidden md:flex justify-end">
           <Button
             size="sm"
-            className="club34-gradient text-primary-foreground"
+            className="janus-gradient text-primary-foreground"
             disabled={!canLockEarly || locking}
             onClick={handleLockEarly}
             title={!isAdmin ? 'Only admins can lock the order early' : undefined}
@@ -902,7 +902,7 @@ export default function ThisWeekOrder({ onLockAndSubmit }: ThisWeekOrderProps) {
           >
             <Button
               size="sm"
-              className="club34-gradient text-primary-foreground"
+              className="janus-gradient text-primary-foreground"
               disabled={!isAdmin || locking}
               onClick={handleLockEarly}
               data-testid="button-lock-early-mobile"

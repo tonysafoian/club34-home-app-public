@@ -1,6 +1,6 @@
 # 🎨 Customization Guide — Bring Your Own Estate
 
-Household OS is engineered to be completely modular. Whether you are running a single-family smart home or managing a multi-acre residential property, this guide explains how to customize the platform for your own space.
+Janus is engineered to be completely modular. Whether you are running a single-family smart home or managing a multi-acre residential property, this guide explains how to customize the platform for your own space.
 
 ---
 
@@ -22,7 +22,7 @@ You can easily rebrand the dashboard with your family or property name.
    ```
 
 ### Theme & Colors
-Household OS uses Tailwind CSS with CSS variables defined in [`src/index.css`](../src/index.css). You can adjust the accent colors (HSL) to match your home's aesthetics:
+Janus uses Tailwind CSS with CSS variables defined in [`src/index.css`](../src/index.css). You can adjust the accent colors (HSL) to match your home's aesthetics:
 ```css
 :root {
   --primary: 215 100% 50%;       /* Accent color (buttons, highlights) */
@@ -102,7 +102,7 @@ To map your thermostats:
 
 ## ⚡ 5. Electrical & Backup Power Configuration
 
-Household OS provides comprehensive estate power observability, including backup generator telemetry, circuit-level wattage monitoring, and utility rate tariff tracking:
+Janus provides comprehensive estate power observability, including backup generator telemetry, circuit-level wattage monitoring, and utility rate tariff tracking:
 
 ### Backup Generator (Generac Mobile Link / Local Bridge)
 Monitor fuel levels, utility grid presence, transfer switch state, and weekly exercise cycles:
@@ -112,4 +112,4 @@ Monitor fuel levels, utility grid presence, transfer switch state, and weekly ex
 ### Circuit-Level Energy Monitoring (Emporia Vue)
 Monitor high-draw estate circuits (HVAC compressors, EV wall chargers, pool pumps, kitchen sub-panels):
 * Expose 16-channel Emporia Vue CT clamps to Home Assistant via ESPHome or the Emporia cloud integration.
-* Household OS aggregates historical circuit draw into daily and monthly cost reports in `/home-systems?section=energy`.
+* Janus aggregates historical circuit draw into daily and monthly cost reports in `/home-systems?section=energy`.

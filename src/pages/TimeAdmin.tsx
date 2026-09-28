@@ -1,5 +1,5 @@
 /**
- * Club34 Time — Admin View
+ * Janus Time — Admin View
  * /time/admin
  *
  * Tabs: Approvals | Workers | Reports | Categories
@@ -9,7 +9,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { apiClient } from '@/lib/apiClient';
 import { useToast } from '@/hooks/use-toast';
-import { Club34Logo } from '@/components/brand/Club34Logo';
+import { JanusLogo } from '@/components/brand/JanusLogo';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -1457,9 +1457,9 @@ export default function TimeAdmin() {
       {/* Header */}
       <div className="flex items-center justify-between px-4 py-3 border-b border-border shrink-0">
         <div className="flex items-center gap-2">
-          <Club34Logo size="sm" variant="icon" />
+          <JanusLogo size="sm" variant="icon" />
           <div>
-            <span className="text-sm font-semibold text-foreground">Club34 Time</span>
+            <span className="text-sm font-semibold text-foreground">Janus Time</span>
             <Badge variant="outline" className="ml-2 text-[10px] py-0">Admin</Badge>
           </div>
         </div>

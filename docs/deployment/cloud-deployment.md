@@ -14,7 +14,7 @@ If you prefer hosting the web dashboard and AI orchestrator in the cloud rather 
    CREATE EXTENSION IF NOT EXISTS vector;
    ```
 3. Add a **Redis** service.
-4. Deploy the GitHub repository [`tonysafoian/club34-home-app-public`](https://github.com/tonysafoian/club34-home-app-public).
+4. Deploy the GitHub repository [`tonysafoian/janus-home-app`](https://github.com/tonysafoian/janus-home-app).
 5. Attach the following Railway environment variables:
    * `DATABASE_URL`: `${{Postgres.DATABASE_URL}}`
    * `REDIS_URL`: `${{Redis.REDIS_URL}}`
@@ -52,7 +52,7 @@ Railway will automatically build the React assets and boot the Express server wi
 
 ## 🔗 Connecting Cloud App to Local Smart Home
 
-When Household OS is deployed in the cloud:
+When Janus is deployed in the cloud:
 - **Home Assistant**: Connect via [Nabu Casa Home Assistant Cloud](https://www.nabucasa.com/) (`https://your-id.ui.nabu.casa`) or a Cloudflare Tunnel.
 - **Tesla Fleet API**: Tesla requires a public domain with SSL for OAuth callbacks, making cloud hosting ideal.
 - **Local Cameras**: Local RTSP streams can be bridged using WebRTC or Tailscale subnet routing.

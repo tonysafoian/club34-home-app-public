@@ -1,5 +1,5 @@
 /**
- * Club34 Time — Worker View
+ * Janus Time — Worker View
  * /time
  *
  * Mobile-first T&M time logging for contractors.
@@ -10,7 +10,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { apiClient } from '@/lib/apiClient';
 import { useToast } from '@/hooks/use-toast';
-import { Club34Logo } from '@/components/brand/Club34Logo';
+import { JanusLogo } from '@/components/brand/JanusLogo';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -1039,8 +1039,8 @@ export default function Time() {
     return (
       <div className="min-h-screen flex items-center justify-center" style={{ background: '#141519' }}>
         <div className="text-center space-y-3">
-          <Club34Logo size="lg" variant="icon" />
-          <p className="text-sm text-muted-foreground">Loading Club34 Time…</p>
+          <JanusLogo size="lg" variant="icon" />
+          <p className="text-sm text-muted-foreground">Loading Janus Time…</p>
         </div>
       </div>
     );
@@ -1068,8 +1068,8 @@ export default function Time() {
       {/* Header */}
       <div className="flex items-center justify-between px-4 py-3 border-b border-border shrink-0">
         <div className="flex items-center gap-2">
-          <Club34Logo size="sm" variant="icon" />
-          <span className="text-sm font-semibold text-foreground">Club34 Time</span>
+          <JanusLogo size="sm" variant="icon" />
+          <span className="text-sm font-semibold text-foreground">Janus Time</span>
         </div>
         <span className="text-xs text-muted-foreground">{worker.full_name}</span>
       </div>
@@ -1080,7 +1080,7 @@ export default function Time() {
           className="bg-amber-500/15 border-b border-amber-500/30 px-4 py-2 text-xs text-amber-400 flex items-center justify-between gap-2"
           data-testid="banner-vendor-preview"
         >
-          <span>Vendor preview — you&apos;re seeing Club34 Time as a vendor.</span>
+          <span>Vendor preview — you&apos;re seeing Janus Time as a vendor.</span>
           <a href="/time/admin" className="underline shrink-0" data-testid="link-back-to-admin">
             Back to Admin
           </a>

@@ -11,7 +11,7 @@ import { IaqualinkCard } from '@/components/dashboard/systems/IaqualinkCard';
 import { PoolTempChart } from '@/components/dashboard/systems/PoolTempChart';
 import { PrintersCard } from '@/components/dashboard/systems/PrintersCard';
 import { SaunaLogicCard } from '@/components/dashboard/systems/SaunaLogicCard';
-import { Club34StatusCard } from '@/components/dashboard/systems/Club34StatusCard';
+import { JanusStatusCard } from '@/components/dashboard/systems/JanusStatusCard';
 import { GeneracCard } from '@/components/dashboard/systems/GeneracCard';
 import { TeslaSection } from '@/components/tesla/TeslaSection';
 import { CrestronThermostatsCard } from '@/components/dashboard/systems/CrestronThermostatsCard';
@@ -213,7 +213,7 @@ export default function HomeSystems() {
     'energy-insights': <EnergyInsightsCard />,
     'printers': <PrintersCard />,
     'generator': <GeneracCard />,
-    'app-health': <Club34StatusCard />,
+    'app-health': <JanusStatusCard />,
     'network': <NetworkDashboard />,
     'system-hardware': <SystemHardwareCard />,
     'software-updates': <HAUpdatesCard />,

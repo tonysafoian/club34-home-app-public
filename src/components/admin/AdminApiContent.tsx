@@ -483,7 +483,7 @@ export function AdminApiContent() {
               </Button>
             </div>
             <p className="text-xs text-muted-foreground mt-1">
-              The API is mounted at this path on the same Club 34 server. Use the production URL
+              The API is mounted at this path on the same Janus server. Use the production URL
               when calling from outside (e.g. <code>https://example.com/api/v1/external</code>).
             </p>
           </div>
@@ -660,7 +660,7 @@ export function AdminApiContent() {
           <p>
             See the full reference, error semantics, and example payloads in{' '}
             <a
-              href="https://github.com/tonysafoian/club34-home-app-public-home-app-public/blob/main/EXTERNAL_API.md"
+              href="https://github.com/tonysafoian/janus-home-app/blob/main/EXTERNAL_API.md"
               target="_blank"
               rel="noopener noreferrer"
               className="text-primary inline-flex items-center gap-1 hover:underline"

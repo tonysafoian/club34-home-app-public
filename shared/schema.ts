@@ -1567,7 +1567,7 @@ export const tokenExpiryAlertDedup = pgTable("token_expiry_alert_dedup", {
   expiresAt: timestamp("expires_at", { withTimezone: true }).notNull(),
 });
 
-// ─── Club34 Ball — Wednesday Night Pickup Basketball ─────────────────────
+// ─── Ball — Wednesday Night Pickup Basketball ─────────────────────
 //
 // Half-court pickup games. Roster of ~47 dads, public landing at /ball,
 // admin at /admin?section=ball. Token-based personal RSVP links, no auth.
@@ -1659,7 +1659,7 @@ export type BallRsvp = typeof ballRsvps.$inferSelect;
 export type InsertBallWaiver = Zinfer<typeof insertBallWaiverSchema>;
 export type BallWaiver = typeof ballWaivers.$inferSelect;
 
-// ─── Club34 Ball — email engagement tracking ─────────────────────────────
+// ─── Ball — email engagement tracking ─────────────────────────────
 //
 // One row per email sent (per dad, per game, per template). Tracks full
 // lifecycle: created → sent → delivered/bounced → opened → clicked.
@@ -1694,7 +1694,7 @@ export const ballEmailSends = pgTable("ball_email_sends", {
 export type BallEmailSend = typeof ballEmailSends.$inferSelect;
 export type InsertBallEmailSend = typeof ballEmailSends.$inferInsert;
 
-// Per-circuit daily energy snapshots (see migration 0037). Club34-owned copy
+// Per-circuit daily energy snapshots (see migration 0037). Janus-owned copy
 // of every Emporia circuit's daily kWh so monthly reports work indefinitely,
 // independent of Home Assistant's recorder purge window.
 export const circuitEnergyDaily = pgTable("circuit_energy_daily", {
@@ -1764,7 +1764,7 @@ export const waterBills = pgTable("water_bills", {
 export type WaterBill = typeof waterBills.$inferSelect;
 export type InsertWaterBill = typeof waterBills.$inferInsert;
 
-// ── Club34 Time Tracking (T&M Contractor) ─────────────────────────────────
+// ── Janus Time Tracking (T&M Contractor) ─────────────────────────────────
 
 export const ttStatusEnum = pgEnum("tt_status", ["pending", "approved", "rejected", "paid"]);
 

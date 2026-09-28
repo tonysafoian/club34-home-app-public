@@ -9,15 +9,15 @@ const Dashboard = lazy(() => import('./Dashboard'));
 const HomePage = lazy(() => import('./HomePage'));
 const ProductivityDay = lazy(() => import('./ProductivityDay'));
 import { Loader2 } from 'lucide-react';
-import { Club34Logo } from '@/components/brand/Club34Logo';
+import { JanusLogo } from '@/components/brand/JanusLogo';
 
 const BrandedSplash = () => (
   <div
     className="min-h-screen flex flex-col items-center justify-center gap-6"
     style={{ background: '#141519' }}
   >
-    <div className="club34-glow-soft rounded-full">
-      <Club34Logo size="xl" variant="icon" />
+    <div className="janus-glow-soft rounded-full">
+      <JanusLogo size="xl" variant="icon" />
     </div>
     <Loader2 className="h-6 w-6 animate-spin text-primary" />
   </div>

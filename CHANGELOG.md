@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 
 ## [1.0.0] - 2026-09-28
 ### Added
-- Initial open-source release of the Household OS / Janus smart home platform.
+- Initial open-source release of the Janus smart home platform.
 - Comprehensive Smart Home integrations:
   - Home Assistant (lighting, climate, security locks, entity logs)
   - Tesla Fleet API (vehicle telemetry, battery monitoring, charging schedules)

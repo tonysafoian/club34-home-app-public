@@ -1,4 +1,4 @@
-# 🏛️ Household OS (Janus)
+# 🏛️ Janus (Janus)
 
 <div align="center">
 
@@ -6,7 +6,7 @@
 
 *IoT automation, multi-agent household coordination, electric vehicle fleet management, and long-term semantic memory in a unified residential command deck.*
 
-[![CI & Security Audit](https://github.com/tonysafoian/club34-home-app-public/actions/workflows/ci.yml/badge.svg)](https://github.com/tonysafoian/club34-home-app-public/actions/workflows/ci.yml)
+[![CI & Security Audit](https://github.com/tonysafoian/janus-home-app/actions/workflows/ci.yml/badge.svg)](https://github.com/tonysafoian/janus-home-app/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Gitleaks: Clean](https://img.shields.io/badge/Security-Gitleaks%20Verified%20(0%20Leaks)-brightgreen.svg)](SECURITY.md)
 [![Node.js](https://img.shields.io/badge/Node.js-20+-68a063.svg)](package.json)
@@ -20,11 +20,11 @@
 
 ---
 
-## 🌟 Why Household OS?
+## 🌟 Why Janus?
 
 Most residential smart home platforms (Home Assistant, Homebridge, Apple Home) are great at controlling individual switches, but they stop short of being a **true residential operating system**. 
 
-Household OS bridges the gap between hardware telemetry and daily estate operations:
+Janus bridges the gap between hardware telemetry and daily estate operations:
 
 * 🧠 **Janus Voice AI**: A resident AI orchestrator with long-term semantic memory (`pgvector`) that executes real-world actions across connected hardware.
 * 🏡 **Interactive Estate Topology**: 2D property floor plans and irrigation maps with clickable zone pins for lighting, HVAC, and valves.
@@ -45,7 +45,7 @@ flowchart TD
         Voice[Voice Audio Stream]
     end
 
-    subgraph Core["Household OS Application Layer"]
+    subgraph Core["Janus Application Layer"]
         Server[Express App Server :5000]
         WS[WebSocket Real-time Event Hub]
         Janus[Janus AI Tool Orchestrator]
@@ -81,12 +81,12 @@ flowchart TD
 
 ## ⚡ 5-Minute Quickstart
 
-Get Household OS running locally in 3 commands:
+Get Janus running locally in 3 commands:
 
 ```bash
 # 1. Clone repository
-git clone https://github.com/tonysafoian/club34-home-app-public.git
-cd club34-home-app-public
+git clone https://github.com/tonysafoian/janus-home-app.git
+cd janus-home-app
 
 # 2. Boot backing services (PostgreSQL 16 with pgvector, Redis 7, Mosquitto MQTT)
 docker compose up -d
@@ -101,7 +101,7 @@ npm run dev
 Open **[http://localhost:5000](http://localhost:5000)** in your browser!
 
 > [!TIP]
-> **Zero Hardware Required**: With default credentials in `.env`, Household OS runs in **Mock Mode**, generating realistic synthetic telemetry for the dashboard, vehicle fleet, and pool equipment.
+> **Zero Hardware Required**: With default credentials in `.env`, Janus runs in **Mock Mode**, generating realistic synthetic telemetry for the dashboard, vehicle fleet, and pool equipment.
 
 ---
 

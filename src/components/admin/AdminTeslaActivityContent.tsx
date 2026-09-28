@@ -24,7 +24,7 @@ const EVENT_META: Record<string, { label: string; icon: React.ReactNode; variant
   charging_complete: { label: 'Charging Complete', icon: <CheckCircle className="h-4 w-4 text-[hsl(var(--status-online))]" />, variant: 'default' },
   plugged_in:        { label: 'Plugged In',         icon: <Plug className="h-4 w-4 text-primary" />,    variant: 'secondary' },
   unplugged:         { label: 'Unplugged',          icon: <Unplug className="h-4 w-4 text-[hsl(var(--status-warning))]" />, variant: 'secondary' },
-  vehicle_woke:      { label: 'Vehicle Woke',       icon: <Sun className="h-4 w-4 text-[hsl(var(--club34-amber))]" />,   variant: 'outline' },
+  vehicle_woke:      { label: 'Vehicle Woke',       icon: <Sun className="h-4 w-4 text-[hsl(var(--janus-amber))]" />,   variant: 'outline' },
   vehicle_slept:     { label: 'Vehicle Slept',      icon: <Moon className="h-4 w-4 text-muted-foreground" />, variant: 'outline' },
   low_battery_alert: { label: 'Low Battery Alert',  icon: <AlertTriangle className="h-4 w-4 text-[hsl(var(--status-offline))]" />, variant: 'destructive' },
   battery_snapshot:  { label: 'Battery Snapshot',   icon: <Car className="h-4 w-4 text-muted-foreground" />,  variant: 'outline' },

@@ -95,10 +95,10 @@ export default {
   				saunalogic: 'hsl(var(--saunalogic))',
   				verkada: 'hsl(var(--verkada))'
   			},
-  			club34: {
-  				amber: 'hsl(var(--club34-amber))',
-  				copper: 'hsl(var(--club34-copper))',
-  				cream: 'hsl(var(--club34-cream))'
+  			janus: {
+  				amber: 'hsl(var(--janus-amber))',
+  				copper: 'hsl(var(--janus-copper))',
+  				cream: 'hsl(var(--janus-cream))'
   			}
   		},
   		borderRadius: {

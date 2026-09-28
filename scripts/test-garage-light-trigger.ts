@@ -127,8 +127,8 @@ function row(label: string, value: string) {
 
 function buildForwardAutomationConfig(triggerId: string, targetIds: string[]) {
   return {
-    alias: 'Club34 — Garage Light Group',
-    description: '[Managed by Club34] Bidirectional group: Garages Recessed ↔ TigerDen (Govee). Forward: Recessed drives North Cabinets, Tool Cabinets, TigerDen.',
+    alias: 'Janus — Garage Light Group',
+    description: '[Managed by Janus] Bidirectional group: Garages Recessed ↔ TigerDen (Govee). Forward: Recessed drives North Cabinets, Tool Cabinets, TigerDen.',
     trigger: [
       { platform: 'state', entity_id: triggerId, to: 'on' },
       { platform: 'state', entity_id: triggerId, to: 'off' },
@@ -154,8 +154,8 @@ function buildForwardAutomationConfig(triggerId: string, targetIds: string[]) {
 
 function buildReverseAutomationConfig(reverseTrigId: string, primaryId: string) {
   return {
-    alias: 'Club34 — Garage Light Group (reverse)',
-    description: '[Managed by Club34] Reverse direction: TigerDen (Govee) drives Garages Recessed. State-equality condition prevents toggle loops.',
+    alias: 'Janus — Garage Light Group (reverse)',
+    description: '[Managed by Janus] Reverse direction: TigerDen (Govee) drives Garages Recessed. State-equality condition prevents toggle loops.',
     trigger: [
       { platform: 'state', entity_id: reverseTrigId, to: 'on' },
       { platform: 'state', entity_id: reverseTrigId, to: 'off' },
@@ -300,8 +300,8 @@ async function main() {
 
   // ── 4. Deployed HA automations ─────────────────────────────────────────
   console.log('── 4. Deployed HA automations ──────────────────────');
-  const fwAutoId = 'automation.club34_garage-recessed-group';
-  const rvAutoId = 'automation.club34_garage-recessed-group__reverse';
+  const fwAutoId = 'automation.janus_garage-recessed-group';
+  const rvAutoId = 'automation.janus_garage-recessed-group__reverse';
 
   const fwAuto = await getState(fwAutoId);
   if (!fwAuto) {
@@ -352,11 +352,11 @@ async function main() {
           forwardTrigger.entity_id,
           forwardTargets.map((t) => t.entity_id),
         );
-        await postToHA('club34_garage-recessed-group', fwConfig);
+        await postToHA('janus_garage-recessed-group', fwConfig);
         forwardOk = true;
-        console.log('✓ Deployed automation.club34_garage-recessed-group (forward)');
+        console.log('✓ Deployed automation.janus_garage-recessed-group (forward)');
         await sleep(800);
-        const after = await getState('automation.club34_garage-recessed-group');
+        const after = await getState('automation.janus_garage-recessed-group');
         if (after) row('  post-deploy state', after.state);
       } catch (e) {
         console.log(`✗ Forward deploy failed: ${e instanceof Error ? e.message : String(e)}`);
@@ -381,11 +381,11 @@ async function main() {
 
         try {
           const rvConfig = buildReverseAutomationConfig(reverseEntityId, forwardTrigger.entity_id);
-          await postToHA('club34_garage-recessed-group__reverse', rvConfig);
+          await postToHA('janus_garage-recessed-group__reverse', rvConfig);
           reverseOk = true;
-          console.log('✓ Deployed automation.club34_garage-recessed-group__reverse (reverse)');
+          console.log('✓ Deployed automation.janus_garage-recessed-group__reverse (reverse)');
           await sleep(800);
-          const afterRv = await getState('automation.club34_garage-recessed-group__reverse');
+          const afterRv = await getState('automation.janus_garage-recessed-group__reverse');
           if (afterRv) row('  post-deploy state', afterRv.state);
         } catch (e) {
           console.log(`✗ Reverse deploy failed: ${e instanceof Error ? e.message : String(e)}`);

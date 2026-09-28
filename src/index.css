@@ -2,7 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Club 34 Design System
+/* Janus Design System
    Refined Private Lounge — Dark + Warm Neutrals + Amber/Gold
 */
 
@@ -57,10 +57,10 @@
     --saunalogic: 25 80% 55%;
     --verkada: 210 65% 50%;
 
-    /* Club 34 Brand — Amber / Copper / Cream */
-    --club34-amber: 35 85% 55%;
-    --club34-copper: 25 75% 50%;
-    --club34-cream: 35 30% 90%;
+    /* Janus Brand — Amber / Copper / Cream */
+    --janus-amber: 35 85% 55%;
+    --janus-copper: 25 75% 50%;
+    --janus-cream: 35 30% 90%;
 
     --sidebar-background: 30 15% 95%;
     --sidebar-foreground: 220 15% 15%;
@@ -190,24 +190,24 @@
     @apply animate-pulse;
   }
 
-  /* Club 34 brand utilities — amber/copper */
-  .club34-gradient {
-    background: linear-gradient(135deg, hsl(var(--club34-amber)) 0%, hsl(var(--club34-copper)) 100%);
+  /* Janus brand utilities — amber/copper */
+  .janus-gradient {
+    background: linear-gradient(135deg, hsl(var(--janus-amber)) 0%, hsl(var(--janus-copper)) 100%);
   }
 
-  .club34-text-gradient {
-    background: linear-gradient(135deg, hsl(var(--club34-amber)) 0%, hsl(var(--club34-copper)) 100%);
+  .janus-text-gradient {
+    background: linear-gradient(135deg, hsl(var(--janus-amber)) 0%, hsl(var(--janus-copper)) 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
   }
 
-  .club34-glow {
-    box-shadow: 0 0 60px -10px hsl(var(--club34-amber) / 0.5), 0 0 30px -5px hsl(var(--club34-copper) / 0.3);
+  .janus-glow {
+    box-shadow: 0 0 60px -10px hsl(var(--janus-amber) / 0.5), 0 0 30px -5px hsl(var(--janus-copper) / 0.3);
   }
 
-  .club34-glow-soft {
-    box-shadow: 0 0 40px -15px hsl(var(--club34-amber) / 0.4);
+  .janus-glow-soft {
+    box-shadow: 0 0 40px -15px hsl(var(--janus-amber) / 0.4);
   }
 
   .font-display {

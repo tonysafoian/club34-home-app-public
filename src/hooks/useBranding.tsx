@@ -69,7 +69,7 @@ export const THEME_COLOR_PRESETS: Record<ThemeColorPreset, ThemePresetDetails> =
   },
 };
 
-const DEFAULT_ESTATE_NAME = 'Household OS';
+const DEFAULT_ESTATE_NAME = 'Janus';
 
 interface BrandingContextType {
   estateName: string;
@@ -121,8 +121,8 @@ export function BrandingProvider({ children }: { children: ReactNode }) {
     root.style.setProperty('--primary', preset.primary);
     root.style.setProperty('--ring', preset.ring);
     root.style.setProperty('--sidebar-primary', preset.primary);
-    root.style.setProperty('--club34-amber', preset.amber);
-    root.style.setProperty('--club34-copper', preset.copper);
+    root.style.setProperty('--janus-amber', preset.amber);
+    root.style.setProperty('--janus-copper', preset.copper);
 
     localStorage.setItem(STORAGE_KEYS.COLOR_PRESET, colorPreset);
   }, [colorPreset]);

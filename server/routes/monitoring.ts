@@ -2504,7 +2504,7 @@ router.post('/api/notion-webhook-health-monitor', requireAuth, async (_req: any,
 });
 
 // ── HA Workflow Trigger Reconciler ───────────────────────────────────────────
-// Checks that every Club34 workflow rule's HA automation(s) still exist and
+// Checks that every Janus workflow rule's HA automation(s) still exist and
 // re-deploys any that are missing. Runs every 30 min via cron.
 
 // ── HA Workflow Trigger Status (UI polling) ──────────────────────────────────
@@ -2569,8 +2569,8 @@ router.get('/api/ha-workflow-status', async (_req: any, res: any) => {
     }
 
     const rules = WORKFLOW_RULES.map((rule) => {
-      const forwardId = `club34_${rule.id}`;
-      const reverseId = `club34_${rule.id}__reverse`;
+      const forwardId = `janus_${rule.id}`;
+      const reverseId = `janus_${rule.id}__reverse`;
 
       const forwardState = automations?.get(forwardId) ?? null;
       const reverseState = rule.bidirectional ? (automations?.get(reverseId) ?? null) : null;
@@ -2901,7 +2901,7 @@ router.post('/api/ha-locks-monitor', async (_req: any, res: any) => {
           `*Lock Status Summary:*`,
           ...locksSummary.map(l => `- ${l.name}: ${l.state.toUpperCase()}${l.battery !== undefined ? ` (${l.battery}% batt)` : ` (${l.connection_status || 'online'})`}`),
           ``,
-          `Check Club 34 Security dashboard for status:`,
+          `Check Janus Security dashboard for status:`,
           `https://example.com/security`,
         ];
         const msg = lines.join('\n');

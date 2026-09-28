@@ -808,7 +808,7 @@ async function pingUrl(url: string, timeoutMs = 5000): Promise<boolean> {
       method: 'HEAD',
       signal: controller.signal,
       redirect: 'follow',
-      headers: { 'User-Agent': 'Mozilla/5.0 (compatible; Club34-LinkChecker/1.0)' },
+      headers: { 'User-Agent': 'Mozilla/5.0 (compatible; Janus-LinkChecker/1.0)' },
     });
     clearTimeout(timer);
     if (res.status === 404 || res.status === 410) return false;
@@ -819,7 +819,7 @@ async function pingUrl(url: string, timeoutMs = 5000): Promise<boolean> {
         method: 'GET',
         signal: controller2.signal,
         redirect: 'follow',
-        headers: { 'User-Agent': 'Mozilla/5.0 (compatible; Club34-LinkChecker/1.0)', 'Range': 'bytes=0-0' },
+        headers: { 'User-Agent': 'Mozilla/5.0 (compatible; Janus-LinkChecker/1.0)', 'Range': 'bytes=0-0' },
       });
       clearTimeout(timer2);
       if (res2.status === 404 || res2.status === 410) return false;
@@ -862,7 +862,7 @@ function replaceDeadUrls(text: string, deadUrls: string[]): string {
   return cleaned;
 }
 
-const TRUSTED_DOMAINS = ['docs.google.com', 'drive.google.com', 'calendar.google.com', 'notion.so', process.env.APP_DOMAIN || 'example.com', 'club34.ai'];
+const TRUSTED_DOMAINS = ['docs.google.com', 'drive.google.com', 'calendar.google.com', 'notion.so', process.env.APP_DOMAIN || 'example.com', 'janus.ai'];
 
 function isTrustedUrl(url: string): boolean {
   try {

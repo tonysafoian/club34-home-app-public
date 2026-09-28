@@ -1,12 +1,12 @@
 # ⚡ Electrical, Backup Generator & Power Telemetry Guide
 
-Household OS treats electricity not merely as a sensor reading, but as a critical operational pillar. This guide explains how to integrate whole-home standby generators, circuit-level wattage monitors, and utility rate tariff schedules.
+Janus treats electricity not merely as a sensor reading, but as a critical operational pillar. This guide explains how to integrate whole-home standby generators, circuit-level wattage monitors, and utility rate tariff schedules.
 
 ---
 
 ## 🔋 1. Whole-Home Backup Generator (Generac Mobile Link / Genmon)
 
-For estates with standby power systems, Household OS provides real-time generator observability:
+For estates with standby power systems, Janus provides real-time generator observability:
 
 ### Monitored States & Sensors
 | Metric | Entity Pattern | Description |
@@ -24,7 +24,7 @@ For estates with standby power systems, Household OS provides real-time generato
 ### Janus Power-Outage Routine
 When `utility_power` switches to `OFF`:
 1. Janus announces over smart speakers: *"Utility grid failure detected. Standby generator has started."*
-2. Household OS triggers load-shedding automations (e.g., turning off pool heaters and lowering secondary AC zones to conserve generator fuel).
+2. Janus triggers load-shedding automations (e.g., turning off pool heaters and lowering secondary AC zones to conserve generator fuel).
 
 ---
 
@@ -47,6 +47,6 @@ Whole-home CT clamps track power consumption across individual circuits in real 
 
 ## 💰 3. Utility Rate Tariffs & Billing Insights
 
-Household OS correlates kilowatt-hour consumption with your local electric utility rate structure (e.g., Time-of-Use tariffs):
+Janus correlates kilowatt-hour consumption with your local electric utility rate structure (e.g., Time-of-Use tariffs):
 - **On-Peak vs. Off-Peak Tracking**: Visualized in `/home-systems?section=electricity-cost`.
 - **Historical Bill Audits**: Compare utility statements against measured breaker panel data to identify energy anomalies.

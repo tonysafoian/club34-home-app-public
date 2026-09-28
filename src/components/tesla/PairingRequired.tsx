@@ -20,7 +20,7 @@ export function PairingRequired({ loading, onRetry, onReregisterAndReauth, onSho
       </CardHeader>
       <CardContent className="space-y-4">
         <p className="text-sm text-muted-foreground">
-          Your Tesla account needs to approve the Club 34 fleet key before vehicles can be loaded.
+          Your Tesla account needs to approve the Janus fleet key before vehicles can be loaded.
           This is a one-time step.
         </p>
         <ol className="list-decimal list-inside text-sm space-y-1 text-muted-foreground">

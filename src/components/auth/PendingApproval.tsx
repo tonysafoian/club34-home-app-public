@@ -1,7 +1,7 @@
 import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
 import { Clock, Home, LogOut } from 'lucide-react';
-import { Club34Logo } from '@/components/brand/Club34Logo';
+import { JanusLogo } from '@/components/brand/JanusLogo';
 
 interface PendingApprovalProps {
   isRejected?: boolean;
@@ -37,8 +37,8 @@ export function PendingApproval({ isRejected = false }: PendingApprovalProps) {
         {/* Logo + status icon */}
         <div className="flex flex-col items-center pt-10 pb-6 px-8">
           <div className="relative mb-5">
-            <div className="club34-glow-soft rounded-full">
-              <Club34Logo size="lg" variant="icon" />
+            <div className="janus-glow-soft rounded-full">
+              <JanusLogo size="lg" variant="icon" />
             </div>
             {/* Status badge overlaid bottom-right */}
             <div
@@ -54,7 +54,7 @@ export function PendingApproval({ isRejected = false }: PendingApprovalProps) {
             </div>
           </div>
 
-          <h1 className="font-display text-3xl font-semibold club34-text-gradient tracking-tight">
+          <h1 className="font-display text-3xl font-semibold janus-text-gradient tracking-tight">
             {isRejected ? 'Access Denied' : 'Pending Approval'}
           </h1>
 

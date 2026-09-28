@@ -1,12 +1,12 @@
 # 🛡️ Enterprise Network & Surveillance Integration Guide
 
-For properties with commercial-grade network hardware and security camera installations, Household OS provides native monitoring for FortiGate firewalls, Ruckus Wi-Fi access points, and Verkada / UniFi camera feeds.
+For properties with commercial-grade network hardware and security camera installations, Janus provides native monitoring for FortiGate firewalls, Ruckus Wi-Fi access points, and Verkada / UniFi camera feeds.
 
 ---
 
 ## 🔒 1. FortiGate Next-Generation Firewall
 
-Household OS monitors perimeter gateway health and bandwidth consumption:
+Janus monitors perimeter gateway health and bandwidth consumption:
 
 1. Create a REST API Administrator in the FortiGate Web UI:
    * **System → Administrators → Create New → REST API Admin**.
@@ -43,7 +43,7 @@ RUCKUS_PASSWORD=your_ruckus_password
 
 ## 📹 3. Surveillance Cameras (Verkada & UniFi Protect)
 
-Household OS integrates real-time camera views into the physical security dashboard:
+Janus integrates real-time camera views into the physical security dashboard:
 
 ### Verkada Command API
 ```env

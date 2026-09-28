@@ -1,15 +1,15 @@
 # Detailed Setup & Deployment Guide
 
-This document walks you through configuring each subsystem of Household OS.
+This document walks you through configuring each subsystem of Janus.
 
 ---
 
 ## 1. Database Setup (PostgreSQL + pgvector)
 
-Household OS uses PostgreSQL for structured data and `pgvector` for AI semantic memory embeddings.
+Janus uses PostgreSQL for structured data and `pgvector` for AI semantic memory embeddings.
 
 ### Local Development Services with Docker Compose
-Household OS provides a `docker-compose.yml` that boots PostgreSQL (with `pgvector`), Redis, and an Eclipse-Mosquitto MQTT broker:
+Janus provides a `docker-compose.yml` that boots PostgreSQL (with `pgvector`), Redis, and an Eclipse-Mosquitto MQTT broker:
 
 ```bash
 docker compose up -d
@@ -30,7 +30,7 @@ npm run migrate
 ## 2. Smart Home Integration (Home Assistant)
 
 1. Open Home Assistant → Click your Profile (bottom left) → **Long-Lived Access Tokens**.
-2. Create a token named `Household OS`.
+2. Create a token named `Janus`.
 3. Add the token and URL to your `.env`:
    ```env
    HA_URL=http://homeassistant.local:8123
@@ -62,7 +62,7 @@ Janus uses an LLM provider for conversational reasoning and embeddings for memor
 
 ## 5. Production Deployment
 
-Household OS runs on any standard Node.js hosting platform (Docker, Railway, Render, Fly.io, or self-hosted VPS / Mini PC).
+Janus runs on any standard Node.js hosting platform (Docker, Railway, Render, Fly.io, or self-hosted VPS / Mini PC).
 
 ### Building for Production:
 ```bash

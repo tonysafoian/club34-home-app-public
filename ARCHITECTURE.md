@@ -1,6 +1,6 @@
-# 🏛️ Architecture & System Design — Household OS (Janus)
+# 🏛️ Architecture & System Design — Janus
 
-Household OS is an enterprise-grade, privacy-conscious residential operating system designed to orchestrate smart home automation, energy telemetry, physical security, community coordination, and voice AI assistance into a unified estate dashboard.
+Janus is an enterprise-grade, privacy-conscious residential operating system designed to orchestrate smart home automation, energy telemetry, physical security, community coordination, and voice AI assistance into a unified estate dashboard.
 
 ---
 
@@ -103,7 +103,7 @@ The backend operates as a single Node.js runtime using Express and native ES Mod
 
 ## 🧠 Janus AI Architecture
 
-Janus is the resident AI intelligence of Household OS. It does not merely answer questions; it acts as an autonomous executive orchestrator capable of reading sensors and executing actions across all connected hardware.
+Janus is the resident AI intelligence of Janus. It does not merely answer questions; it acts as an autonomous executive orchestrator capable of reading sensors and executing actions across all connected hardware.
 
 ```mermaid
 sequenceDiagram
@@ -136,7 +136,7 @@ sequenceDiagram
 
 ## 🛡️ Security & Role-Based Access Control (RBAC)
 
-Household OS enforces strict perimeter security:
+Janus enforces strict perimeter security:
 - **`admin`**: Full configuration access, database inspection, API credential management, and user creation.
 - **`family`**: Full control over climate, lighting, music, and entertainment; access to personal calendars.
 - **`guest`**: Access restricted to designated guest suites, shared entertainment spaces, and guest Wi-Fi credentials.

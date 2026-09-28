@@ -5,7 +5,7 @@
  *
  * Janus's outsider/LLM reply path used to fire on these inputs because the
  * forwarded body has no obvious question, so the LLM defaulted to its
- * fallback greeting ("I'm Janus — I run the house at Club 34. What can I
+ * fallback greeting ("I'm Janus — I run the house at Janus. What can I
  * help you with?"). That reply then got sent back to the original vendor
  * (and CC'd to Tony), which is both noisy and embarrassing.
  *

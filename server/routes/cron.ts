@@ -411,7 +411,7 @@ export function initCronJobs(): void {
 
   // Per-circuit daily energy snapshot — 05:10 AM PT. Records the PRIOR
   // LA-local day's kWh for all 89 Emporia circuits into circuit_energy_daily
-  // so Club34 owns the full history (monthly reports work forever, even past
+  // so Janus owns the full history (monthly reports work forever, even past
   // HA's recorder purge window). Idempotent: re-runs upsert the same day.
   cron.schedule('10 5 * * *', () => {
     console.log('[cron] Running daily per-circuit energy snapshot (prior day)');
@@ -436,7 +436,7 @@ export function initCronJobs(): void {
     triggerRoute('/api/janus/token-expiration-warnings');
   }, { timezone: 'America/Los_Angeles' });
 
-  // HA Workflow Trigger Reconciler — checks every 30 min that Club34-managed
+  // HA Workflow Trigger Reconciler — checks every 30 min that Janus-managed
   // HA automations still exist and re-deploys any that went missing (e.g. after
   // an HA restart). Logs each redeploy to the audit log so it's visible in
   // the Automations page. Also fires a smart alert if the same rule keeps
@@ -465,7 +465,7 @@ export function initCronJobs(): void {
     triggerRoute('/api/updates-autogen');
   }, { timezone: 'America/Los_Angeles' });
 
-  // ── Club34 Time Tracking crons ───────────────────────────────────────────
+  // ── Janus Time Tracking crons ───────────────────────────────────────────
 
   // Worker daily digest — 6 PM PT Mon–Sat. Emails workers whose entries had
   // status changes (approved/rejected) that day so they know what happened.

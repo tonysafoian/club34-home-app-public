@@ -17,7 +17,7 @@ import jwt from "jsonwebtoken";
 const PORT = process.env.PORT || 5000;
 const BASE = `http://localhost:${PORT}`;
 const JWT_SECRET =
-  process.env.JWT_SECRET || process.env.SESSION_SECRET || "club34-dev-secret-change-in-production";
+  process.env.JWT_SECRET || process.env.SESSION_SECRET || "janus-dev-secret-change-in-production";
 
 const SENSITIVE_TABLES = [
   "google_tokens",

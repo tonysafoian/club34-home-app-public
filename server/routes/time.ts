@@ -1,9 +1,9 @@
 /**
- * Club34 Time Tracking — T&M Contractor Time Tracking
+ * Janus Time Tracking — T&M Contractor Time Tracking
  * server/routes/time.ts
  *
  * Worker routes: authenticated by JWT role='worker' (or admin acting on behalf)
- * Admin routes: authenticated by the standard Club34 'admin' role (JWT roles claim,
+ * Admin routes: authenticated by the standard Janus 'admin' role (JWT roles claim,
  * backed by user_roles) — there is no separate Time admin list.
  *
  * Canonical timezone: America/Los_Angeles (PT) for all date logic.
@@ -55,7 +55,7 @@ function isWithinWindow(dateStr: string): boolean {
 
 // ── Admin auth helper ──────────────────────────────────────────────────────
 
-// Time admin = standard Club34 admin role (same 'admin' role used everywhere else).
+// Time admin = standard Janus admin role (same 'admin' role used everywhere else).
 function isTimeAdmin(user: { roles: string[] }): boolean {
   return user.roles.includes("admin");
 }
@@ -147,7 +147,7 @@ function requireTimeAdmin(req: Request, res: Response): { user: NonNullable<Retu
 // ─────────────────────────────────────────────────────────────────────────────
 
 // GET /api/time/is-admin — lets the frontend check if the current user is a time admin
-// Time admin = standard Club34 'admin' role (same gate as all /api/time/admin/* routes).
+// Time admin = standard Janus 'admin' role (same gate as all /api/time/admin/* routes).
 router.get("/api/time/is-admin", async (req, res) => {
   try {
     const user = getAuthUser(req);
@@ -1218,7 +1218,7 @@ router.get("/api/time/admin/payments/preview", async (req, res) => {
       expenses: allExpenses,
       priorExpenses: priorExpenses.rows,
       existingPayment: existingPayment.rows[0] ?? null,
-      suggestedMemo: `Club34 T&M — week of ${weekStart} — ${worker.rows[0].full_name}`,
+      suggestedMemo: `Janus T&M — week of ${weekStart} — ${worker.rows[0].full_name}`,
     });
   } catch (e) {
     console.error("[time] GET /api/time/admin/payments/preview error:", e);
@@ -1574,7 +1574,7 @@ router.get("/api/time/admin/reports/export.xlsx", async (req, res) => {
     }
 
     res.setHeader("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
-    res.setHeader("Content-Disposition", `attachment; filename="club34-time-${periodStart}-to-${periodEnd}.xlsx"`);
+    res.setHeader("Content-Disposition", `attachment; filename="janus-time-${periodStart}-to-${periodEnd}.xlsx"`);
     await workbook.xlsx.write(res);
     res.end();
   } catch (e) {
@@ -2040,14 +2040,14 @@ router.post("/api/time/cron/worker-digest", async (req, res) => {
         .map((e) => `<tr><td>${e.work_date}</td><td>${e.category_name}</td><td>${e.hours}h</td><td>${e.status}</td><td>${e.rejected_reason ?? ""}</td></tr>`)
         .join("");
 
-      const html = `<h2>Club34 Time — Daily Status Update</h2>
+      const html = `<h2>Janus Time — Daily Status Update</h2>
 <p>Here's a summary of your time entry status changes for ${today}:</p>
 <table border="1" cellpadding="6"><tr><th>Date</th><th>Category</th><th>Hours</th><th>Status</th><th>Note</th></tr>${rows}</table>
 <p>View your full history at <a href="https://example.com/time">example.com/time</a></p>`;
 
       const { sendGmailRaw, logEmail, JANUS_EMAIL } = await import("../lib/helpers.js");
-      const ok = await sendGmailRaw(saKey, w.email, `Club34 Time — Status Update ${today}`, html, `Status update for ${today}`, JANUS_EMAIL);
-      await logEmail("time_worker_digest", `Club34 Time — Status Update ${today}`, [w.email], html, ok ? "sent" : "failed");
+      const ok = await sendGmailRaw(saKey, w.email, `Janus Time — Status Update ${today}`, html, `Status update for ${today}`, JANUS_EMAIL);
+      await logEmail("time_worker_digest", `Janus Time — Status Update ${today}`, [w.email], html, ok ? "sent" : "failed");
       if (ok) sent++;
     }
 
@@ -2107,16 +2107,16 @@ router.post("/api/time/cron/admin-pending-digest", async (req, res) => {
       .map((r) => `<tr><td>${r.full_name}</td><td>${r.cnt}</td><td>$${(parseFloat(String(r.labor_cents ?? 0)) / 100).toFixed(2)}</td></tr>`)
       .join("");
 
-    const html = `<h2>Club34 Time — Pending Approvals</h2>
+    const html = `<h2>Janus Time — Pending Approvals</h2>
 <p>The following workers have pending time entries requiring your approval:</p>
 <table border="1" cellpadding="6"><tr><th>Worker</th><th>Entries</th><th>Est. Amount</th></tr>${rows}</table>
-<p><a href="https://example.com/time/admin">Review in Club34 Time Admin</a></p>`;
+<p><a href="https://example.com/time/admin">Review in Janus Time Admin</a></p>`;
 
     const { sendGmailRaw, logEmail, JANUS_EMAIL } = await import("../lib/helpers.js");
     let sent = 0;
     for (const adminEmail of adminEmails) {
-      const ok = await sendGmailRaw(saKey, adminEmail, "Club34 Time — Pending Approvals", html, "Pending approvals for Club34 Time", JANUS_EMAIL);
-      await logEmail("time_admin_pending_digest", "Club34 Time — Pending Approvals", [adminEmail], html, ok ? "sent" : "failed");
+      const ok = await sendGmailRaw(saKey, adminEmail, "Janus Time — Pending Approvals", html, "Pending approvals for Janus Time", JANUS_EMAIL);
+      await logEmail("time_admin_pending_digest", "Janus Time — Pending Approvals", [adminEmail], html, ok ? "sent" : "failed");
       if (ok) sent++;
     }
 
@@ -2177,15 +2177,15 @@ router.post("/api/time/cron/weekly-closeout", async (req, res) => {
       .map((r) => `<tr><td>${r.full_name}</td><td>${r.total_hours}h</td><td>$${(parseFloat(String(r.unpaid_approved_cents ?? 0)) / 100).toFixed(2)}</td><td>$${(parseFloat(String(r.pending_cents ?? 0)) / 100).toFixed(2)}</td></tr>`)
       .join("");
 
-    const html = `<h2>Club34 Time — Weekly Close-Out (${lastWeekStart} to ${lastWeekEnd})</h2>
+    const html = `<h2>Janus Time — Weekly Close-Out (${lastWeekStart} to ${lastWeekEnd})</h2>
 <table border="1" cellpadding="6"><tr><th>Worker</th><th>Hours</th><th>Ready to Pay</th><th>Still Pending</th></tr>${rows}</table>
-<p><a href="https://example.com/time/admin">Manage in Club34 Time Admin</a></p>`;
+<p><a href="https://example.com/time/admin">Manage in Janus Time Admin</a></p>`;
 
     const { sendGmailRaw, logEmail, JANUS_EMAIL } = await import("../lib/helpers.js");
     let sent = 0;
     for (const adminEmail of adminEmails) {
-      const ok = await sendGmailRaw(saKey, adminEmail, `Club34 Time — Weekly Close-Out ${lastWeekStart}`, html, "Weekly close-out", JANUS_EMAIL);
-      await logEmail("time_weekly_closeout", `Club34 Time — Weekly Close-Out ${lastWeekStart}`, [adminEmail], html, ok ? "sent" : "failed");
+      const ok = await sendGmailRaw(saKey, adminEmail, `Janus Time — Weekly Close-Out ${lastWeekStart}`, html, "Weekly close-out", JANUS_EMAIL);
+      await logEmail("time_weekly_closeout", `Janus Time — Weekly Close-Out ${lastWeekStart}`, [adminEmail], html, ok ? "sent" : "failed");
       if (ok) sent++;
     }
 
@@ -2218,17 +2218,17 @@ async function sendWelcomeEmail(worker: Record<string, unknown>, rateCents: numb
       catNames = (cats.rows as Array<Record<string, unknown>>).map((c) => c.name).join(", ");
     }
 
-    const html = `<h2>Welcome to Club34 Time!</h2>
+    const html = `<h2>Welcome to Janus Time!</h2>
 <p>Hi ${worker.full_name},</p>
-<p>Your Club34 Time account has been set up. You can log your hours at:</p>
+<p>Your Janus Time account has been set up. You can log your hours at:</p>
 <p><strong><a href="https://example.com/time">https://example.com/time</a></strong></p>
 <p><strong>Your hourly rate:</strong> $${(rateCents / 100).toFixed(2)}/hr</p>
 ${catNames ? `<p><strong>Your work categories:</strong> ${catNames}</p>` : ""}
 ${worker.can_add_expenses ? "<p>You are also authorized to submit expenses.</p>" : ""}
 <p>Log in with your Google or Apple account to get started.</p>`;
 
-    const ok = await sendGmailRaw(saKey, String(worker.email), "Welcome to Club34 Time", html, `Welcome to Club34 Time. Login at https://example.com/time`, JANUS_EMAIL);
-    await logEmail("time_welcome", "Welcome to Club34 Time", [String(worker.email)], html, ok ? "sent" : "failed");
+    const ok = await sendGmailRaw(saKey, String(worker.email), "Welcome to Janus Time", html, `Welcome to Janus Time. Login at https://example.com/time`, JANUS_EMAIL);
+    await logEmail("time_welcome", "Welcome to Janus Time", [String(worker.email)], html, ok ? "sent" : "failed");
   } catch (e) {
     console.error("[time] sendWelcomeEmail error:", e);
   }
@@ -2241,10 +2241,10 @@ async function sendActivationEmail(worker: Record<string, unknown>, active: bool
     try { saKey = getSaKey(); } catch { saKey = null; }
     if (!saKey) return;
 
-    const subject = active ? "Your Club34 Time account has been reactivated" : "Your Club34 Time account has been deactivated";
+    const subject = active ? "Your Janus Time account has been reactivated" : "Your Janus Time account has been deactivated";
     const html = active
-      ? `<p>Hi ${worker.full_name}, your Club34 Time account has been reactivated. You can log hours at <a href="https://example.com/time">example.com/time</a>.</p>`
-      : `<p>Hi ${worker.full_name}, your Club34 Time account has been deactivated. Contact Tony if you have questions.</p>`;
+      ? `<p>Hi ${worker.full_name}, your Janus Time account has been reactivated. You can log hours at <a href="https://example.com/time">example.com/time</a>.</p>`
+      : `<p>Hi ${worker.full_name}, your Janus Time account has been deactivated. Contact Tony if you have questions.</p>`;
 
     const ok = await sendGmailRaw(saKey, String(worker.email), subject, html, subject, JANUS_EMAIL);
     await logEmail(active ? "time_reactivation" : "time_deactivation", subject, [String(worker.email)], html, ok ? "sent" : "failed");
@@ -2269,7 +2269,7 @@ async function sendPaymentEmail(workerId: string, payment: Record<string, unknow
     const expCents = parseInt(String(payment.expenses_cents ?? 0), 10);
     const hours = parseFloat(String(payment.hours_total ?? 0));
 
-    const html = `<h2>Club34 Time — Payment Confirmation</h2>
+    const html = `<h2>Janus Time — Payment Confirmation</h2>
 <p>Hi ${worker.full_name},</p>
 <p>Payment for the week of <strong>${payment.week_start}</strong> has been sent:</p>
 <table border="1" cellpadding="6">
@@ -2281,8 +2281,8 @@ async function sendPaymentEmail(workerId: string, payment: Record<string, unknow
 ${payment.confirmation_ref ? `<p>Zelle Confirmation: ${payment.confirmation_ref}</p>` : ""}
 <p>View your history at <a href="https://example.com/time">example.com/time</a></p>`;
 
-    const ok = await sendGmailRaw(saKey, worker.email, `Club34 Time — Payment ${payment.week_start}`, html, `Payment of $${(totalCents / 100).toFixed(2)} for week ${payment.week_start}`, JANUS_EMAIL);
-    await logEmail("time_payment", `Club34 Time — Payment ${payment.week_start}`, [worker.email], html, ok ? "sent" : "failed");
+    const ok = await sendGmailRaw(saKey, worker.email, `Janus Time — Payment ${payment.week_start}`, html, `Payment of $${(totalCents / 100).toFixed(2)} for week ${payment.week_start}`, JANUS_EMAIL);
+    await logEmail("time_payment", `Janus Time — Payment ${payment.week_start}`, [worker.email], html, ok ? "sent" : "failed");
   } catch (e) {
     console.error("[time] sendPaymentEmail error:", e);
   }

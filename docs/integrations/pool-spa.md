@@ -1,12 +1,12 @@
 # 🏊 Pool & Spa (Hydrology & Climate) Integration Guide
 
-Household OS provides dedicated management for residential swimming pools, spas, solar heating loops, and water features.
+Janus provides dedicated management for residential swimming pools, spas, solar heating loops, and water features.
 
 ---
 
 ## 🌊 1. iAquaLink / Zodiac Setup
 
-Household OS includes native support for Zodiac / Jandy iAquaLink systems via cloud API:
+Janus includes native support for Zodiac / Jandy iAquaLink systems via cloud API:
 
 1. Locate your iAquaLink web login credentials (the same username and password used in the mobile app).
 2. Add them to `.env`:
@@ -45,4 +45,4 @@ Janus can automate pool and spa routines using contextual sensors:
 
 If your estate uses Pentair IntelliCenter or Hayward OmniLogic:
 1. Connect the system to your Home Assistant instance using the respective Home Assistant integration (e.g., `pentair`, `hayward_omnilogic`).
-2. Household OS will automatically discover the `climate.*` and `switch.*` entities and surface them on the main dashboard.
+2. Janus will automatically discover the `climate.*` and `switch.*` entities and surface them on the main dashboard.

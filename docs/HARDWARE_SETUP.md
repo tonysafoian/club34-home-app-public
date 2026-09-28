@@ -1,6 +1,6 @@
 # 🛠️ Home Assistant Hardware Requirements & Estate Setup Guide
 
-Household OS uses **[Home Assistant](https://www.home-assistant.io/)** as its physical Hardware Abstraction Layer (HAL). While Household OS provides the AI brain, executive dashboard, and multi-subsystem coordination, Home Assistant runs on your local network to communicate directly with physical estate protocols: Zigbee, Z-Wave, Crestron CIP, Lutron Clear Connect, Modbus, and Matter.
+Janus uses **[Home Assistant](https://www.home-assistant.io/)** as its physical Hardware Abstraction Layer (HAL). While Janus provides the AI brain, executive dashboard, and multi-subsystem coordination, Home Assistant runs on your local network to communicate directly with physical estate protocols: Zigbee, Z-Wave, Crestron CIP, Lutron Clear Connect, Modbus, and Matter.
 
 This guide details the recommended hardware, wireless coordinators, network topology, and estate bridging architecture.
 
@@ -10,8 +10,8 @@ This guide details the recommended hardware, wireless coordinators, network topo
 
 ```mermaid
 flowchart TD
-    subgraph EstateServer["Household OS Host (Homelab / Cloud)"]
-        HOS[Household OS Dashboard & Janus AI :5000]
+    subgraph EstateServer["Janus Host (Homelab / Cloud)"]
+        HOS[Janus Dashboard & Janus AI :5000]
         VectorDB[(PostgreSQL 16 + pgvector)]
     end
 
@@ -90,12 +90,12 @@ To communicate with local sensors, locks, shades, and climate relays without dep
 Luxury homes frequently utilize centralized Crestron processors (CP3, CP4, AV4, DIN-AP4):
 1. **Crestron-to-HA Bridge**: Communicates over local Ethernet using Crestron IP / CIP (Computer Interface Protocol) or Crestron Home API.
 2. Digital joins (lights, fireplace ignition relays), analog joins (thermostat setpoints, dimmer percentages), and serial joins are mapped to native Home Assistant entities (`light.*`, `climate.*`, `switch.*`).
-3. Household OS automatically discovers these entities via WebSocket and exposes them on the `/home-systems` dashboard.
+3. Janus automatically discovers these entities via WebSocket and exposes them on the `/home-systems` dashboard.
 
 ### Backup Power & Generator (Generac Mobile Link / Genmon)
 1. **Transfer Switch & Grid Monitor**: Connected to the automatic transfer switch (ATS).
 2. Monitored states: `Utility Grid Status` (Normal / Outage), `Generator Engine State` (Running / Ready / Off), `Battery Voltage`, `Engine RPM`, and `Fuel Level`.
-3. If utility power drops, Household OS detects `RUNNING_UTILITY_LOSS` and prompts Janus to notify the household and switch HVAC zones into power-conservation mode.
+3. If utility power drops, Janus detects `RUNNING_UTILITY_LOSS` and prompts Janus to notify the household and switch HVAC zones into power-conservation mode.
 
 ### Circuit-Level Power Monitoring (Emporia Vue 2/3)
 1. 16-channel current transformer (CT) clamps installed inside the main breaker panel and sub-panels.
@@ -104,7 +104,7 @@ Luxury homes frequently utilize centralized Crestron processors (CP3, CP4, AV4, 
 
 ### Smart Irrigation (Rain Bird ESP-TM2 / ESP-ME3)
 1. Rain Bird controllers equipped with the LNK2 Wi-Fi module connect directly to Home Assistant over the local network.
-2. Zone valves, active runtimes, and rain-delay sensors are mapped into Household OS for visualization on the interactive property SVG map.
+2. Zone valves, active runtimes, and rain-delay sensors are mapped into Janus for visualization on the interactive property SVG map.
 
 ---
 
@@ -122,7 +122,7 @@ For estate security and reliability, isolate your smart home hardware behind a c
        │ VLAN 1 (Core)        │ VLAN 20 (IoT)        │ VLAN 30 (Cameras)
        ▼                      ▼                      ▼
 ┌──────────────┐       ┌──────────────┐       ┌──────────────┐
-│ Household OS │       │Home Assistant│       │Verkada /     │
+│ Janus │       │Home Assistant│       │Verkada /     │
 │ Server       │       │Crestron      │       │UniFi Protect │
 │ (Port 5000)  │       │Lutron Bridge │       │(No WAN out)  │
 │ TrueNAS /    │       │Generac       │       └──────────────┘
@@ -131,8 +131,8 @@ For estate security and reliability, isolate your smart home hardware behind a c
 ```
 
 ### Firewall Rules:
-1. **Allow Household OS (VLAN 1) → Home Assistant (VLAN 20)** on ports `8123` (HTTP/WebSocket) and `1883` (MQTT).
-2. **Allow Trusted Devices (VLAN 10) → Household OS (VLAN 1)** on port `5000` (Web UI).
+1. **Allow Janus (VLAN 1) → Home Assistant (VLAN 20)** on ports `8123` (HTTP/WebSocket) and `1883` (MQTT).
+2. **Allow Trusted Devices (VLAN 10) → Janus (VLAN 1)** on port `5000` (Web UI).
 3. **Block IoT & Cameras (VLAN 20/30) → Core VLAN (VLAN 1)** to prevent smart devices from reaching sensitive estate storage.
 
 ---
@@ -152,18 +152,18 @@ From the Home Assistant sidebar, navigate to **Settings → Add-ons → Add-on S
 1. Click your user profile in the bottom-left corner of Home Assistant.
 2. Scroll down to **Long-Lived Access Tokens** → **Create Token**.
 3. Name it `Household-OS`.
-4. Copy the token into your Household OS `.env`:
+4. Copy the token into your Janus `.env`:
    ```env
    HA_URL=http://homeassistant.local:8123
    HA_TOKEN=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
    ```
 
 ### Step 4: Verify Connection
-Test the bridge from your Household OS terminal:
+Test the bridge from your Janus terminal:
 ```bash
 curl -H "Authorization: Bearer $HA_TOKEN" \
   -H "Content-Type: application/json" \
   http://homeassistant.local:8123/api/states
 ```
 
-You will receive a JSON payload of all physical devices in your estate. Household OS will immediately begin synchronizing state changes!
+You will receive a JSON payload of all physical devices in your estate. Janus will immediately begin synchronizing state changes!

@@ -92,7 +92,7 @@ async function deriveKey(masterSecret: string): Promise<CryptoKey> {
   const enc = new TextEncoder();
   const keyMaterial = await crypto.subtle.importKey('raw', enc.encode(masterSecret), { name: 'HKDF' }, false, ['deriveKey']);
   return crypto.subtle.deriveKey(
-    { name: 'HKDF', hash: 'SHA-256', salt: enc.encode('club34-credential-vault-v1'), info: enc.encode('aes-gcm-encryption') },
+    { name: 'HKDF', hash: 'SHA-256', salt: enc.encode('janus-credential-vault-v1'), info: enc.encode('aes-gcm-encryption') },
     keyMaterial, { name: 'AES-GCM', length: 256 }, false, ['encrypt', 'decrypt']
   );
 }
@@ -313,17 +313,17 @@ router.post('/api/notify-signup', async (req: any, res: any) => {
       method: 'POST',
       headers: { Authorization: `Bearer ${resendKey}`, 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        from: 'Club 34 <noreply@example.com>',
+        from: 'Janus <noreply@example.com>',
         to: [ADMIN_EMAIL],
-        subject: 'New Club 34 Signup Request',
+        subject: 'New Janus Signup Request',
         html: `<div style="font-family: sans-serif; max-width: 600px; margin: 0 auto;">
           <h1 style="color: #1a1a2e;">New Signup Request</h1>
-          <p>A new user has signed up for Club 34 and is awaiting your approval:</p>
+          <p>A new user has signed up for Janus and is awaiting your approval:</p>
           <div style="background: #f5f5f5; padding: 20px; border-radius: 8px; margin: 20px 0;">
             <p style="margin: 0;"><strong>Name:</strong> ${displayName || 'Not provided'}</p>
             <p style="margin: 10px 0 0;"><strong>Email:</strong> ${userEmail}</p>
           </div>
-          <p>Please log in to the Club 34 admin panel to approve or reject this request.</p>
+          <p>Please log in to the Janus admin panel to approve or reject this request.</p>
         </div>`,
       }),
     });
@@ -423,9 +423,9 @@ router.post('/api/suggest-submit', async (req: any, res: any) => {
 
       try {
         const accessToken = await getGmailToken('https://www.googleapis.com/auth/gmail.send https://www.googleapis.com/auth/gmail.readonly https://www.googleapis.com/auth/gmail.modify');
-        const raw1 = buildMimeMessage(ADMIN_EMAIL, `New suggestion from ${user_display_name || user_email}`, `A new suggestion was submitted via Club 34.\n\nFrom: ${user_display_name || user_email} (${user_email})\n\n---\n\n${content}`);
+        const raw1 = buildMimeMessage(ADMIN_EMAIL, `New suggestion from ${user_display_name || user_email}`, `A new suggestion was submitted via Janus.\n\nFrom: ${user_display_name || user_email} (${user_email})\n\n---\n\n${content}`);
         await fetch('https://gmail.googleapis.com/gmail/v1/users/me/messages/send', { method: 'POST', headers: { Authorization: `Bearer ${accessToken}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ raw: raw1 }) });
-        const raw2 = buildMimeMessage(user_email, 'Your suggestion was received', `Hi ${user_display_name || user_email},\n\nThanks for your suggestion — it's been logged and will be reviewed.\n\n— Club 34`);
+        const raw2 = buildMimeMessage(user_email, 'Your suggestion was received', `Hi ${user_display_name || user_email},\n\nThanks for your suggestion — it's been logged and will be reviewed.\n\n— Janus`);
         await fetch('https://gmail.googleapis.com/gmail/v1/users/me/messages/send', { method: 'POST', headers: { Authorization: `Bearer ${accessToken}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ raw: raw2 }) });
       } catch (e) { console.error('Email send failed:', e); }
 
@@ -442,8 +442,8 @@ router.post('/api/suggest-submit', async (req: any, res: any) => {
         const accessToken = await getGmailToken('https://www.googleapis.com/auth/gmail.send');
         const statusLabel = suggestion.status.charAt(0).toUpperCase() + suggestion.status.slice(1);
         const noteSection = suggestion.admin_note ? `\n\nNote from the team:\n"${suggestion.admin_note}"` : '';
-        const raw = buildMimeMessage(suggestion.user_email, 'Update on your Club 34 suggestion',
-          `Hi ${suggestion.user_display_name || suggestion.user_email},\n\nYour suggestion has been marked as: ${statusLabel}${noteSection}\n\nYour original suggestion:\n"${suggestion.content}"\n\n— Club 34`);
+        const raw = buildMimeMessage(suggestion.user_email, 'Update on your Janus suggestion',
+          `Hi ${suggestion.user_display_name || suggestion.user_email},\n\nYour suggestion has been marked as: ${statusLabel}${noteSection}\n\nYour original suggestion:\n"${suggestion.content}"\n\n— Janus`);
         await fetch('https://gmail.googleapis.com/gmail/v1/users/me/messages/send', { method: 'POST', headers: { Authorization: `Bearer ${accessToken}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ raw }) });
       } catch (e) { console.error('Email send failed:', e); }
 

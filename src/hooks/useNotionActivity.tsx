@@ -94,19 +94,19 @@ export interface DailyActivity {
   tigerden_updates: number;
   tigerden_new: number;
   tigerden_completions: number;
-  club34_updates: number;
-  club34_new: number;
-  club34_completions: number;
+  janus_updates: number;
+  janus_new: number;
+  janus_completions: number;
 }
 
 const EMPTY_DAY = {
   updates: 0, new: 0, completions: 0,
   tigerden_updates: 0, tigerden_new: 0, tigerden_completions: 0,
-  club34_updates: 0, club34_new: 0, club34_completions: 0,
+  janus_updates: 0, janus_new: 0, janus_completions: 0,
 };
 
 const TIGERDEN_DATABASE_ID = '2b8e96d8-93fa-80cc-b1fa-fa4eef48c6fe';
-const CLUB34_DATABASE_ID = '2b8e96d8-93fa-80bb-9428-cd132f827553';
+const JANUS_DATABASE_ID = '2b8e96d8-93fa-80bb-9428-cd132f827553';
 
 const BOT_AUTHOR_IDS = new Set([
   '00000000-0000-0000-0000-000000000005',
@@ -122,13 +122,13 @@ function isHumanAuthored(payload: NotionPayload | null): boolean {
 function getProjectFromPayload(
   payload: NotionPayload | null,
   pageToDatabaseMap: Map<string, string>
-): 'tigerden' | 'club34' {
-  if (!payload?.data?.parent) return 'club34';
+): 'tigerden' | 'janus' {
+  if (!payload?.data?.parent) return 'janus';
   const parentType = payload.data.parent.type;
   const parentId = payload.data.parent.id;
 
   if (parentType === 'database') {
-    return parentId === TIGERDEN_DATABASE_ID ? 'tigerden' : 'club34';
+    return parentId === TIGERDEN_DATABASE_ID ? 'tigerden' : 'janus';
   }
 
   if (parentType === 'page' && parentId) {
@@ -136,7 +136,7 @@ function getProjectFromPayload(
     if (dbId === TIGERDEN_DATABASE_ID) return 'tigerden';
   }
 
-  return 'club34';
+  return 'janus';
 }
 
 export function useNotionActivityStats(days: number = 14) {

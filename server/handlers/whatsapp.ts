@@ -118,7 +118,7 @@ let JANUS_SYSTEM_PROMPT: string;
 try {
   JANUS_SYSTEM_PROMPT = fs.readFileSync(path.resolve(process.cwd(), "supabase/functions/_shared/SOUL.md"), "utf8");
 } catch {
-  JANUS_SYSTEM_PROMPT = "You are Janus, the AI assistant for Club 34.";
+  JANUS_SYSTEM_PROMPT = "You are Janus, the AI assistant for Janus.";
 }
 
 const JANUS_NUMBER = "13102996015";
@@ -335,10 +335,10 @@ export const ALL_TOOLS = [
   { type: "function", function: { name: "check_tesla_status", description: "Check Tesla vehicles status.", parameters: { type: "object", properties: {}, additionalProperties: false } } },
   { type: "function", function: { name: "check_verkada_security", description: "Check Verkada security system.", parameters: { type: "object", properties: {}, additionalProperties: false } } },
   { type: "function", function: { name: "check_generator_status", description: "Check Generac generator status.", parameters: { type: "object", properties: {}, additionalProperties: false } } },
-  { type: "function", function: { name: "query_activity_log", description: "Recent activity from Club 34's central app-activity log (home, network, ball, security, automations, logins, and more). Pass an optional keyword to filter.", parameters: { type: "object", properties: { event_type: { type: "string", description: "Optional keyword to filter the feed" }, hours: { type: "number" } }, additionalProperties: false } } },
-  { type: "function", function: { name: "query_system_health", description: "Check Club 34 app health status. ADMIN ONLY.", parameters: { type: "object", properties: {}, additionalProperties: false } } },
-  { type: "function", function: { name: "query_system_updates", description: "Get recent Club 34 app updates.", parameters: { type: "object", properties: { limit: { type: "number" } }, additionalProperties: false } } },
-  { type: "function", function: { name: "read_codebase", description: "Read one or more files from the Club 34 codebase on GitHub. Accepts file paths or directory paths. ADMIN ONLY.", parameters: { type: "object", properties: { paths: { type: "array", items: { type: "string" }, description: "List of file or directory paths to read (e.g. ['server/utils/tools/home-automation.ts', 'lib/github.ts'])" } }, required: ["paths"], additionalProperties: false } } },
+  { type: "function", function: { name: "query_activity_log", description: "Recent activity from Janus's central app-activity log (home, network, ball, security, automations, logins, and more). Pass an optional keyword to filter.", parameters: { type: "object", properties: { event_type: { type: "string", description: "Optional keyword to filter the feed" }, hours: { type: "number" } }, additionalProperties: false } } },
+  { type: "function", function: { name: "query_system_health", description: "Check Janus app health status. ADMIN ONLY.", parameters: { type: "object", properties: {}, additionalProperties: false } } },
+  { type: "function", function: { name: "query_system_updates", description: "Get recent Janus app updates.", parameters: { type: "object", properties: { limit: { type: "number" } }, additionalProperties: false } } },
+  { type: "function", function: { name: "read_codebase", description: "Read one or more files from the Janus codebase on GitHub. Accepts file paths or directory paths. ADMIN ONLY.", parameters: { type: "object", properties: { paths: { type: "array", items: { type: "string" }, description: "List of file or directory paths to read (e.g. ['server/utils/tools/home-automation.ts', 'lib/github.ts'])" } }, required: ["paths"], additionalProperties: false } } },
   { type: "function", function: { name: "propose_code_fix", description: "Create a GitHub branch and pull request with a proposed code change. ADMIN ONLY. Never pushes to main directly.", parameters: { type: "object", properties: { file_path: { type: "string", description: "Repo-relative path to the file to create or update" }, new_content: { type: "string", description: "Full new content for the file" }, commit_message: { type: "string", description: "Commit message" }, pr_title: { type: "string", description: "Pull request title" }, pr_body: { type: "string", description: "Pull request description explaining the change and reasoning" } }, required: ["file_path", "new_content", "commit_message", "pr_title", "pr_body"], additionalProperties: false } } },
   LOAD_SKILL_TOOL,
 ];

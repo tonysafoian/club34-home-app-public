@@ -173,7 +173,7 @@ router.post("/api/data/invited-emails", requireRole("admin"), async (req: any, r
     logAudit("data-admin", {
       category: "config", event_type: "user_invited", severity: "info",
       actor_id: req.user?.userId || "UNKNOWN", actor_name: req.user?.displayName || req.user?.email || "UNKNOWN", actor_role: "admin",
-      channel: "web", summary: `Admin invited ${req.body.email} to Club 34`,
+      channel: "web", summary: `Admin invited ${req.body.email} to Janus`,
       detail: { email: req.body.email }, status: "success",
     });
     res.json(result);

@@ -424,7 +424,7 @@ router.post("/proxy", async (req: Request, res: Response) => {
 
     if (action === "search-pages" || action === "search-projects") {
       const searchQuery = query || "";
-      const CLUB34_DB = "2b8e96d8-93fa-80bb-9428-cd132f827553";
+      const JANUS_DB = "2b8e96d8-93fa-80bb-9428-cd132f827553";
       const TIGERDEN_DB = "2b8e96d8-93fa-80cc-b1fa-fa4eef48c6fe";
 
       const fetchDb = async (
@@ -485,14 +485,14 @@ router.post("/proxy", async (req: Request, res: Response) => {
         });
       };
 
-      const [club34, tigerDen] = await Promise.all([
-        fetchDb(CLUB34_DB, "Club 34"),
+      const [janus, tigerDen] = await Promise.all([
+        fetchDb(JANUS_DB, "Janus"),
         fetchDb(TIGERDEN_DB, "TigerDen"),
       ]);
 
       return res.json({
         success: true,
-        results: [...club34, ...tigerDen],
+        results: [...janus, ...tigerDen],
       });
     }
 

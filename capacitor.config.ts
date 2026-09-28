@@ -2,7 +2,7 @@ import type { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
   appId: 'app.lovable.janus',
-  appName: 'Club 34',
+  appName: 'Janus',
   webDir: 'dist',
 };
 

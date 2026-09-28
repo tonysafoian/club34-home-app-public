@@ -259,9 +259,9 @@ describe('GET /api/wireless/grouped — contract', () => {
 
     const app = makeApp();
     const res = await call(app, '/api/wireless/grouped');
-    const club34 = res.body.ssids.find((s: any) => s.ssid === '34');
-    expect(club34.clientCount).toBe(2);
-    expect(club34.apCount).toBe(2);
+    const janus = res.body.ssids.find((s: any) => s.ssid === '34');
+    expect(janus.clientCount).toBe(2);
+    expect(janus.apCount).toBe(2);
     const guest = res.body.ssids.find((s: any) => s.ssid === 'Guest');
     expect(guest.clientCount).toBe(1);
     expect(guest.apCount).toBe(1);

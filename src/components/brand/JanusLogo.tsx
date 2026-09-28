@@ -16,7 +16,7 @@ const sizeClasses = {
   xl: { container: 'w-20 h-20', text: 'text-lg font-bold' },
 };
 
-export function Club34Logo({ size = 'md', variant = 'full', className, showText = true }: LogoProps) {
+export function JanusLogo({ size = 'md', variant = 'full', className, showText = true }: LogoProps) {
   const { estateName, customLogo } = useBranding();
   const sizes = sizeClasses[size];
 
@@ -33,7 +33,7 @@ export function Club34Logo({ size = 'md', variant = 'full', className, showText 
     return (
       <span 
         className={cn(
-          'inline-flex items-center justify-center w-7 h-7 rounded-full club34-gradient text-[11px] font-display font-bold text-primary-foreground shadow-sm tracking-tight',
+          'inline-flex items-center justify-center w-7 h-7 rounded-full janus-gradient text-[11px] font-display font-bold text-primary-foreground shadow-sm tracking-tight',
           className
         )}
       >
@@ -69,9 +69,9 @@ export function Club34Logo({ size = 'md', variant = 'full', className, showText 
 }
 
 // Aliases for modern naming
-export const HouseholdLogo = Club34Logo;
+export const HouseholdLogo = JanusLogo;
 
-export function Club34Emoji({ className }: { className?: string }) {
+export function JanusEmoji({ className }: { className?: string }) {
   const { estateName } = useBranding();
   const initials = estateName
     .split(' ')
@@ -84,7 +84,7 @@ export function Club34Emoji({ className }: { className?: string }) {
   return (
     <span 
       className={cn(
-        'inline-flex items-center justify-center w-6 h-6 rounded-full club34-gradient text-[10px] font-display font-bold text-primary-foreground shadow-sm',
+        'inline-flex items-center justify-center w-6 h-6 rounded-full janus-gradient text-[10px] font-display font-bold text-primary-foreground shadow-sm',
         className
       )}
     >

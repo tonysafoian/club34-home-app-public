@@ -31,8 +31,8 @@ export default defineConfig(({ mode }) => ({
       registerType: "autoUpdate",
       includeAssets: ["icon.svg"],
       manifest: {
-        name: "Household OS",
-        short_name: "Household OS",
+        name: "Janus",
+        short_name: "Janus",
         description: "AI-orchestrated residential estate operating system",
         theme_color: "#1c1917",
         background_color: "#1c1917",

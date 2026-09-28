@@ -16,7 +16,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Moon, Sun, Monitor, LogOut, Settings, Download, ShieldCheck, Lightbulb, Search, Sparkles } from 'lucide-react';
 import { usePWAInstall } from '@/hooks/usePWAInstall';
-import { Club34Logo } from '@/components/brand/Club34Logo';
+import { JanusLogo } from '@/components/brand/JanusLogo';
 import claudeIcon from '@/assets/claude-icon.png';
 import { SuggestionDialog } from '@/components/suggestions/SuggestionDialog';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
@@ -59,7 +59,7 @@ export function DashboardHeader() {
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/90 backdrop-blur-xl pt-[env(safe-area-inset-top)]">
       <div className="container flex h-11 md:h-16 items-center justify-between">
         <div className="flex items-center gap-2">
-          <Club34Logo size="md" variant="full" />
+          <JanusLogo size="md" variant="full" />
           {latestVersion && (
             <button
               onClick={() => navigate('/updates')}

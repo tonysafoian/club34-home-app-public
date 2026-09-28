@@ -2,7 +2,7 @@
  * Computer Agent Token Auth
  *
  * Parallel auth path for the Perplexity Computer agent so it can drive
- * the Club34 app via browser_task / Comet without hitting OAuth/login
+ * the Janus app via browser_task / Comet without hitting OAuth/login
  * walls. The agent sends an `X-Computer-Token` header; if it matches
  * the env-configured secret, the request is treated as an admin user.
  *

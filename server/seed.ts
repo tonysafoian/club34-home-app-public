@@ -321,7 +321,7 @@ async function seedSystemPrompts(): Promise<void> {
 - **Inline links**: Always use markdown links \`[text](url)\` — never bare URLs.
 
 ### App Navigation Links
-When referencing Club 34 app sections, use exact routes as markdown links. Examples:
+When referencing Janus app sections, use exact routes as markdown links. Examples:
 - [Dashboard](/) — today's overview, calendar, tasks
 - [Security](/security) — Verkada feeds, POI, access logs
 - [Tesla](/teslas) — vehicle status, battery, location
@@ -441,7 +441,7 @@ When referencing Club 34 app sections, use exact routes as markdown links. Examp
       slug: "janus-chat-addendum",
       label: "Janus Chat Addendum",
       content: chatAddendum,
-      description: "Channel-specific behavior for the Club 34 web chat interface. Appended after the core prompt.",
+      description: "Channel-specific behavior for the Janus web chat interface. Appended after the core prompt.",
     },
     {
       slug: "janus-whatsapp-addendum",

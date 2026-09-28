@@ -1,5 +1,5 @@
 /**
- * Workflow Triggers — event-driven automations defined in Club34
+ * Workflow Triggers — event-driven automations defined in Janus
  * and deployed to Home Assistant for server-side execution.
  *
  * Rule definitions (the source of truth) live in `shared/workflowRules.ts`
@@ -30,8 +30,8 @@ export {
 /**
  * Deploy a workflow rule as native HA automation(s).
  * For bidirectional rules, two automations are deployed:
- *   1. `club34_{rule.id}`           — forward (primary trigger → targets)
- *   2. `club34_{rule.id}__reverse`  — reverse (secondary trigger → primary)
+ *   1. `janus_{rule.id}`           — forward (primary trigger → targets)
+ *   2. `janus_{rule.id}__reverse`  — reverse (secondary trigger → primary)
  *
  * Returns the resolved entity details on success.
  */
@@ -44,7 +44,7 @@ export async function deployWorkflowToHA(
     throw new Error('Could not resolve trigger/target entities — check that the lights exist in HA');
   }
 
-  const forwardId = `club34_${rule.id}`;
+  const forwardId = `janus_${rule.id}`;
   const forwardConfig = buildForwardAutomationConfig(resolved);
   await haProxy(`/api/config/automation/config/${forwardId}`, 'POST', forwardConfig);
 
@@ -59,7 +59,7 @@ export async function deployWorkflowToHA(
         'could not be resolved — reverse automation was NOT deployed.',
       );
     } else {
-      const reverseId = `club34_${rule.id}__reverse`;
+      const reverseId = `janus_${rule.id}__reverse`;
       const reverseConfig = buildReverseAutomationConfig(resolved);
       await haProxy(`/api/config/automation/config/${reverseId}`, 'POST', reverseConfig);
     }
@@ -96,8 +96,8 @@ export async function getWorkflowHAStatus(
   reverseExists?: boolean;
   reverseState?: string | null;
 }> {
-  const forwardId = `club34_${rule.id}`;
-  const reverseId = `club34_${rule.id}__reverse`;
+  const forwardId = `janus_${rule.id}`;
+  const reverseId = `janus_${rule.id}__reverse`;
 
   // HA generates the automation entity_id from the alias (slugified), NOT from
   // the config-id we POST. So we can't look up by predicted entity_id — list

@@ -682,7 +682,7 @@ export function JanusDrawer() {
               <div>
                 <h3 className="text-lg font-semibold text-foreground mb-1">Hey, I'm Janus!</h3>
                 <p className="text-sm text-muted-foreground max-w-[260px] leading-relaxed">
-                  I'm here to help you manage the house. Ask me about systems, schedules, or anything Club 34.
+                  I'm here to help you manage the house. Ask me about systems, schedules, or anything Janus.
                 </p>
               </div>
               <p className="text-xs text-muted-foreground/60 mt-2">

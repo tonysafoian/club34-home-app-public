@@ -1,6 +1,6 @@
 ---
 name: 🐛 Bug Report
-about: Create a report to help us improve Household OS
+about: Create a report to help us improve Janus
 title: "[BUG] "
 labels: ["bug"]
 assignees: ""
