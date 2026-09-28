@@ -1626,7 +1626,7 @@ function buildEmailHtml(childName: string, data: EmailData, today: string): stri
               </div>
             </td>
             <td style="vertical-align:middle;text-align:right;padding-left:16px;width:60px;">
-              <img src="https://example.com/club34-icon.png" alt="Janus" width="48" height="48" style="border-radius:50%;border:2px solid rgba(255,255,255,0.4);display:block;" />
+              <img src="https://example.com/icon.svg" alt="Janus" width="48" height="48" style="border-radius:50%;border:2px solid rgba(255,255,255,0.4);display:block;" />
             </td>
           </tr>
         </table>

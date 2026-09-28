@@ -6,14 +6,15 @@
 
 *IoT automation, multi-agent household coordination, electric vehicle fleet management, and long-term semantic memory in a unified residential command deck.*
 
+[![CI & Security Audit](https://github.com/tonysafoian/club34-home-app-public/actions/workflows/ci.yml/badge.svg)](https://github.com/tonysafoian/club34-home-app-public/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Gitleaks: Clean](https://img.shields.io/badge/Security-Gitleaks%20Verified%20(0%20Leaks)-brightgreen.svg)](.pre-commit-config.yaml)
+[![Gitleaks: Clean](https://img.shields.io/badge/Security-Gitleaks%20Verified%20(0%20Leaks)-brightgreen.svg)](SECURITY.md)
 [![Node.js](https://img.shields.io/badge/Node.js-20+-68a063.svg)](package.json)
 [![React](https://img.shields.io/badge/React-18.x-61dafb.svg)](package.json)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.x-3178c6.svg)](tsconfig.json)
 [![Docker Ready](https://img.shields.io/badge/Docker-Compose%20Ready-2496ed.svg)](docker-compose.yml)
 
-[5-Minute Quickstart](QUICKSTART.md) • [System Architecture](ARCHITECTURE.md) • [Customization Guide](docs/CUSTOMIZATION.md) • [Mock Mode](docs/MOCK_MODE.md) • [Roadmap](ROADMAP.md)
+[5-Minute Quickstart](QUICKSTART.md) • [Executive Guide (Non-Technical / PDF)](docs/EXECUTIVE_GUIDE.md) • [System Architecture](ARCHITECTURE.md) • [Customization Guide](docs/CUSTOMIZATION.md) • [Mock Mode](docs/MOCK_MODE.md) • [Roadmap](ROADMAP.md)
 
 </div>
 
@@ -108,6 +109,7 @@ Open **[http://localhost:5000](http://localhost:5000)** in your browser!
 
 | Guide | Description |
 | :--- | :--- |
+| **[EXECUTIVE_GUIDE.md](docs/EXECUTIVE_GUIDE.md)** | **Executive & Non-Technical Guide** — Complete visual overview & printable PDF brochure. |
 | **[QUICKSTART.md](QUICKSTART.md)** | Step-by-step local setup, Docker containers, and database seeding. |
 | **[LLM_SETUP.md](docs/LLM_SETUP.md)** | **AI & LLM Setup Guide** — Free Gemini API key, OpenRouter, and local Ollama. |
 | **[HARDWARE_SETUP.md](docs/HARDWARE_SETUP.md)** | **Home Assistant Hardware & Architecture Guide** — Mini PCs, Zigbee/Z-Wave radios, and estate topology. |

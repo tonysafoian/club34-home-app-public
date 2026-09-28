@@ -12,6 +12,7 @@ import { BrowserRouter, Routes, Route, Navigate, useNavigate, useLocation } from
 import { useAuth } from "@/hooks/useAuth";
 import { AuthProvider } from "@/hooks/AuthProvider";
 import { ThemeProvider } from "@/hooks/ThemeProvider";
+import { BrandingProvider } from "@/hooks/useBranding";
 import { HAEntitiesProvider } from "@/hooks/HAEntitiesProvider";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { WorkerRoute, TimeAdminRoute } from "@/components/auth/WorkerRoute";
@@ -141,12 +142,13 @@ const GlobalErrorInit = () => {
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <GlobalErrorInit />
-    <ThemeProvider>
-      <AuthProvider>
-        <TooltipProvider>
-          <Toaster />
-          <HAEntitiesProvider>
-          <BrowserRouter>
+    <BrandingProvider>
+      <ThemeProvider>
+        <AuthProvider>
+          <TooltipProvider>
+            <Toaster />
+            <HAEntitiesProvider>
+            <BrowserRouter>
             <ServiceWorkerUpdater />
             <ErrorBoundary name="app-root" fallback={
               <div className="min-h-screen flex flex-col items-center justify-center bg-background gap-4">
@@ -203,6 +205,7 @@ const App = () => (
         </TooltipProvider>
       </AuthProvider>
     </ThemeProvider>
+    </BrandingProvider>
   </QueryClientProvider>
 );
 

@@ -1,0 +1,109 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 620" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#141210"/>
+      <stop offset="100%" stop-color="#0c0a09"/>
+    </linearGradient>
+    <linearGradient id="card-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#221e1a"/>
+      <stop offset="100%" stop-color="#181512"/>
+    </linearGradient>
+    <linearGradient id="emerald-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#10b981"/>
+      <stop offset="100%" stop-color="#047857"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="1000" height="620" rx="16" fill="url(#bg)" stroke="#332c24" stroke-width="2"/>
+
+  <!-- Header -->
+  <text x="50" y="55" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto" font-size="20" font-weight="bold" fill="#f5f5f4">Estate Branding &amp; Luxury Personalization</text>
+  <text x="50" y="80" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto" font-size="13" fill="#a8a29e">White-Label Customization • Family Crest Upload • Dynamic Curated Color Palettes</text>
+
+  <!-- Main Card -->
+  <g transform="translate(50, 110)">
+    <rect width="900" height="460" rx="14" fill="url(#card-grad)" stroke="#383027" stroke-width="1.5"/>
+
+    <!-- Live Preview Banner inside Card -->
+    <g transform="translate(30, 25)">
+      <rect width="840" height="85" rx="10" fill="#141210" stroke="#2c251e"/>
+      <circle cx="50" cy="42" r="24" fill="#047857"/>
+      <text x="50" y="48" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto" font-size="16" font-weight="bold" fill="#ffffff" text-anchor="middle">VP</text>
+      <text x="90" y="38" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto" font-size="18" font-weight="bold" fill="#f5f5f4">Villa Paradiso</text>
+      <text x="90" y="56" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto" font-size="12" fill="#10b981">Live Theme: Emerald Sanctuary • Custom Crest Active</text>
+
+      <rect x="710" y="27" width="110" height="32" rx="16" fill="url(#emerald-grad)"/>
+      <text x="765" y="47" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto" font-size="11" font-weight="bold" fill="#ffffff" text-anchor="middle">Active Theme</text>
+    </g>
+
+    <!-- Field 1: Estate Name -->
+    <g transform="translate(30, 135)">
+      <text x="0" y="16" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto" font-size="13" font-weight="600" fill="#f5f5f4">Estate / Residence Name</text>
+      <rect x="0" y="28" width="480" height="42" rx="8" fill="#110f0d" stroke="#383027"/>
+      <text x="16" y="54" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto" font-size="14" fill="#f5f5f4">Villa Paradiso</text>
+      <rect x="500" y="28" width="120" height="42" rx="8" fill="#2c2722" stroke="#3d352d"/>
+      <text x="560" y="54" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto" font-size="12" font-weight="600" fill="#d6d3d1" text-anchor="middle">Save Name</text>
+      <text x="0" y="88" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto" font-size="11" fill="#78716c">Rebrands all navigation headers, browser titles, and morning executive reports.</text>
+    </g>
+
+    <!-- Field 2: Logo Upload -->
+    <g transform="translate(30, 245)">
+      <text x="0" y="16" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto" font-size="13" font-weight="600" fill="#f5f5f4">Custom Family Crest or Estate Logo</text>
+      <rect x="0" y="28" width="220" height="38" rx="8" fill="#2c2722" stroke="#3d352d"/>
+      <text x="110" y="52" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto" font-size="12" font-weight="600" fill="#f5f5f4" text-anchor="middle">↑ Upload Logo File</text>
+
+      <rect x="235" y="28" width="140" height="38" rx="8" fill="none" stroke="#383027"/>
+      <text x="305" y="52" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto" font-size="12" fill="#a8a29e" text-anchor="middle">Use Image URL</text>
+
+      <rect x="390" y="28" width="160" height="38" rx="8" fill="none" stroke="#7f1d1d"/>
+      <text x="470" y="52" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto" font-size="12" fill="#f87171" text-anchor="middle">Restore Default Emblem</text>
+    </g>
+
+    <!-- Field 3: Luxury Palette Swatches -->
+    <g transform="translate(30, 335)">
+      <text x="0" y="16" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto" font-size="13" font-weight="600" fill="#f5f5f4">Curated Color Palettes (Applied Instantly to Dials, Buttons &amp; Glows)</text>
+      
+      <!-- Swatch 1: Amber -->
+      <g transform="translate(0, 30)">
+        <rect width="130" height="50" rx="8" fill="#1c1915" stroke="#332c24"/>
+        <circle cx="25" cy="25" r="10" fill="#f59e0b"/>
+        <text x="45" y="30" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto" font-size="11" font-weight="600" fill="#d6d3d1">Classic Gold</text>
+      </g>
+
+      <!-- Swatch 2: Emerald (Selected) -->
+      <g transform="translate(145, 30)">
+        <rect width="130" height="50" rx="8" fill="#0f291e" stroke="#10b981" stroke-width="1.5"/>
+        <circle cx="25" cy="25" r="10" fill="#10b981"/>
+        <text x="45" y="30" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto" font-size="11" font-weight="bold" fill="#34d399">Emerald ✓</text>
+      </g>
+
+      <!-- Swatch 3: Sapphire -->
+      <g transform="translate(290, 30)">
+        <rect width="130" height="50" rx="8" fill="#1c1915" stroke="#332c24"/>
+        <circle cx="25" cy="25" r="10" fill="#3b82f6"/>
+        <text x="45" y="30" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto" font-size="11" font-weight="600" fill="#d6d3d1">Pacific Azure</text>
+      </g>
+
+      <!-- Swatch 4: Violet -->
+      <g transform="translate(435, 30)">
+        <rect width="130" height="50" rx="8" fill="#1c1915" stroke="#332c24"/>
+        <circle cx="25" cy="25" r="10" fill="#8b5cf6"/>
+        <text x="45" y="30" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto" font-size="11" font-weight="600" fill="#d6d3d1">Obsidian Violet</text>
+      </g>
+
+      <!-- Swatch 5: Bordeaux -->
+      <g transform="translate(580, 30)">
+        <rect width="130" height="50" rx="8" fill="#1c1915" stroke="#332c24"/>
+        <circle cx="25" cy="25" r="10" fill="#f43f5e"/>
+        <text x="45" y="30" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto" font-size="11" font-weight="600" fill="#d6d3d1">Royal Wine</text>
+      </g>
+
+      <!-- Swatch 6: Slate -->
+      <g transform="translate(725, 30)">
+        <rect width="130" height="50" rx="8" fill="#1c1915" stroke="#332c24"/>
+        <circle cx="25" cy="25" r="10" fill="#94a3b8"/>
+        <text x="45" y="30" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto" font-size="11" font-weight="600" fill="#d6d3d1">Nordic Slate</text>
+      </g>
+    </g>
+  </g>
+</svg>
