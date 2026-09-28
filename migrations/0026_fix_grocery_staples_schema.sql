@@ -24,18 +24,23 @@ ALTER TABLE grocery_staples
   ADD COLUMN IF NOT EXISTS size        text,
   ADD COLUMN IF NOT EXISTS unit_price  numeric(10,2);
 
--- Backfill size from size_label for rows where size is NULL and size_label is populated.
-UPDATE grocery_staples
-SET size = size_label
-WHERE size IS NULL
-  AND size_label IS NOT NULL;
+-- Backfill from legacy columns if they exist.
+DO $$
+BEGIN
+  IF EXISTS (
+    SELECT 1 FROM information_schema.columns
+    WHERE table_name = 'grocery_staples' AND column_name = 'size_label'
+  ) THEN
+    EXECUTE 'UPDATE grocery_staples SET size = size_label WHERE size IS NULL AND size_label IS NOT NULL';
+  END IF;
 
--- Backfill unit_price from last_known_price_cents (cents → dollars) for rows
--- where unit_price is NULL and last_known_price_cents is populated.
-UPDATE grocery_staples
-SET unit_price = last_known_price_cents / 100.0
-WHERE unit_price IS NULL
-  AND last_known_price_cents IS NOT NULL;
+  IF EXISTS (
+    SELECT 1 FROM information_schema.columns
+    WHERE table_name = 'grocery_staples' AND column_name = 'last_known_price_cents'
+  ) THEN
+    EXECUTE 'UPDATE grocery_staples SET unit_price = last_known_price_cents / 100.0 WHERE unit_price IS NULL AND last_known_price_cents IS NOT NULL';
+  END IF;
+END $$;
 
 -- ─── Follow-up: drop legacy columns after one clean deploy cycle ────────────
 -- Uncomment and run in a subsequent migration (e.g. 0027_drop_grocery_legacy_cols.sql)

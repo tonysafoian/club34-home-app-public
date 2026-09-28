@@ -29,25 +29,30 @@ ALTER TABLE grocery_order_items
   ADD COLUMN IF NOT EXISTS unit_price         numeric(10,2),
   ADD COLUMN IF NOT EXISTS added_by_user_id   text;
 
--- Backfill size from size_label for rows where size is NULL and size_label is populated.
-UPDATE grocery_order_items
-SET size = size_label
-WHERE size IS NULL
-  AND size_label IS NOT NULL;
+-- Backfill from legacy columns if they exist.
+DO $$
+BEGIN
+  IF EXISTS (
+    SELECT 1 FROM information_schema.columns
+    WHERE table_name = 'grocery_order_items' AND column_name = 'size_label'
+  ) THEN
+    EXECUTE 'UPDATE grocery_order_items SET size = size_label WHERE size IS NULL AND size_label IS NOT NULL';
+  END IF;
 
--- Backfill unit_price from unit_price_cents (cents → dollars) for rows
--- where unit_price is NULL and unit_price_cents is populated.
-UPDATE grocery_order_items
-SET unit_price = unit_price_cents / 100.0
-WHERE unit_price IS NULL
-  AND unit_price_cents IS NOT NULL;
+  IF EXISTS (
+    SELECT 1 FROM information_schema.columns
+    WHERE table_name = 'grocery_order_items' AND column_name = 'unit_price_cents'
+  ) THEN
+    EXECUTE 'UPDATE grocery_order_items SET unit_price = unit_price_cents / 100.0 WHERE unit_price IS NULL AND unit_price_cents IS NOT NULL';
+  END IF;
 
--- Backfill added_by_user_id from added_by for rows where added_by_user_id
--- is NULL and added_by is populated.
-UPDATE grocery_order_items
-SET added_by_user_id = added_by
-WHERE added_by_user_id IS NULL
-  AND added_by IS NOT NULL;
+  IF EXISTS (
+    SELECT 1 FROM information_schema.columns
+    WHERE table_name = 'grocery_order_items' AND column_name = 'added_by'
+  ) THEN
+    EXECUTE 'UPDATE grocery_order_items SET added_by_user_id = added_by WHERE added_by_user_id IS NULL AND added_by IS NOT NULL';
+  END IF;
+END $$;
 
 -- ─── Follow-up: drop legacy columns after one clean deploy cycle ────────────
 -- Uncomment and run in a subsequent migration (e.g. 0036_drop_grocery_order_items_legacy_cols.sql)

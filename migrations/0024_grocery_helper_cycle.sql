@@ -13,11 +13,38 @@
 
 BEGIN;
 
+CREATE TABLE IF NOT EXISTS grocery_staples (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  name text NOT NULL,
+  default_quantity integer DEFAULT 1 NOT NULL,
+  category text DEFAULT 'general' NOT NULL,
+  platform text DEFAULT 'amazon-fresh' NOT NULL,
+  is_active boolean DEFAULT true NOT NULL,
+  added_by_user_id text,
+  created_at timestamptz DEFAULT now() NOT NULL,
+  updated_at timestamptz DEFAULT now() NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS grocery_order_runs (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  status text DEFAULT 'open' NOT NULL,
+  cart_snapshot jsonb,
+  whatsapp_notified_at timestamptz,
+  approved_at timestamptz,
+  ordered_at timestamptz,
+  approved_by text,
+  auto_ordered boolean DEFAULT false NOT NULL,
+  item_count integer DEFAULT 0 NOT NULL,
+  created_at timestamptz DEFAULT now() NOT NULL,
+  updated_at timestamptz DEFAULT now() NOT NULL
+);
+
 -- ─── Extend grocery_staples ────────────────────────────────────────────────
 ALTER TABLE grocery_staples
   ADD COLUMN IF NOT EXISTS brand       text,
   ADD COLUMN IF NOT EXISTS size        text,
   ADD COLUMN IF NOT EXISTS amazon_asin text,
+  ADD COLUMN IF NOT EXISTS amazon_url  text,
   ADD COLUMN IF NOT EXISTS image_url   text,
   ADD COLUMN IF NOT EXISTS unit_price  numeric(10,2);
 

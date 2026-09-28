@@ -46,19 +46,23 @@ ALTER TABLE grocery_staples
 ALTER TABLE grocery_staples
   ADD COLUMN IF NOT EXISTS image_url   text;
 
--- 2. Backfill new columns from old. Both UPDATEs are no-ops if the source
---    columns are NULL or the destination is already populated.
-UPDATE grocery_staples
-SET size = size_label
-WHERE size IS NULL
-  AND size_label IS NOT NULL;
+-- 2. Backfill new columns from old (only if legacy columns exist).
+DO $$
+BEGIN
+  IF EXISTS (
+    SELECT 1 FROM information_schema.columns
+    WHERE table_name = 'grocery_staples' AND column_name = 'size_label'
+  ) THEN
+    EXECUTE 'UPDATE grocery_staples SET size = size_label WHERE size IS NULL AND size_label IS NOT NULL';
+  END IF;
 
--- last_known_price_cents is integer cents; unit_price is numeric dollars.
--- 599 cents → 5.99
-UPDATE grocery_staples
-SET unit_price = last_known_price_cents::numeric / 100
-WHERE unit_price IS NULL
-  AND last_known_price_cents IS NOT NULL;
+  IF EXISTS (
+    SELECT 1 FROM information_schema.columns
+    WHERE table_name = 'grocery_staples' AND column_name = 'last_known_price_cents'
+  ) THEN
+    EXECUTE 'UPDATE grocery_staples SET unit_price = last_known_price_cents::numeric / 100 WHERE unit_price IS NULL AND last_known_price_cents IS NOT NULL';
+  END IF;
+END $$;
 
 -- 3. Ensure the unique index that migration 0024 v2 intended exists.
 --    Idempotent. If 0024 v1 already created an equivalent index under a
