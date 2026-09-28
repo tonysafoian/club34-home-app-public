@@ -22,7 +22,7 @@ CREATE EXTENSION IF NOT EXISTS vector;
 
 Run schema migrations:
 ```bash
-npm run db:push
+npm run migrate
 ```
 
 ---

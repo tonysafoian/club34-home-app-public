@@ -27,9 +27,8 @@ Household OS bridges the gap between hardware telemetry and daily estate operati
 
 * 🧠 **Janus Voice AI**: A resident AI orchestrator with long-term semantic memory (`pgvector`) that executes real-world actions across connected hardware.
 * 🏡 **Interactive Estate Topology**: 2D property floor plans and irrigation maps with clickable zone pins for lighting, HVAC, and valves.
-* 🚗 **Electric Vehicle Fleet**: Real-time Tesla battery telemetry, charge management, and cabin pre-conditioning.
-* 🏊 **Hydrology & Pool/Spa**: Water climate schedules, variable speed pump telemetry, and auxiliary water features.
-* 🏀 **Community & Sports Hub**: Recurring sports league coordinator with automated RSVPs, waitlists, and court weather contingency alerts.
+* ⚡ **Electrical & Energy Telemetry**: Generac backup generator monitoring, Emporia Vue 16-channel circuit breaker tracking, utility rate tariffs, and power anomaly insights.
+* 🎛️ **Crestron & Estate Lighting**: Centralized Crestron lighting scenes, commercial thermostats, radiant heated floors, and gas fireplaces bridged into Home Assistant.
 * 🛡️ **Enterprise Observability**: Real-time monitoring for FortiGate firewalls, Ruckus Wi-Fi, and Verkada/UniFi cameras.
 * 🎭 **Batteries-Included Mock Engine**: **No smart home hardware? No problem.** The system automatically simulates telemetry so anyone can run and test the complete app locally.
 
@@ -94,7 +93,7 @@ docker compose up -d
 # 3. Configure environment, install dependencies, and launch dev server
 cp .env.example .env
 npm install
-npm run db:push
+npm run migrate
 npm run dev
 ```
 
@@ -110,6 +109,8 @@ Open **[http://localhost:5000](http://localhost:5000)** in your browser!
 | Guide | Description |
 | :--- | :--- |
 | **[QUICKSTART.md](QUICKSTART.md)** | Step-by-step local setup, Docker containers, and database seeding. |
+| **[LLM_SETUP.md](docs/LLM_SETUP.md)** | **AI & LLM Setup Guide** — Free Gemini API key, OpenRouter, and local Ollama. |
+| **[HARDWARE_SETUP.md](docs/HARDWARE_SETUP.md)** | **Home Assistant Hardware & Architecture Guide** — Mini PCs, Zigbee/Z-Wave radios, and estate topology. |
 | **[ARCHITECTURE.md](ARCHITECTURE.md)** | Full technical breakdown of frontend, backend, database schema, and Janus AI. |
 | **[CUSTOMIZATION.md](docs/CUSTOMIZATION.md)** | **"Bring Your Own Estate"** — How to customize floor plans, SVG maps, members, and zones. |
 | **[MOCK_MODE.md](docs/MOCK_MODE.md)** | Guide to zero-hardware simulation and graceful degradation. |
@@ -117,11 +118,14 @@ Open **[http://localhost:5000](http://localhost:5000)** in your browser!
 | **[ROADMAP.md](ROADMAP.md)** | Upcoming features: Local Whisper voice, Matter/Thread, and mobile apps. |
 
 ### Subsystem Integration Runbooks
-* **[Home Assistant](docs/integrations/home-assistant.md)**: Token creation, WebSocket event streaming, and entity mapping.
+* **[AI & LLM Providers (Janus)](docs/LLM_SETUP.md)**: Free Google AI Studio keys, OpenRouter, and local Ollama setup.
+* **[Home Assistant Hardware Setup](docs/HARDWARE_SETUP.md)**: Physical hardware tiers, Zigbee/Z-Wave USB coordinators, and network architecture.
+* **[Electrical, Backup Power & Energy](docs/integrations/electrical-power.md)**: Generac standby generators, Emporia Vue 16-channel circuit CTs, and utility rate tariffs.
+* **[Crestron & Estate Subsystems](docs/integrations/crestron-ha.md)**: Crestron 3/4-series processors, lighting scenes, thermostats, fireplaces, and radiant floor heat.
+* **[Home Assistant Core Bridge](docs/integrations/home-assistant.md)**: Token creation, WebSocket event streaming, and entity mapping.
 * **[Janus Voice AI](docs/integrations/ai-janus.md)**: Gemini 2.5 Flash, OpenRouter, and local Ollama setup.
 * **[Vehicle Fleet](docs/integrations/vehicle-fleet.md)**: Tesla Fleet API developer setup, partner keys, and charging control.
-* **[Pool & Spa](docs/integrations/pool-spa.md)**: iAquaLink / Zodiac hydrology, heater scheduling, and pump speeds.
-* **[Community Sports Hub](docs/integrations/community-ball.md)**: Pickup basketball league coordinator, RSVPs, and weather alerts.
+* **[Pool & Spa Hydrology](docs/integrations/pool-spa.md)**: iAquaLink / Zodiac hydrology, heater scheduling, and pump speeds.
 * **[Enterprise Network & Surveillance](docs/integrations/enterprise-network.md)**: FortiGate firewalls, Ruckus APs, and Verkada/UniFi cameras.
 
 ### Deployment & Self-Hosting

@@ -73,7 +73,8 @@ The user interface is built as a responsive Single Page Application (SPA) with P
 | **Water & Irrigation** | `src/components/irrigation/` | SVG property map, valve configuration, and moisture schedule controls. |
 | **Pool & Spa** | `src/pages/Iaqualink.tsx` | Water temperature targets, solar heater valves, pump RPM, and cleaner cycles. |
 | **Vehicle Fleet** | `src/pages/TeslaCallback.tsx` | Battery charge percentage, pre-conditioning switches, and sentry mode toggles. |
-| **Community & Ball** | `src/pages/Ball.tsx` | Pickup basketball court manager, member RSVP grid, and organizer communications. |
+| **Electrical & Power** | `src/pages/HomeSystems.tsx` | Generac backup generator, Emporia circuit wattage, utility tariffs, and power insights. |
+| **Crestron & Lights** | `src/pages/HomeSystems.tsx` | Crestron lighting scenes, thermostats, fireplaces, and radiant floor heat. |
 
 ---
 
@@ -88,7 +89,8 @@ The backend operates as a single Node.js runtime using Express and native ES Mod
    - `/api/tesla`: OAuth2 partner authentication, vehicle status, and command execution.
    - `/api/pool`: iAquaLink session management and device state dispatch.
    - `/api/network`: FortiGate and Ruckus telemetry ingestion.
-   - `/api/ball`: Pickup basketball schedule and RSVP mutations.
+   - `/api/electricity`: Utility bill tariffs, circuit power draw, and Generac generator telemetry.
+   - `/api/water`: Daily water consumption, leak alerts, and Rain Bird irrigation status.
 
 2. **WebSocket Real-Time Dispatcher (`server/lib/websocket.ts`)**:
    - Provides low-latency event broadcasting. When a light is switched in Home Assistant or pool temperature updates, a message is dispatched to all connected clients in `< 20ms`.
