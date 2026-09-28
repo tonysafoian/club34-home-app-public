@@ -18,9 +18,9 @@
  *  - For DNS hostnames, every resolved address must be public. Resolution
  *    failure rejects (the URL would be unusable anyway).
  *
- * This is intentionally strict: on Replit the app cannot reach LAN hosts at
- * all — HA is reached through a public tunnel URL — so there is no legitimate
- * use for private addresses here.
+ * This is intentionally strict: when cloud deployed or tunneled, the app should
+ * reach HA through a public tunnel URL — so there is no legitimate use for
+ * private addresses unless self-hosting locally.
  */
 import { isIP } from 'node:net';
 import { lookup } from 'node:dns/promises';

@@ -1,8 +1,6 @@
-// Always relative — see fetchWithAuth.ts for the rationale. Hard-coding
-// to '' prevents the Supabase compatibility shim from making cross-origin
-// calls to the Replit backend, which were being blocked by CORS for
-// routes like /api/db/query and /api/db/count.
-const API_BASE = '';
+// Always relative so requests are same-origin. Supports VITE_API_URL
+// when the frontend and backend run on distinct hosts.
+const API_BASE = import.meta.env.VITE_API_URL || '';
 
 function resolveUrl(path: string): string {
   return `${API_BASE}${path}`;

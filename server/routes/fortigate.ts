@@ -2012,7 +2012,7 @@ function requireConfigured(res: Response): boolean {
   if (isFortigateConfigured()) return true;
   res.status(503).json({
     error: 'FortiGate not configured',
-    hint: 'Set FORTIGATE_API_TOKEN in Replit Secrets. FORTIGATE_BASE_URL defaults to https://fortigate.example.com.',
+    hint: 'Set FORTIGATE_API_TOKEN in environment variables. FORTIGATE_BASE_URL defaults to https://fortigate.example.com.',
     baseUrl: FORTIGATE_BASE_URL,
   });
   return false;

@@ -215,7 +215,7 @@ function ErrorCard({ error, hint, baseUrl }: ApiError) {
         {baseUrl && <div className="text-muted-foreground">Target: <span className="font-mono">{baseUrl}</span></div>}
         {hint && <div className="text-muted-foreground">{hint}</div>}
         <div className="text-xs text-muted-foreground border-t pt-3">
-          The Ruckus Unleashed controller is on the LAN — Replit reaches it via the Home Assistant
+          The Ruckus Unleashed controller is on the LAN — the server reaches it via the Home Assistant
           <code className="px-1 mx-1 bg-muted rounded">rest_command.ruckus_login</code> /
           <code className="px-1 mx-1 bg-muted rounded">ruckus_call</code> proxy services.
           See <code className="px-1 bg-muted rounded">docs/ruckus-ha-proxy.yaml</code> for the snippet to paste into your HA <code className="px-1 bg-muted rounded">configuration.yaml</code>.

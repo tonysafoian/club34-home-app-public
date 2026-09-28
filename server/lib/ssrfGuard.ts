@@ -13,9 +13,9 @@ import { Agent, fetch as undiciFetch, type RequestInit as UndiciRequestInit, typ
  * services (including this app itself on localhost) or the cloud metadata
  * endpoint (169.254.169.254).
  *
- * Note: the workspace/deployment cannot reach LAN hosts anyway (see memory:
- * Replit → LAN reachability), so blocking RFC1918 ranges costs nothing for
- * legitimate use — real HA instances are reached via a public tunnel URL.
+ * Note: for cloud deployments that cannot reach local LAN hosts directly,
+ * blocking RFC1918 ranges protects internal infrastructure — HA instances
+ * are reached via a secure public tunnel URL.
  */
 
 export function isBlockedIp(ip: string): boolean {

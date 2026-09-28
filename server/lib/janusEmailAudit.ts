@@ -1,6 +1,6 @@
 /**
  * Mirror of inbound-email decisions to the local system_audit_log table so
- * Janus email behavior can be debugged from Replit without opening Supabase.
+ * Janus email behavior can be inspected directly via audit log tools.
  *
  * Categories: 'janus.email'
  * Event types: 'email.<route>' (admin-reply, member-reply, coordination-reply,

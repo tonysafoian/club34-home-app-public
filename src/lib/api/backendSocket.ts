@@ -3,16 +3,12 @@ import { io, Socket } from "socket.io-client";
 let sharedSocket: Socket | null = null;
 let refCount = 0;
 
-// Production frontend is served by Cloudflare Pages at example.com, but CF
-// Pages can't proxy WebSocket upgrades — so the socket has to connect
-// directly to the Replit backend origin. Anywhere else (dev, Replit's own
-// preview domains, localhost) we use same-origin so the socket goes
-// through the same server as REST.
+// By default, uses same-origin WebSocket connection.
+// If the backend runs on a separate origin/host, configure VITE_WS_URL.
 function getSocketTarget(): string | undefined {
   if (typeof window === "undefined") return undefined;
-  const host = window.location.hostname;
-  if (host === "example.com" || host === "www.example.com") {
-    return "wss://club34.replit.app";
+  if (import.meta.env.VITE_WS_URL) {
+    return import.meta.env.VITE_WS_URL;
   }
   return undefined;
 }

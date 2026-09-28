@@ -2,11 +2,7 @@ import { eq, desc, and, sql, gte, ilike, count as countFn, type SQL } from "driz
 import { db, pool } from "./db";
 import * as schema from "@shared/schema";
 
-// NOTE (2026-05-17): The dual-DB read path that pulled audit logs from a
-// separate PROD_DATABASE_URL (Supabase-hosted) was removed when the
-// Supabase project itself was deleted. See server/lib/auditLog.ts header
-// for full history. All audit logs are now read from the single Replit
-// Postgres DB (DATABASE_URL), which IS durable across redeploys.
+// All audit logs are stored in the primary PostgreSQL database (`DATABASE_URL`).
 import type {
   Profile, InsertProfile,
   UserRole, InsertUserRole,

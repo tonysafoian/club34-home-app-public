@@ -1,7 +1,6 @@
 -- Drop the optional pgvector ANN index on janus_memory.embedding.
 --
--- WHY: Replit's Publish flow runs a pre-deploy schema diff that introspects the
--- DEV database and replicates new objects onto PROD. drizzle-style introspection
+-- WHY: Standard pre-deploy schema diff flows that introspect the database
 -- CANNOT represent a pgvector HNSW/ivfflat index's required operator class
 -- (vector_cosine_ops), so it emits an invalid statement:
 --   CREATE INDEX "janus_memory_embedding_hnsw" ON "janus_memory" USING hnsw ("embedding");
@@ -21,8 +20,8 @@
 -- Idempotent (IF EXISTS), so re-running is a no-op.
 --
 -- If/when approximate-nearest-neighbour performance is needed at scale,
--- reintroduce the index via a path that is NOT subject to the Replit publish-diff
--- (e.g. an external/dedicated vector store), not a raw migration on this DB.
+-- reintroduce the index via a dedicated vector store or external index,
+-- not a raw migration on this DB.
 
 DROP INDEX IF EXISTS janus_memory_embedding_hnsw;
 DROP INDEX IF EXISTS janus_memory_embedding_ivfflat;

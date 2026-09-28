@@ -384,7 +384,7 @@ class ServerStorageBucket {
     // user-facing PUBLIC_BASE_URL (example.com is Cloudflare Pages and returns
     // the SPA index.html for /storage/*, which breaks any consumer fetching the
     // raw media URL, e.g. Google Cast audio). Use MEDIA_BASE_URL.
-    const baseUrl = process.env.MEDIA_BASE_URL || "https://club34.replit.app";
+    const baseUrl = process.env.MEDIA_BASE_URL || process.env.APP_URL || "http://localhost:5000";
     return { data: { publicUrl: `${baseUrl.replace(/\/$/, "")}/storage/v1/object/public/${this.bucket}/${filePath}` } };
   }
 

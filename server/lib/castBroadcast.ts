@@ -200,7 +200,7 @@ export async function generateAndUploadTTS(
   // backend; /storage/* is served exclusively by this app (storage-compat.ts).
   // Use MEDIA_BASE_URL (the backend origin) and never fall back to
   // PUBLIC_BASE_URL here.
-  const baseUrl = process.env.MEDIA_BASE_URL || 'https://club34.replit.app';
+  const baseUrl = process.env.MEDIA_BASE_URL || process.env.APP_URL || 'http://localhost:5000';
   return `${baseUrl.replace(/\/$/, '')}/storage/v1/object/public/${VOICE_REPLIES_BUCKET}/${filename}`;
 }
 

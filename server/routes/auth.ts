@@ -81,24 +81,16 @@ async function verifyAppleIdToken(idToken: string, clientId: string): Promise<Ap
 function getBaseUrl(req: Request): string {
   // OAuth requires a STABLE redirect_uri — it must be byte-identical between
   // the init redirect (where the user is sent to Google/Apple) and the token
-  // exchange call, AND it must be in the provider's allowlist. With a
-  // cross-domain setup (frontend on example.com, backend on *.replit.app),
-  // deriving the base URL from request headers per-call drifts whenever the
-  // two requests arrive via different paths (CF proxy vs direct), which
-  // produces `redirect_uri_mismatch` on Google and `invalid_state` on Apple.
-  //
-  // Always prefer env-pinned values. Only fall back to request headers when
-  // no env var is set (local dev), and even then, never trust headers for the
-  // production callbacks. Regression history: commit 65ae0730 reversed this
-  // order to "support custom domain" but broke sign-in for both providers.
+  // exchange call, AND it must be in the provider's allowlist.
+  // Always prefer env-pinned values (GOOGLE_REDIRECT_BASE_URL, APP_URL, APP_DOMAIN).
   if (process.env.GOOGLE_REDIRECT_BASE_URL) {
     return process.env.GOOGLE_REDIRECT_BASE_URL;
   }
+  if (process.env.APP_URL) {
+    return process.env.APP_URL.replace(/\/$/, "");
+  }
   if (process.env.APP_DOMAIN) {
     return `https://${process.env.APP_DOMAIN}`;
-  }
-  if (process.env.REPLIT_DEV_DOMAIN) {
-    return `https://${process.env.REPLIT_DEV_DOMAIN}`;
   }
   const forwardedHost = req.headers["x-forwarded-host"] as string;
   if (forwardedHost) {

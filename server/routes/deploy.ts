@@ -17,20 +17,16 @@ router.get("/api/fortigate/config-status", (_req: Request, res: Response) => {
   res.json({
     configured: tokenSet,
     base_url: baseUrl,
-    hint: tokenSet ? null : "Set FORTIGATE_API_TOKEN in Replit Secrets and redeploy",
+    hint: tokenSet ? null : "Set FORTIGATE_API_TOKEN in environment variables and restart",
   });
 });
 
 /**
  * POST /api/deploy/webhook
  *
- * Called by the GitHub Actions CI pipeline after every push to `main`.
- * Pulls the latest code and restarts the server process so Replit's
- * process manager picks up the changes automatically.
- *
- * Security: HMAC-SHA256 signature verification (same scheme as GitHub webhooks).
- * Set DEPLOY_WEBHOOK_SECRET in Replit Secrets to a long random string,
- * and store the same value as REPLIT_DEPLOY_SECRET in GitHub Secrets.
+ * Optional webhook receiver for automated deployments.
+ * Security: HMAC-SHA256 signature verification.
+ * Set DEPLOY_WEBHOOK_SECRET in environment variables.
  */
 router.post("/api/deploy/webhook", async (req: Request, res: Response) => {
   const secret = process.env.DEPLOY_WEBHOOK_SECRET;
@@ -96,7 +92,7 @@ router.post("/api/deploy/webhook", async (req: Request, res: Response) => {
       const { stdout: buildOut } = await execFileAsync("npm", ["run", "build"], {
         cwd: process.cwd(),
         timeout: 120_000,
-        env: { ...process.env, REPLIT_DEPLOYMENT: "1" }, // skip github push inside build
+        env: { ...process.env, NODE_ENV: "production" },
       });
       console.log("[deploy] npm run build:", buildOut.trim().slice(0, 200));
 

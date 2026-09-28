@@ -671,7 +671,7 @@ export function AdminApiContent() {
             .
           </p>
           <p className="text-muted-foreground text-xs">
-            Rotate the <code>EXTERNAL_API_KEY</code> secret in Replit Secrets to revoke access. There is
+            Rotate the <code>EXTERNAL_API_KEY</code> environment variable to revoke access. There is
             currently a single shared key — there are no per-app keys.
           </p>
         </CardContent>

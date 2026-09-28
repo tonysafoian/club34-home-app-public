@@ -1,8 +1,8 @@
 /**
  * Mirror of inbound-channel routing decisions (WhatsApp, chat) to the local
- * system_audit_log table so all of Janus's channels can be debugged from
- * Replit without opening Supabase. Companion to janusEmailAudit.ts; uses the
- * same ResolvedIdentity shape so the routing audit story is uniform.
+ * system_audit_log table so all of Janus's channels can be inspected directly.
+ * Companion to janusEmailAudit.ts; uses the same ResolvedIdentity shape so
+ * the routing audit story is uniform.
  *
  * Categories: 'janus.whatsapp' | 'janus.chat'
  * Event types: '<channel>.<route>'

@@ -4,8 +4,8 @@
 -- janus_memory. Pinned rows survive the 200-row FIFO eviction in
 -- executeRememberFact.
 --
--- pgvector must be enabled on the target Postgres instance. Replit Postgres
--- 16 ships with the extension available; this migration enables it.
+-- pgvector must be enabled on the target Postgres instance. Standard Postgres
+-- 16 with pgvector installed supports this migration.
 --
 -- The vector index is created via a defensive DO block that tries HNSW
 -- (best, requires pgvector >= 0.5.0) → ivfflat (broadly available) → no

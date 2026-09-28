@@ -29,7 +29,7 @@ import { verifyPlaybackState } from "../castBroadcast.js";
 const HA_URL = "https://ha.example.test";
 const HA_TOKEN = "test-token";
 const EXPECTED_URL =
-  "https://club34.replit.app/storage/v1/object/public/voice-replies/broadcasts/school-morning-123.mp3";
+  "http://localhost:5000/storage/v1/object/public/voice-replies/broadcasts/school-morning-123.mp3";
 
 /**
  * Build a mock for global.fetch that resolves the HA states endpoint to a

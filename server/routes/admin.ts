@@ -457,12 +457,7 @@ router.post('/api/suggest-submit', async (req: any, res: any) => {
   }
 });
 
-// NOTE (2026-05-17): POST /api/admin/db-sync was removed when the separate
-// Supabase-hosted PROD_DATABASE_URL was decommissioned during the Express
-// migration. With a single Replit Postgres DB, there is no dev↔prod sync
-// to run. See server/lib/auditLog.ts header for full history. If a frontend
-// still references this endpoint, it will now 404 — update the frontend or
-// remove the call.
+// NOTE: Database is unified under the primary PostgreSQL connection (DATABASE_URL).
 
 // Read-only admin telemetry: snapshot of every registered breaker
 // (state, failure count, last failure / success timestamps, next retry

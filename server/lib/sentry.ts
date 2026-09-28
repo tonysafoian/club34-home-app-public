@@ -3,7 +3,7 @@
  *
  * Activation requires BOTH:
  *   1. `@sentry/node` installed (`npm install @sentry/node`)
- *   2. `SENTRY_DSN` env var set in Replit Secrets
+ *   2. `SENTRY_DSN` env var configured in environment (.env)
  *
  * If either is missing this module silently no-ops, so the server keeps
  * running unchanged. We use a dynamic `import()` so the codebase does not

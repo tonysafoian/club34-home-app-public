@@ -27,10 +27,7 @@
   const params = new URLSearchParams(window.location.search);
   const code = params.get('code');
   const error = params.get('error');
-  // Same-origin so the auth_token cookie is set on example.com, not club34.replit.app.
-  // Cross-origin set-cookie was being stored on the wrong domain → admin fetches
-  // from example.com sent no cookie → 401. Empty string = relative URL = same origin
-  // via the CF Pages _worker.js proxy → /api/auth/google/exchange on Replit.
+  // Same-origin relative URL so auth_token cookie is set on the active domain.
   const API = '';
 
   if (error) {

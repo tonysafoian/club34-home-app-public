@@ -2,13 +2,11 @@
  * Minimal in-process HNSW (Hierarchical Navigable Small World) index for
  * cosine similarity over dense embeddings.
  *
- * WHY THIS EXISTS: Replit's Publish pre-deploy schema diff cannot represent
- * a pgvector ANN index's operator class (vector_cosine_ops), so keeping an
- * HNSW/ivfflat index in the database blocks every production Publish (see
- * migrations/0046_drop_janus_memory_vector_index.sql). This module restores
- * sub-linear approximate-nearest-neighbour recall entirely in process
- * memory — the database schema stays untouched, so the publish-diff stays
- * empty.
+ * WHY THIS EXISTS: Database introspection tools often cannot represent
+ * a pgvector ANN index's operator class (vector_cosine_ops), which can cause
+ * schema migration issues (see migrations/0046_drop_janus_memory_vector_index.sql).
+ * This module restores sub-linear approximate-nearest-neighbour recall
+ * entirely in process memory — keeping database schema portable across providers.
  *
  * Design notes:
  * - Vectors are L2-normalised at insert/query time, so cosine distance
