@@ -30,7 +30,7 @@ function requireAdmin(req: AuthenticatedRequest, res: Response, next: () => void
 // Settings, encrypted at rest) takes precedence over the HA_URL/HA_TOKEN env
 // vars. Cached briefly because the proxy is hit constantly by the dashboard;
 // invalidated whenever the user saves new settings.
-interface ResolvedHACreds { haUrl: string; haToken: string; source: 'settings' | 'env' }
+interface ResolvedHACreds { haUrl: string; haToken: string; source: 'settings' | 'env' | 'supervisor' }
 const haCredsCache = new Map<string, { creds: ResolvedHACreds | null; fetchedAt: number }>();
 const HA_CREDS_CACHE_TTL_MS = 60 * 1000;
 
@@ -76,9 +76,10 @@ async function resolveHACreds(userId: string | undefined): Promise<ResolvedHACre
     }
   }
   if (!creds) {
-    const envUrl = process.env.HA_URL ?? '';
-    const envToken = process.env.HA_TOKEN ?? '';
-    if (envUrl && envToken) creds = { haUrl: envUrl, haToken: envToken, source: 'env' };
+    const supervisorToken = process.env.SUPERVISOR_TOKEN || process.env.HASSIO_TOKEN;
+    const envUrl = process.env.HA_URL || process.env.HOME_ASSISTANT_URL || (supervisorToken ? 'http://supervisor/core' : '');
+    const envToken = process.env.HA_TOKEN || process.env.HOME_ASSISTANT_TOKEN || supervisorToken || '';
+    if (envUrl && envToken) creds = { haUrl: envUrl, haToken: envToken, source: supervisorToken ? 'supervisor' : 'env' };
   }
   haCredsCache.set(cacheKey, { creds, fetchedAt: Date.now() });
   return creds;

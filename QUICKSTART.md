@@ -75,21 +75,37 @@ To populate sample family profiles and sports roster data:
 docker exec -i household-postgres psql -U postgres -d household_db < scripts/seed-household-members.example.sql
 ```
 
-### 6. Launch the Development Server
+### 6. Launch the Server
 ```bash
-npm run dev
+npm run build
+npm start # or npm run dev
 ```
 
-The application will start with:
-- **Frontend Dashboard**: [http://localhost:5000](http://localhost:5000)
-- **API & WebSocket Gateway**: [http://localhost:5000/api](http://localhost:5000/api)
+Open **[http://localhost:5000](http://localhost:5000)** (or your configured port).
+
+> [!TIP]
+> **No OAuth Setup Required for Testing!**
+> On the login screen, click **`[⚡ Enter Demo / Local Test Mode]`**. This immediately signs you in as an Admin with full access to the command deck, mock telemetry, system controls, and settings without configuring Google or Apple OAuth credentials.
+
+---
+
+## 📦 Option B: Install as a Home Assistant Add-on (1-Click)
+
+If you run **Home Assistant OS** or **Supervised**:
+
+1. In Home Assistant, go to **Settings ➔ Add-ons ➔ Add-on Store**.
+2. Click the three dots **⋮** in the top right ➔ **Repositories**.
+3. Add repository: `https://github.com/tonysafoian/janus-home-app`
+4. Find **Janus** in the store list and click **Install**.
+5. Toggle **Show in sidebar**, click **Start**, and enjoy! Janus will automatically discover Home Assistant and embed itself in your sidebar.
 
 ---
 
 ## 🎯 Exploring the Dashboard
 
-1. **Dashboard Home**: View real-time weather, estate zones, and active household status.
-2. **Janus AI Assistant**: Tap the microphone icon or press `Space` to speak with Janus.
+1. **Bypass Login**: Click `Enter Demo / Local Test Mode` on the welcome screen.
+2. **Dashboard Home**: View real-time weather, estate zones, and active household status.
+3. **Janus AI Assistant**: Tap the microphone icon or press `Space` to speak with Janus.
 3. **Estate Systems**: Explore HVAC thermostats, lighting groups, and water/irrigation maps.
 4. **Pool & Spa**: Monitor water temperatures, heater status, and filter pump cycles.
 5. **Vehicle Fleet**: View simulated battery telemetry and vehicle climate status.

@@ -13,8 +13,9 @@
 [![React](https://img.shields.io/badge/React-18.x-61dafb.svg)](package.json)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.x-3178c6.svg)](tsconfig.json)
 [![Docker Ready](https://img.shields.io/badge/Docker-Compose%20Ready-2496ed.svg)](docker-compose.yml)
+[![Home Assistant Add-on](https://img.shields.io/badge/Home%20Assistant-Add--on%20Ready-41BDF5.svg?logo=home-assistant&logoColor=white)](addon/DOCS.md)
 
-[5-Minute Quickstart](QUICKSTART.md) • [Executive Guide (Non-Technical / PDF)](docs/EXECUTIVE_GUIDE.md) • [System Architecture](ARCHITECTURE.md) • [Customization Guide](docs/CUSTOMIZATION.md) • [Mock Mode](docs/MOCK_MODE.md) • [Roadmap](ROADMAP.md)
+[5-Minute Quickstart](QUICKSTART.md) • [Home Assistant Add-on](addon/DOCS.md) • [Executive Guide (Non-Technical / PDF)](docs/EXECUTIVE_GUIDE.md) • [System Architecture](ARCHITECTURE.md) • [Customization Guide](docs/CUSTOMIZATION.md) • [Mock Mode](docs/MOCK_MODE.md) • [Roadmap](ROADMAP.md)
 
 </div>
 

@@ -32,6 +32,9 @@ export type HaUrlCheck =
 /** Admin-controlled set of hostnames the HA integration may talk to. */
 export function getAllowedHaHosts(env: NodeJS.ProcessEnv = process.env): Set<string> {
   const hosts = new Set<string>();
+  if (env.SUPERVISOR_TOKEN || env.HASSIO_TOKEN) {
+    hosts.add('supervisor');
+  }
   if (env.HA_URL) {
     try {
       hosts.add(new URL(env.HA_URL).hostname.toLowerCase());
@@ -114,6 +117,11 @@ export function checkHaUrlSync(rawUrl: string, env: NodeJS.ProcessEnv = process.
   // URL.hostname wraps IPv6 literals in brackets — strip for isIP().
   const hostname = parsed.hostname.toLowerCase().replace(/^\[|\]$/g, '');
 
+  // Home Assistant supervisor hostname inside add-on network is explicitly permitted
+  if (hostname === 'supervisor' && (env.SUPERVISOR_TOKEN || env.HASSIO_TOKEN || env.HA_ALLOWED_HOSTS?.includes('supervisor'))) {
+    return { ok: true, url: rawUrl };
+  }
+
   if (isIP(hostname)) {
     if (isPrivateOrReservedIp(hostname)) {
       return { ok: false, reason: 'ha_url must not point at a private, loopback, or reserved address' };
@@ -142,6 +150,9 @@ export async function validateHaUrl(rawUrl: string, env: NodeJS.ProcessEnv = pro
   if (!sync.ok) return sync;
 
   const hostname = new URL(rawUrl).hostname.toLowerCase().replace(/^\[|\]$/g, '');
+  if (hostname === 'supervisor' && (env.SUPERVISOR_TOKEN || env.HASSIO_TOKEN || env.HA_ALLOWED_HOSTS?.includes('supervisor'))) {
+    return sync;
+  }
   if (isIP(hostname)) return sync; // already range-checked above
 
   let addrs: { address: string }[];
