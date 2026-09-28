@@ -211,15 +211,9 @@ async function main(): Promise<void> {
 }
 
 // Detect "is this the CLI entry?" — when running `tsx scripts/run-migrations.ts`
-// import.meta.url starts with file://… and matches process.argv[1].
-const invokedAsCLI = (() => {
-  try {
-    const argvUrl = new URL(`file://${process.argv[1]}`).href;
-    return import.meta.url === argvUrl;
-  } catch {
-    return false;
-  }
-})();
+const invokedAsCLI =
+  Boolean(process.argv[1]?.endsWith("run-migrations.ts")) ||
+  import.meta.url === `file://${process.argv[1]}`;
 
 if (invokedAsCLI) {
   main();

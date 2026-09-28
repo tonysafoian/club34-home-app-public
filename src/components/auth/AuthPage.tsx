@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Loader2 } from 'lucide-react';
+import { Loader2, Key } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { JanusLogo } from '@/components/brand/JanusLogo';
 import { resolveApiUrl } from '@/lib/api/fetchWithAuth';
@@ -8,6 +8,34 @@ import { resolveApiUrl } from '@/lib/api/fetchWithAuth';
 export function AuthPage() {
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
+
+  const handleDemoSignIn = async () => {
+    setLoading(true);
+    try {
+      const res = await fetch(resolveApiUrl('/api/auth/demo'), {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+      });
+      const data = await res.json();
+      if (data.ok) {
+        if (data.token) {
+          try {
+            localStorage.setItem('auth_token', data.token);
+          } catch {}
+        }
+        window.location.href = '/';
+      } else {
+        throw new Error(data.error || 'Demo sign in failed');
+      }
+    } catch (err: unknown) {
+      toast({
+        title: 'Demo sign in failed',
+        description: err instanceof Error ? err.message : 'An unexpected error occurred',
+        variant: 'destructive',
+      });
+      setLoading(false);
+    }
+  };
 
   const handleAppleSignIn = () => {
     setLoading(true);
@@ -116,6 +144,29 @@ export function AuthPage() {
               </svg>
             )}
             Sign in with Apple
+          </Button>
+
+          <div className="relative my-2">
+            <div className="absolute inset-0 flex items-center">
+              <div className="w-full border-t border-white/10" />
+            </div>
+            <div className="relative flex justify-center text-xs uppercase">
+              <span className="bg-[#1c1d24] px-2 text-muted-foreground">or test mode</span>
+            </div>
+          </div>
+
+          <Button
+            data-testid="button-demo-sign-in"
+            onClick={handleDemoSignIn}
+            disabled={loading}
+            className="w-full flex items-center justify-center gap-2 h-12 text-base janus-gradient text-white font-medium shadow-lg hover:opacity-95 transition-opacity"
+          >
+            {loading ? (
+              <Loader2 className="h-5 w-5 animate-spin" />
+            ) : (
+              <Key className="h-5 w-5 shrink-0" />
+            )}
+            Enter Demo / Local Test Mode
           </Button>
         </div>
       </div>

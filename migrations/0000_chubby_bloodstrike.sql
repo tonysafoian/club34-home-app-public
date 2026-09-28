@@ -1,6 +1,5 @@
 -- Current sql file was generated after introspecting the database
 -- If you want to run this migration please uncomment this code before executing migrations
-/*
 CREATE TYPE "public"."activity_event_type" AS ENUM('motion', 'access', 'alarm', 'camera', 'system');--> statement-breakpoint
 CREATE TYPE "public"."activity_severity" AS ENUM('info', 'warning', 'alert');--> statement-breakpoint
 CREATE TYPE "public"."app_role" AS ENUM('admin', 'member', 'guest');--> statement-breakpoint
@@ -583,4 +582,3 @@ CREATE UNIQUE INDEX "hw_calendar_config_email_school_year_idx" ON "hw_calendar_c
 CREATE UNIQUE INDEX "hw_school_calendars_school_year_campus_idx" ON "hw_school_calendars" USING btree ("school_year" text_ops,"campus" text_ops);--> statement-breakpoint
 CREATE UNIQUE INDEX "janus_chat_summaries_user_idx" ON "janus_chat_summaries" USING btree ("user_id" text_ops);--> statement-breakpoint
 CREATE UNIQUE INDEX "janus_memory_user_key_idx" ON "janus_memory" USING btree ("user_id" text_ops,"key" text_ops);
-*/

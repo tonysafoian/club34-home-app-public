@@ -29,6 +29,8 @@ WHERE amazon_asin IN (
 -- Also deactivate any rows where amazon_asin IS NULL and brand IS NULL — those came from 0029 stub rows.
 OR (amazon_asin IS NULL AND brand IS NULL);
 
+ALTER TABLE grocery_staples ADD COLUMN IF NOT EXISTS amazon_url text;
+
 -- Also deactivate the 0029 rows that have brand but NULL ASIN — those are also invented stubs:
 UPDATE grocery_staples SET is_active = false, updated_at = NOW()
 WHERE amazon_asin IS NULL

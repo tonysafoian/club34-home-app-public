@@ -111,6 +111,47 @@ router.get("/api/auth/me", (req, res) => {
   res.json({ user });
 });
 
+router.post("/api/auth/demo", async (req, res) => {
+  const isDev = process.env.NODE_ENV !== "production";
+  const allowDemo = isDev || process.env.ENABLE_DEMO_LOGIN === "true" || !process.env.GOOGLE_CLIENT_SECRET;
+
+  if (!allowDemo) {
+    res.status(403).json({ error: "Demo login is disabled in this environment." });
+    return;
+  }
+
+  const user = {
+    userId: "demo-admin",
+    email: "admin@janus.local",
+    displayName: "Estate Owner (Demo)",
+    avatarUrl: null,
+    roles: ["admin"],
+    approvalStatus: "approved",
+  };
+
+  try {
+    const { storage } = await import("../storage.js");
+    const existing = await storage.getProfileByUserId(user.userId);
+    if (!existing) {
+      await storage.createProfile({
+        userId: user.userId,
+        displayName: user.displayName || user.email,
+        avatarUrl: null,
+        approvalStatus: "approved",
+        phoneNumber: null,
+      });
+      await storage.createUserRole({ userId: user.userId, role: "admin" });
+    }
+  } catch (e) {
+    console.warn("[AUTH] Note: demo profile storage sync skipped:", e instanceof Error ? e.message : e);
+  }
+
+  const token = generateToken(user);
+  setAuthCookie(res, token);
+
+  res.json({ ok: true, user, token });
+});
+
 router.get("/api/auth/google", (req, res) => {
   const clientId = process.env.GOOGLE_CLIENT_ID || DEFAULT_GOOGLE_CLIENT_ID;
   if (!clientId) {
