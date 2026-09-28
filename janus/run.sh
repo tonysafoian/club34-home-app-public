@@ -61,7 +61,7 @@ export ENABLE_DEMO_LOGIN="$ENABLE_DEMO_LOGIN"
 export MOCK_MODE="$ENABLE_MOCK_MODE"
 
 echo "[janus] Applying database migrations..."
-npm run migrate || echo "[janus] Note: migration step finished."
+node dist/run-migrations.js || npm run migrate || echo "[janus] Note: migration step finished."
 
 echo "[janus] Launching Janus command deck on port $PORT..."
 exec node dist/index.js
