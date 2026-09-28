@@ -3,11 +3,9 @@ version: "1.0.0"
 slug: "janus"
 description: "AI-orchestrated residential estate operating system and command deck."
 url: "https://github.com/tonysafoian/janus-home-app"
-image: "ghcr.io/tonysafoian/janus-home-app-{arch}"
 arch:
   - aarch64
   - amd64
-  - armv7
 startup: services
 boot: auto
 init: false
