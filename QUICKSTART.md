@@ -4,7 +4,25 @@ Get Janus running on your local machine in under five minutes.
 
 ---
 
-## ⚡ Prerequisites
+## 🏛️ Option 1: 1-Click Home Assistant Add-on (Recommended)
+
+If you already use Home Assistant OS or Supervised, you can install Janus directly with one click:
+
+[![Open your Home Assistant instance and show the add-on repository dialog with a specific repository URL pre-filled.](https://my.home-assistant.io/badges/supervisor_add_addon_repository.svg)](https://my.home-assistant.io/redirect/supervisor_add_addon_repository/?repository_url=https%3A%2F%2Fgithub.com%2Ftonysafoian%2Fjanus-home-app)
+
+1. Click the button above to add the Janus repository to your Home Assistant Add-on Store.
+2. Click **Install**.
+3. Toggle **Show in sidebar**.
+4. Click **Start** ➔ **Open Web UI**.
+5. Click **[⚡ Enter Demo / Local Test Mode]** on the login screen!
+
+See [HOME_ASSISTANT_ADDON.md](docs/HOME_ASSISTANT_ADDON.md) for complete details.
+
+---
+
+## 💻 Option 2: Local Developer Setup (Node.js & Docker)
+
+### ⚡ Prerequisites
 
 Before you begin, ensure you have installed:
 - [Node.js](https://nodejs.org/) (version **20.x** or higher)
@@ -17,7 +35,7 @@ Before you begin, ensure you have installed:
 
 ---
 
-## 🛠️ Step-by-Step Setup
+### Step-by-Step Setup
 
 ### 1. Clone the Repository
 ```bash
