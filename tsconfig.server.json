@@ -1,0 +1,33 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    // DOM lib is included so global fetch's Response.json() types as
+    // Promise<any> (matching this codebase's loose data handling) instead of
+    // @types/node's Promise<unknown>, which produced ~330 spurious errors.
+    // Trade-off: browser globals (window/document) won't be flagged here.
+    "lib": ["ES2023", "DOM"],
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    // Treat every file as a module so standalone test scripts that share
+    // top-level names (PORT, BASE, ...) don't collide in the global scope.
+    "moduleDetection": "force",
+    "baseUrl": ".",
+    "paths": {
+      "@shared/*": ["./shared/*"]
+    },
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "skipLibCheck": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "strict": true,
+    // Required by drizzle-orm: without strictNullChecks its column types
+    // collapse to `never` and every .values()/.set() call fails to typecheck.
+    // It also catches real null bugs. Keep enabled.
+    "strictNullChecks": true,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "noImplicitAny": true
+  },
+  "include": ["server/**/*.ts"]
+}

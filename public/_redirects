@@ -1,0 +1,6 @@
+# See public/_redirects.template for the canonical version. This file
+# is for local dev preview only — production uses the template + sed.
+/api/auth/google/callback   /api/auth/google/callback/index.html   200
+/api/*                      https://club34.replit.app/api/:splat    200!
+/ws/*                       https://club34.replit.app/ws/:splat     200!
+/*                          /index.html                             200

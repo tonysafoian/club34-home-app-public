@@ -1,0 +1,7 @@
+node_modules/
+screenshots/*.png
+screenshots/*.jpg
+screenshots/*.pdf
+.env
+.env.local
+.state/
