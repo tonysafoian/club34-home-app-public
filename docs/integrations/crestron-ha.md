@@ -2,11 +2,11 @@
 
 Luxury residences often feature centralized **Crestron automation processors** controlling lighting panels, motorized window shades, HVAC, gas fireplaces, and radiant floor heating.
 
-Household OS bridges modern web and AI voice control to enterprise Crestron hardware by leveraging Home Assistant as an IP/CIP gateway.
+Janus bridges modern web and AI voice control to enterprise Crestron hardware by leveraging Home Assistant as an IP/CIP gateway.
 
 ---
 
-## 🏛️ Architecture: Crestron to Household OS
+## 🏛️ Architecture: Crestron to Janus
 
 ```
 ┌────────────────────────────────┐
@@ -29,7 +29,7 @@ Household OS bridges modern web and AI voice control to enterprise Crestron hard
                 │ WebSocket / REST Stream
                 ▼
 ┌────────────────────────────────┐
-│      Household OS & Janus      │
+│      Janus & Janus      │
 │  - Interactive Dashboard UI    │
 │  - Natural Language Voice AI   │
 │  - Multimodal Tool Calling     │
@@ -73,7 +73,7 @@ The Crestron processor communicates with Home Assistant over Ethernet using the 
 
 ## 💡 2. Estate Lighting & Scenes
 
-Once bridged into Home Assistant, Crestron lighting circuits appear natively in Household OS:
+Once bridged into Home Assistant, Crestron lighting circuits appear natively in Janus:
 * **Dimmer Sliders**: Real-time slider control for 0–100% lighting levels.
 * **Architectural Scenes**: Trigger centralized lighting moods (*"Entertain"*, *"Evening Relax"*, *"Goodnight All Off"*).
 * **Govee Architectural Light Integration**: Combine high-voltage Crestron dimmers with low-voltage exterior Govee landscape lighting into unified estate scenes.

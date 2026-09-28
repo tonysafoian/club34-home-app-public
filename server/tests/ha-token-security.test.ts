@@ -30,7 +30,7 @@ import { assertPublicHttpUrl, isBlockedIp, guardedLookup, guardedFetch } from '.
 const PORT = process.env.PORT || 5000;
 const BASE = `http://localhost:${PORT}`;
 const JWT_SECRET =
-  process.env.JWT_SECRET || process.env.SESSION_SECRET || 'club34-dev-secret-change-in-production';
+  process.env.JWT_SECRET || process.env.SESSION_SECRET || 'janus-dev-secret-change-in-production';
 
 const TEST_USER_ID = 'test-ha-token-security';
 const RAW_TOKEN = 'raw-ha-token-should-never-leak';

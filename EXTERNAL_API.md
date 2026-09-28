@@ -1,6 +1,6 @@
-# Club 34 / Janus External API
+# Janus External API
 
-A read/write HTTP API for sibling apps and external integrations to interact with the Club 34 / Janus stack.
+A read/write HTTP API for sibling apps and external integrations to interact with the Janus stack.
 
 - **Base path:** `/api/v1/external`
 - **Production:** `https://example.com/api/v1/external`
@@ -191,5 +191,5 @@ curl -H "x-api-key: $EXTERNAL_API_KEY" \
 
 ## Admin UI
 
-A documentation + capability-explorer page is available in the Club 34 web app at  
+A documentation + capability-explorer page is available in the Janus web app at  
 `/admin?section=api`.

@@ -375,7 +375,7 @@ export async function getBillingCycleConsumption(): Promise<{
 // show $0 despite a live ~31 kW load. These helpers read the CURRENT STATE of
 // the daily total-increasing _energy_today counters from the live entity cache
 // (the same source the live-power UI uses) and read completed days from the
-// Club34-owned circuit_energy_daily table.
+// Janus-owned circuit_energy_daily table.
 
 export interface CircuitTodayKwh {
   entityId: string;
@@ -500,7 +500,7 @@ function laDateString(iso: string): string {
  * cover, recovered from HA long-term statistics (recorder/statistics_during_period
  * with day periods). HA retains these statistics for the _energy_today sensors
  * long after the recorder's short-term purge, so the elapsed days are
- * recoverable even when the Club34 snapshot table is empty.
+ * recoverable even when the Janus snapshot table is empty.
  *
  * Returns per-circuit summed kWh over the filled days plus the set of LA-local
  * dates that were actually filled (so the daily-average denominator can count

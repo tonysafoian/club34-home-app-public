@@ -10,9 +10,9 @@ export function ProductivityTodayCard() {
   const { data } = useNotionActivityStats(7);
 
   const todayData = data?.find((d) => d.date === todayStr);
-  const updates = todayData?.club34_updates ?? 0;
-  const newItems = todayData?.club34_new ?? 0;
-  const completions = todayData?.club34_completions ?? 0;
+  const updates = todayData?.janus_updates ?? 0;
+  const newItems = todayData?.janus_new ?? 0;
+  const completions = todayData?.janus_completions ?? 0;
 
   return (
     <Card

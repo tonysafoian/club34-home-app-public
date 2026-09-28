@@ -1,6 +1,6 @@
 # Database migrations
 
-Club 34 uses a small custom filename-based migration runner (`scripts/run-migrations.ts`)
+Janus uses a small custom filename-based migration runner (`scripts/run-migrations.ts`)
 that auto-applies any new `migrations/*.sql` file on server boot. This document
 captures the workflow.
 

@@ -121,7 +121,7 @@ function describeActivityFilters(o: AppActivityOptions): string {
 }
 
 // Unified reader over the central system_audit_log — the app's activity "nervous
-// system". Almost everything that happens anywhere in Club 34 is recorded here.
+// system". Almost everything that happens anywhere in Janus is recorded here.
 // Supports filtering by time / area (category) / person (actor) / severity /
 // status / source / keyword, plus a summary mode that returns counts-by-area so
 // high-volume categories (e.g. automation) can be answered without dumping

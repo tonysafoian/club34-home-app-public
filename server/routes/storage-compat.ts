@@ -19,7 +19,7 @@ function serviceSecret(): string | null {
   if (configured) return configured;
   // Fail closed in production: never accept the static dev fallback there.
   if (process.env.NODE_ENV === "production") return null;
-  return "club34-dev-secret-change-in-production";
+  return "janus-dev-secret-change-in-production";
 }
 
 function timingSafeEqualStr(a: string, b: string): boolean {

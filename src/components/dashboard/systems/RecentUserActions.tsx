@@ -86,7 +86,7 @@ function getActionIcon(entry: ActionEntry) {
 function ActionItem({ entry }: { entry: ActionEntry }) {
   const [expanded, setExpanded] = useState(false);
   const rawActor = entry.actor_name && entry.actor_name !== 'Unknown' ? entry.actor_name : null;
-  const actorDisplay = rawActor ?? (entry.channel === 'web' ? 'Club34 App' : null);
+  const actorDisplay = rawActor ?? (entry.channel === 'web' ? 'Janus' : null);
 
   return (
     <div className="border-b border-border/50 last:border-0">

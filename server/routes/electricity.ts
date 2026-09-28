@@ -816,7 +816,7 @@ async function snapshotOneDay(bounds: { start: Date; end: Date; usageDate: strin
 
 // POST /snapshot-daily
 // Records ONE LA-local day of per-circuit kWh into circuit_energy_daily so
-// Club34 owns the full history independent of HA's recorder purge window.
+// Janus owns the full history independent of HA's recorder purge window.
 // Defaults to yesterday (the last fully-complete day). Pass { date: 'YYYY-MM-DD' }
 // or { daysBack: N } to backfill. Idempotent via (entity_id, usage_date) upsert.
 // Cron- or admin-gated (no user session required).
@@ -989,7 +989,7 @@ router.post('/backfill', async (req: AuthenticatedRequest, res: Response) => {
 });
 
 // GET /circuit-history
-// Per-circuit / per-category monthly (or daily) report from the Club34-owned
+// Per-circuit / per-category monthly (or daily) report from the Janus-owned
 // circuit_energy_daily table. Works for ANY past month, indefinitely.
 //   ?months=12                  trailing months (default 6, max 36)
 //   ?from=YYYY-MM&to=YYYY-MM     explicit month range (overrides ?months)

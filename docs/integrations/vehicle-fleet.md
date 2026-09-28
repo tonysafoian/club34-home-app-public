@@ -1,6 +1,6 @@
 # 🚗 Vehicle Fleet & Tesla Fleet API Integration Guide
 
-Household OS provides comprehensive electric vehicle (EV) fleet orchestration, including real-time battery status, cabin pre-conditioning, smart charging schedules, and geofenced estate entry/exit.
+Janus provides comprehensive electric vehicle (EV) fleet orchestration, including real-time battery status, cabin pre-conditioning, smart charging schedules, and geofenced estate entry/exit.
 
 ---
 
@@ -10,7 +10,7 @@ Tesla requires developer registration to communicate with vehicles via the moder
 
 1. Log into the [Tesla Developer Portal](https://developer.tesla.com/).
 2. Create an Application:
-   * **Application Name**: `Household OS`
+   * **Application Name**: `Janus`
    * **Redirect URI**: `https://yourdomain.com/api/tesla/callback` (or `http://localhost:5000/api/tesla/callback` for local development).
    * **Scopes**:
      * `openid`
@@ -26,7 +26,7 @@ Tesla requires developer registration to communicate with vehicles via the moder
 
 Tesla Fleet API requires a signed public key hosted on your public web domain to authorize end-to-end command dispatch.
 
-Household OS includes an automated key generation endpoint:
+Janus includes an automated key generation endpoint:
 ```bash
 # Generate a new EC prime256v1 keypair via API
 curl -X POST http://localhost:5000/api/tesla/setup?action=generate-key \
@@ -69,6 +69,6 @@ TESLA_REDIRECT_URI=http://localhost:5000/api/tesla/callback
 
 ## 🔌 5. Non-Tesla Vehicles
 
-Household OS is designed to be vehicle-agnostic:
-- **Home Assistant EV Integrations**: If you drive a Rivian, BMW, Ford Mach-E, or Porsche, you can expose their battery and climate entities to Home Assistant. Household OS will map them automatically into the vehicle widget.
+Janus is designed to be vehicle-agnostic:
+- **Home Assistant EV Integrations**: If you drive a Rivian, BMW, Ford Mach-E, or Porsche, you can expose their battery and climate entities to Home Assistant. Janus will map them automatically into the vehicle widget.
 - **Enode / Smartcar Bridge**: You can easily implement a custom adapter in `server/routes/vehicles.ts`.

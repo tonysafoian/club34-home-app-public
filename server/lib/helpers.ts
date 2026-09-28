@@ -321,7 +321,7 @@ export async function sendGmailRaw(
 export function isAllowedOrigin(origin: string): boolean {
   if (origin === `https://${APP_DOMAIN}` || origin === `https://www.${APP_DOMAIN}`)
     return true;
-  if (origin === "https://club34.ai" || origin === "https://www.club34.ai")
+  if (origin === "https://janus.ai" || origin === "https://www.janus.ai")
     return true;
   return false;
 }
@@ -371,7 +371,7 @@ export async function authenticateRequest(
 
   try {
     const jwt = await import("jsonwebtoken");
-    const secret = process.env.JWT_SECRET || process.env.SESSION_SECRET || "club34-dev-secret-change-in-production";
+    const secret = process.env.JWT_SECRET || process.env.SESSION_SECRET || "janus-dev-secret-change-in-production";
     const decoded = jwt.default.verify(jwtToken, secret) as { userId?: string; email?: string; sub?: string };
     return {
       userId: decoded.userId || decoded.sub || null,

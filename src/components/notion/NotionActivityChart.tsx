@@ -35,15 +35,15 @@ const CATEGORIES: { key: Category; label: string; icon: React.ReactNode }[] = [
 ];
 
 const chartConfig: ChartConfig = {
-  club34_updates: {
+  janus_updates: {
     label: 'Updates',
     color: 'hsl(var(--iaqualink))',
   },
-  club34_new: {
+  janus_new: {
     label: 'New',
     color: 'hsl(var(--status-online))',
   },
-  club34_completions: {
+  janus_completions: {
     label: 'Completed',
     color: 'hsl(var(--accent))',
   },
@@ -72,12 +72,12 @@ export function NotionActivityChart() {
     }
   };
 
-  // Summary stats (Club 34 only)
+  // Summary stats (Janus only)
   const totals = (data ?? []).reduce(
     (acc, d) => ({
-      updates: acc.updates + d.club34_updates,
-      new: acc.new + d.club34_new,
-      completions: acc.completions + d.club34_completions,
+      updates: acc.updates + d.janus_updates,
+      new: acc.new + d.janus_new,
+      completions: acc.completions + d.janus_completions,
     }),
     { updates: 0, new: 0, completions: 0 }
   );
@@ -155,7 +155,7 @@ export function NotionActivityChart() {
                 onClick={() => toggleCategory(cat.key)}
                 style={
                   visible[cat.key]
-                    ? { backgroundColor: chartConfig[`club34_${cat.key}`].color, color: 'hsl(var(--primary-foreground))' }
+                    ? { backgroundColor: chartConfig[`janus_${cat.key}`].color, color: 'hsl(var(--primary-foreground))' }
                     : undefined
                 }
               >
@@ -216,9 +216,9 @@ export function NotionActivityChart() {
                 <ChartLegend content={<ChartLegendContent />} />
                 {visible.updates && (
                   <Bar
-                    dataKey="club34_updates"
-                    stackId="club34"
-                    fill="var(--color-club34_updates)"
+                    dataKey="janus_updates"
+                    stackId="janus"
+                    fill="var(--color-janus_updates)"
                     radius={[0, 0, 0, 0]}
                     className="cursor-pointer"
                     onClick={(data) => handleBarClick(data)}
@@ -226,9 +226,9 @@ export function NotionActivityChart() {
                 )}
                 {visible.new && (
                   <Bar
-                    dataKey="club34_new"
-                    stackId="club34"
-                    fill="var(--color-club34_new)"
+                    dataKey="janus_new"
+                    stackId="janus"
+                    fill="var(--color-janus_new)"
                     radius={[0, 0, 0, 0]}
                     className="cursor-pointer"
                     onClick={(data) => handleBarClick(data)}
@@ -236,9 +236,9 @@ export function NotionActivityChart() {
                 )}
                 {visible.completions && (
                   <Bar
-                    dataKey="club34_completions"
-                    stackId="club34"
-                    fill="var(--color-club34_completions)"
+                    dataKey="janus_completions"
+                    stackId="janus"
+                    fill="var(--color-janus_completions)"
                     radius={[4, 4, 0, 0]}
                     className="cursor-pointer"
                     onClick={(data) => handleBarClick(data)}

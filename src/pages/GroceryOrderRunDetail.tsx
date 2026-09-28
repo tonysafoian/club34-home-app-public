@@ -197,7 +197,7 @@ export default function GroceryOrderRunDetail() {
       <main className="container py-6 space-y-6 max-w-3xl pb-12">
         <div className="rounded-xl border border-border/60 bg-card p-5 space-y-3">
           <div className="flex items-center gap-3">
-            <div className="flex items-center justify-center w-10 h-10 rounded-xl club34-gradient shrink-0">
+            <div className="flex items-center justify-center w-10 h-10 rounded-xl janus-gradient shrink-0">
               <span className="text-xl font-black font-display text-primary-foreground leading-none">34</span>
             </div>
             <div>

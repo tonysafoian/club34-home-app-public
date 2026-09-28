@@ -367,7 +367,7 @@ export function renderCartHtml(
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Grocery Helper — Club 34</title>
+<title>Grocery Helper — Janus</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:wght@600;700&family=Barlow:wght@400;500;600&display=swap');
 body { margin:0; padding:0; background:#f6f3ec; }
@@ -448,7 +448,7 @@ body { margin:0; padding:0; background:#f6f3ec; }
               <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
                 <tr>
                   <td style="font-family:Barlow,Arial,sans-serif;font-size:11px;color:#9CA3AF;line-height:1.7;">
-                    <strong style="color:#6B7280;">Club 34</strong> · Grocery Helper<br>
+                    <strong style="color:#6B7280;">Janus</strong> · Grocery Helper<br>
                     Cart locks: ${escHtml(lockTime)}<br>
                     Delivery: ${escHtml(deliveryDate)}<br>
                     <a href="${ctaUrl}" style="color:#D97706;text-decoration:none;">Edit cart</a>
@@ -488,7 +488,7 @@ export function renderCartText(
   const deliveryDate = fmtDeliveryDate(run?.delivery_date);
 
   const lines: string[] = [];
-  lines.push(`GROCERY HELPER — Club 34`);
+  lines.push(`GROCERY HELPER — Janus`);
   lines.push(`========================================`);
   lines.push(``);
   lines.push(hero.toUpperCase());
@@ -525,7 +525,7 @@ export function renderCartText(
   lines.push(`Delivery: ${deliveryDate}`);
   lines.push(`${CART_URL}`);
   lines.push(``);
-  lines.push(`Club 34 — Grocery Helper`);
+  lines.push(`Janus — Grocery Helper`);
 
   return lines.join('\n');
 }

@@ -1,7 +1,7 @@
 /**
  * Server-side Workflow Trigger Reconciler
  *
- * Periodically checks that every Club34 workflow rule's HA automation(s)
+ * Periodically checks that every Janus workflow rule's HA automation(s)
  * still exist in Home Assistant. If any are missing they are re-deployed
  * automatically so physical-switch sync keeps working after HA restarts.
  *
@@ -146,8 +146,8 @@ async function reconcileRule(
   entities: HAEntityLike[],
   result: ReconcileResult,
 ): Promise<boolean> {
-  const forwardId = `club34_${rule.id}`;
-  const reverseId = `club34_${rule.id}__reverse`;
+  const forwardId = `janus_${rule.id}`;
+  const reverseId = `janus_${rule.id}__reverse`;
 
   const forwardExists = automations.has(forwardId);
   const reverseExists = !rule.bidirectional || automations.has(reverseId);

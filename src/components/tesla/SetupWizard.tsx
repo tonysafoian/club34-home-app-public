@@ -90,7 +90,7 @@ export function SetupWizard() {
                   <Copy className="h-3 w-3" /> Copy Public Key
                 </Button>
                 <p className="text-xs text-muted-foreground mt-2">
-                  Host this at: <code className="text-[hsl(var(--club34-amber))]">https://{import.meta.env.VITE_APP_DOMAIN || "example.com"}/.well-known/appspecific/com.tesla.3p.public-key.pem</code>
+                  Host this at: <code className="text-[hsl(var(--janus-amber))]">https://{import.meta.env.VITE_APP_DOMAIN || "example.com"}/.well-known/appspecific/com.tesla.3p.public-key.pem</code>
                 </p>
               </div>
             )}

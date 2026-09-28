@@ -2,8 +2,8 @@ const PROJECT_ID = 'b5561696-27c3-437d-a6f3-c33ce05a412f';
 
 export function isAllowedOrigin(origin: string): boolean {
   if (origin === 'https://example.com' || origin === 'https://www.example.com') return true;
-  if (origin === 'https://club34.pages.dev') return true;
-  if (origin === 'https://club34.ai' || origin === 'https://www.club34.ai') return true;
+  if (origin === 'https://janus.pages.dev') return true;
+  if (origin === 'https://janus.ai' || origin === 'https://www.janus.ai') return true;
   return false;
 }
 

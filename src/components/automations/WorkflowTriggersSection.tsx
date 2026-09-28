@@ -427,7 +427,7 @@ function WorkflowRuleCard({ rule, serverStatus }: { rule: WorkflowRule; serverSt
         {isDeployed && (
           <div className="text-[10px] text-muted-foreground flex items-center gap-1 pt-1">
             <Info className="h-3 w-3" />
-            Runs server-side — fires from any source (physical switch, HA app, Google Home, Club34)
+            Runs server-side — fires from any source (physical switch, HA app, Google Home, Janus)
           </div>
         )}
       </CardContent>

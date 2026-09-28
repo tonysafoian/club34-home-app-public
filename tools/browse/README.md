@@ -2,7 +2,7 @@
 
 Isolated Playwright setup so Claude can:
 
-- Open the Club34 web app (production or a preview URL) and take screenshots / read DOM
+- Open the Janus web app (production or a preview URL) and take screenshots / read DOM
 - Drive Home Assistant via its REST/websocket API using a Long-Lived Access Token (LLAT)
 
 This directory is **completely separate** from the main app's `package.json`. Standard
@@ -60,13 +60,13 @@ git clone <this repo>
 cd tools/browse
 npm install
 npm run install:browsers
-npm run capture -- https://example.com --out club34.json
+npm run capture -- https://example.com --out janus.json
 # (a Chrome window opens; sign in; come back to the terminal; press Enter)
 ```
 
-That writes `club34.json` (a small JSON file with cookies + storage). Upload
+That writes `janus.json` (a small JSON file with cookies + storage). Upload
 it to the cloud Claude session. Claude stores it under `tools/browse/.state/`
-(gitignored) and screenshots run with `--state .state/club34.json`.
+(gitignored) and screenshots run with `--state .state/janus.json`.
 
 ### Notes
 

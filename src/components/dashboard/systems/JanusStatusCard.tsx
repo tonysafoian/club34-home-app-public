@@ -127,7 +127,7 @@ function CategorySection({ label, icon: Icon, color, results, defaultOpen }: Cat
   );
 }
 
-export function Club34StatusCard() {
+export function JanusStatusCard() {
   const [running, setRunning] = useState(false);
   const queryClient = useQueryClient();
 
@@ -175,7 +175,7 @@ export function Club34StatusCard() {
       <Card>
         <CardHeader className="pb-3">
           <div className="flex items-center justify-between">
-            <CardTitle className="text-base">Club 34 App Status</CardTitle>
+            <CardTitle className="text-base">Janus App Status</CardTitle>
             <div className="flex items-center gap-2">
               {latest && (
                 <Badge

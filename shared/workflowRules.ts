@@ -1,5 +1,5 @@
 /**
- * Workflow Rules — single source of truth for Club34-managed HA automations.
+ * Workflow Rules — single source of truth for Janus-managed HA automations.
  *
  * Shared between:
  *   - Frontend (src/lib/workflowTriggers.ts) — for UI display + manual deploy
@@ -7,7 +7,7 @@
  *
  * IMPORTANT: This module must stay pure (no browser-only or server-only
  * imports) so it can be consumed from both environments. To add a new
- * Club34-managed HA automation, just append it to WORKFLOW_RULES below —
+ * Janus-managed HA automation, just append it to WORKFLOW_RULES below —
  * the reconciler will automatically pick it up and self-heal it.
  */
 
@@ -64,7 +64,7 @@ export interface WorkflowRule {
   resolveReverseTarget?: (reverseEntity: HAEntityLike, allEntities: HAEntityLike[]) => string[];
 }
 
-// ── Rules (source of truth — all workflow logic lives in Club34) ─────────
+// ── Rules (source of truth — all workflow logic lives in Janus) ─────────
 
 export const WORKFLOW_RULES: WorkflowRule[] = [
   {
@@ -394,8 +394,8 @@ export function buildForwardAutomationConfig(resolved: ResolvedWorkflow) {
     : [onBranch, offBranch];
 
   return {
-    alias: `Club34 — ${resolved.rule.name}`,
-    description: `[Managed by Club34] ${resolved.rule.description}`,
+    alias: `Janus — ${resolved.rule.name}`,
+    description: `[Managed by Janus] ${resolved.rule.description}`,
     trigger: triggers,
     condition: [],
     action: [{ choose: chooseBranches }],
@@ -415,8 +415,8 @@ export function buildReverseAutomationConfig(resolved: ResolvedWorkflow) {
   const primaryId = resolved.reverseTargetEntityIds![0];
 
   return {
-    alias: `Club34 — ${resolved.rule.name} (reverse)`,
-    description: `[Managed by Club34] Reverse direction: ${resolved.rule.reverseTriggerLabel ?? 'secondary'} → primary. ${resolved.rule.description}`,
+    alias: `Janus — ${resolved.rule.name} (reverse)`,
+    description: `[Managed by Janus] Reverse direction: ${resolved.rule.reverseTriggerLabel ?? 'secondary'} → primary. ${resolved.rule.description}`,
     trigger: [
       { platform: 'state', entity_id: reverseId, to: 'on' },
       { platform: 'state', entity_id: reverseId, to: 'off' },

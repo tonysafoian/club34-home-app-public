@@ -3,7 +3,7 @@ import { RequestError } from "@octokit/request-error";
 import { randomBytes } from "crypto";
 
 const REPO_OWNER = process.env.GITHUB_REPO_OWNER ?? "owner";
-const REPO_NAME = process.env.GITHUB_REPO_NAME ?? "club34-home-app-public";
+const REPO_NAME = process.env.GITHUB_REPO_NAME ?? "janus-home-app-public";
 const DEFAULT_BRANCH = process.env.GITHUB_DEFAULT_BRANCH ?? "main";
 
 const MAX_PATH_LENGTH = 500;

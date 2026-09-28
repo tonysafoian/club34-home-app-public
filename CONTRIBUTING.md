@@ -1,14 +1,14 @@
-# Contributing to Household OS
+# Contributing to Janus
 
-Thank you for your interest in contributing to Household OS! We welcome contributions, bug reports, and suggestions from the community.
+Thank you for your interest in contributing to Janus! We welcome contributions, bug reports, and suggestions from the community.
 
 ## Development Workflow
 
 1. **Fork the Repository** on GitHub.
 2. **Clone your fork locally**:
    ```bash
-   git clone https://github.com/<your-username>/club34-home-app-public.git
-   cd club34-home-app-public
+   git clone https://github.com/<your-username>/janus-home-app.git
+   cd janus-home-app
    ```
 3. **Install dependencies**:
    ```bash

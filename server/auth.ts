@@ -9,7 +9,7 @@ const JWT_SECRET = process.env.JWT_SECRET || process.env.SESSION_SECRET || (() =
     throw new Error("JWT_SECRET or SESSION_SECRET must be set in production");
   }
   console.warn("[AUTH] WARNING: Using default JWT secret. Set JWT_SECRET env var for production.");
-  return "club34-dev-secret-change-in-production";
+  return "janus-dev-secret-change-in-production";
 })();
 const JWT_EXPIRY = "7d";
 

@@ -1,6 +1,6 @@
 # 🖥️ Self-Hosting with Docker & Homelab Guide
 
-Household OS is designed for self-hosting on residential homelab hardware, including:
+Janus is designed for self-hosting on residential homelab hardware, including:
 - **Unraid**
 - **Proxmox VE (Debian / Ubuntu VM or LXC)**
 - **TrueNAS SCALE**
@@ -11,7 +11,7 @@ Household OS is designed for self-hosting on residential homelab hardware, inclu
 ## 📦 Production Docker Architecture
 
 A production deployment runs three primary components:
-1. **Household OS Application Container**: The Node.js Express server + built React SPA.
+1. **Janus Application Container**: The Node.js Express server + built React SPA.
 2. **PostgreSQL 16 + pgvector**: Database with vector search extensions.
 3. **Redis 7**: Pub/Sub real-time event cache.
 
@@ -29,7 +29,7 @@ Create `docker-compose.prod.yml`:
 ```yaml
 services:
   app:
-    image: ghcr.io/tonysafoian/club34-home-app:latest
+    image: ghcr.io/tonysafoian/janus-home-app:latest
     container_name: household-app
     restart: unless-stopped
     ports:

@@ -833,7 +833,7 @@ async function pingUrl(url: string, timeoutMs = 5000): Promise<boolean> {
       method: 'HEAD',
       signal: controller.signal,
       redirect: 'follow',
-      headers: { 'User-Agent': 'Mozilla/5.0 (compatible; Club34-LinkChecker/1.0)' },
+      headers: { 'User-Agent': 'Mozilla/5.0 (compatible; Janus-LinkChecker/1.0)' },
     });
     clearTimeout(timer);
     // 2xx/3xx = alive, 404/410 = dead, 403 = may be geo-blocked (treat as alive)
@@ -847,7 +847,7 @@ async function pingUrl(url: string, timeoutMs = 5000): Promise<boolean> {
         signal: controller2.signal,
         redirect: 'follow',
         headers: {
-          'User-Agent': 'Mozilla/5.0 (compatible; Club34-LinkChecker/1.0)',
+          'User-Agent': 'Mozilla/5.0 (compatible; Janus-LinkChecker/1.0)',
           'Range': 'bytes=0-0',
         },
       });
@@ -902,7 +902,7 @@ function replaceDeadUrls(text: string, deadUrls: string[]): string {
 }
 
 // Domains to skip validation (always trusted — e.g. Google Docs links we generate)
-const TRUSTED_DOMAINS = ['docs.google.com', 'drive.google.com', 'calendar.google.com', 'notion.so', 'example.com', 'club34.ai'];
+const TRUSTED_DOMAINS = ['docs.google.com', 'drive.google.com', 'calendar.google.com', 'notion.so', 'example.com', 'janus.ai'];
 
 function isTrustedUrl(url: string): boolean {
   try {

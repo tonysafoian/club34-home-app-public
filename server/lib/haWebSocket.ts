@@ -112,7 +112,7 @@ async function fireCrestronAlert(state: 'healthy' | 'offline', unavailable: numb
     const { getAlertPhoneNumber, sendWhatsAppTo } = await import('./helpers.js');
     const phone = await getAlertPhoneNumber();
     const msg = state === 'offline'
-      ? `🔴 *Crestron Home bridge offline*\n${unavailable}/${total} lights are unavailable. Open Club 34 → Home Lights to reload.`
+      ? `🔴 *Crestron Home bridge offline*\n${unavailable}/${total} lights are unavailable. Open Janus → Home Lights to reload.`
       : `✅ *Crestron Home bridge recovered*\nUnavailable lights dropped below threshold (${unavailable}/${total} still offline).`;
     await sendWhatsAppTo(phone, msg);
   } catch (e) {

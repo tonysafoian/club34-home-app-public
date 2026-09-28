@@ -6,7 +6,7 @@ Securing remote access to your estate operating system is paramount. **Never ope
 
 ## 🛡️ Recommended: Cloudflare Tunnels (Zero Trust)
 
-[Cloudflare Tunnels](https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/) allow you to securely expose Household OS to your custom domain without opening inbound router firewall ports.
+[Cloudflare Tunnels](https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/) allow you to securely expose Janus to your custom domain without opening inbound router firewall ports.
 
 ### Setup Steps:
 1. In Cloudflare Zero Trust Dashboard, navigate to **Networks → Tunnels → Create a Tunnel**.
@@ -26,7 +26,7 @@ Securing remote access to your estate operating system is paramount. **Never ope
 
 If you do not want your dashboard exposed to the public internet at all, use [Tailscale](https://tailscale.com/):
 
-1. Install Tailscale on the machine running Household OS:
+1. Install Tailscale on the machine running Janus:
    ```bash
    curl -fsSL https://tailscale.com/install.sh | sh
    sudo tailscale up

@@ -34,7 +34,7 @@ export function PWAInstallBanner() {
         <>
           <Download className="h-8 w-8 text-primary shrink-0" />
           <div className="flex-1 min-w-0">
-            <p className="font-medium text-sm">Install Club 34</p>
+            <p className="font-medium text-sm">Install Janus</p>
             <p className="text-xs text-muted-foreground">
               Add to your home screen for instant access & offline support.
             </p>
@@ -47,7 +47,7 @@ export function PWAInstallBanner() {
         <>
           <Download className="h-8 w-8 text-primary shrink-0" />
           <div className="flex-1 min-w-0">
-            <p className="font-medium text-sm">Install Club 34</p>
+            <p className="font-medium text-sm">Install Janus</p>
             <p className="text-xs text-muted-foreground">
               Tap <Share className="inline h-3.5 w-3.5" /> then <strong>Add to Home Screen</strong> <PlusSquare className="inline h-3.5 w-3.5" />
             </p>

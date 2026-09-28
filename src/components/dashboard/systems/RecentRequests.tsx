@@ -41,7 +41,7 @@ function getEventIcon(entry: AuditEntry) {
 
 export function RecentRequestItem({ entry }: { entry: AuditEntry }) {
   const [expanded, setExpanded] = useState(false);
-  const actorDisplay = entry.actor_name ?? (entry.channel === 'web' ? 'Club34 App' : null);
+  const actorDisplay = entry.actor_name ?? (entry.channel === 'web' ? 'Janus' : null);
 
   return (
     <div className="border-b border-border/50 last:border-0">

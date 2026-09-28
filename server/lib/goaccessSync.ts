@@ -1,5 +1,5 @@
 /**
- * Club34 Ball — GoAccess Control sync
+ * Janus Ball — GoAccess Control sync
  *
  * GoAccess Control (app.goaccesscontrol.com) is the gate access system
  * for Community Gatehouse. There's no API — we have to drive the
@@ -16,7 +16,7 @@
  *   - Run once per Wednesday at ~3pm PT (after the game ON/OFF decision)
  *   - Single browser session adds every confirmed dad as a one-day
  *     Temporary visitor for the game date
- *   - We tag the Gatehouse Notes with `[club34-ball:YYYY-MM-DD]` so we
+ *   - We tag the Gatehouse Notes with `[janus-ball:YYYY-MM-DD]` so we
  *     can find/clean up entries later if needed
  *   - Idempotency: before adding, we check the visitor list and skip
  *     anyone already tagged for this game
@@ -36,7 +36,7 @@ const LOGIN_URL = 'https://app.goaccesscontrol.com/login';
 const ADD_URL = 'https://app.goaccesscontrol.com/go/ResidentAddVisitor';
 const LIST_URL = 'https://app.goaccesscontrol.com/go/ResidentVisitors';
 
-const TAG_PREFIX = '[club34-ball:'; // followed by YYYY-MM-DD]
+const TAG_PREFIX = '[janus-ball:'; // followed by YYYY-MM-DD]
 
 export interface GoAccessSyncResult {
   attempted: number;

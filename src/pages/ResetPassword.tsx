@@ -7,7 +7,7 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Loader2, CheckCircle } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { Club34Logo } from '@/components/brand/Club34Logo';
+import { JanusLogo } from '@/components/brand/JanusLogo';
 
 export default function ResetPassword() {
   const navigate = useNavigate();
@@ -103,13 +103,13 @@ export default function ResetPassword() {
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden bg-background">
-      <div className="absolute inset-0 club34-gradient opacity-10" />
-      <Card className="w-full max-w-md animate-fade-in glass relative z-10 club34-glow-soft">
+      <div className="absolute inset-0 janus-gradient opacity-10" />
+      <Card className="w-full max-w-md animate-fade-in glass relative z-10 janus-glow-soft">
         <CardHeader className="text-center space-y-4">
-          <div className="mx-auto club34-glow-soft rounded-full inline-block">
-            <Club34Logo size="xl" variant="icon" />
+          <div className="mx-auto janus-glow-soft rounded-full inline-block">
+            <JanusLogo size="xl" variant="icon" />
           </div>
-          <CardTitle className="text-3xl font-display club34-text-gradient">Reset Password</CardTitle>
+          <CardTitle className="text-3xl font-display janus-text-gradient">Reset Password</CardTitle>
           <CardDescription>Enter your new password below</CardDescription>
         </CardHeader>
         <CardContent>

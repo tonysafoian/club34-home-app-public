@@ -1,8 +1,8 @@
-# 🏛️ Household OS — Executive Overview & Estate Guide
+# 🏛️ Janus — Executive Overview & Estate Guide
 
 <div align="center">
 
-### The Operating System for Modern Residential Estates
+### The AI-Powered Operating System for Modern Residential Estates
 
 *A comprehensive, non-technical guide for estate owners, household managers, architects, integrators, and family members.*
 
@@ -16,45 +16,46 @@
 
 ## Table of Contents
 
-1. [Executive Summary](#executive-summary-what-is-household-os)
-2. [Why Household OS Exists](#why-household-os-exists)
-3. [The Executive Command Deck](#-the-executive-command-deck)
-4. [⭐ Home Assistant — The Recommended Integration Hub](#-home-assistant--the-recommended-integration-hub)
-5. [Janus — The Resident AI Concierge](#-janus--the-resident-ai-concierge)
-6. [Multi-Channel Communication](#-multi-channel-communication-email-whatsapp-google-cast)
-7. [Tesla EV Fleet Management](#-tesla-ev-fleet-management)
-8. [Energy Intelligence](#-energy-intelligence--cost-tracking)
-9. [Water Intelligence](#-water-intelligence)
-10. [Pool & Spa Hydrology](#-pool--spa-hydrology)
-11. [Interactive Irrigation Map](#-interactive-estate-topology--smart-irrigation)
-12. [Security & Perimeter](#-security--perimeter-monitoring)
-13. [Network & Infrastructure](#-network-infrastructure-monitoring)
-14. [Family Calendar & Travel Hub](#-family-calendar--travel-hub)
-15. [Grocery & Shopping Automation](#-grocery--shopping-automation)
-16. [Entertainment & Media](#-entertainment--media-discovery)
-17. [Morning Executive Briefings](#-morning-executive-briefings)
-18. [Project Workspace](#-project-workspace--notion-integration)
-19. [Weather & Microclimate](#-hyper-local-weather--microclimate)
-20. [Automation Engine](#-automation-engine--scheduled-jobs)
-21. [White-Label Customization](#-white-label-customization-bring-your-own-estate)
-22. [Admin & Multi-User Security](#-admin--multi-user-security)
-23. [Self-Healing Infrastructure](#-self-healing-infrastructure)
-24. [Architecture Overview](#-architecture-overview)
-25. [The Twenty Pillars of Household OS](#-the-twenty-pillars-of-household-os)
-26. [Downloadable & Printable Version](#-downloadable--printable-version)
+1. [Executive Summary](#executive-summary-what-is-janus)
+2. [Why "Janus"? — The Name Behind the App](#-why-janus--the-name-behind-the-app)
+3. [Why Janus Exists](#why-janus-exists)
+4. [The Executive Command Deck](#-the-executive-command-deck)
+5. [⭐ Home Assistant — The Recommended Integration Hub](#-home-assistant--the-recommended-integration-hub)
+6. [The Janus AI Concierge](#-the-janus-ai-concierge)
+7. [Multi-Channel Communication](#-multi-channel-communication-email-whatsapp-google-cast)
+8. [Tesla EV Fleet Management](#-tesla-ev-fleet-management)
+9. [Energy Intelligence](#-energy-intelligence--cost-tracking)
+10. [Water Intelligence](#-water-intelligence)
+11. [Pool & Spa Hydrology](#-pool--spa-hydrology)
+12. [Interactive Irrigation Map](#-interactive-estate-topology--smart-irrigation)
+13. [Security & Perimeter](#-security--perimeter-monitoring)
+14. [Network & Infrastructure](#-network-infrastructure-monitoring)
+15. [Family Calendar & Travel Hub](#-family-calendar--travel-hub)
+16. [Grocery & Shopping Automation](#-grocery--shopping-automation)
+17. [Entertainment & Media](#-entertainment--media-discovery)
+18. [Morning Executive Briefings](#-morning-executive-briefings)
+19. [Project Workspace](#-project-workspace--notion-integration)
+20. [Weather & Microclimate](#-hyper-local-weather--microclimate)
+21. [Automation Engine](#-automation-engine--scheduled-jobs)
+22. [White-Label Customization](#-white-label-customization-bring-your-own-estate)
+23. [Admin & Multi-User Security](#-admin--multi-user-security)
+24. [Self-Healing Infrastructure](#-self-healing-infrastructure)
+25. [Architecture Overview](#-architecture-overview)
+26. [The Twenty Pillars of Janus](#-the-twenty-pillars-of-janus)
+27. [Downloadable & Printable Version](#-downloadable--printable-version)
 
 ---
 
-## Executive Summary: What is Household OS?
+## Executive Summary: What is Janus?
 
 Modern estates are equipped with extraordinary technology: Crestron lighting systems, commercial HVAC chillers, swimming pools and hydronic spas, automated security gates, high-voltage vehicle charging, backup generators, smart irrigation, whole-house audio, enterprise-grade networking, and dozens of IoT sensors.
 
 However, managing them daily usually requires **15 to 20 different vendor apps**—each with its own login, notifications, and clunky user interface. The pool company has one app. The electrician monitors another. The sprinklers use a third. The Tesla has its own. The thermostat lives in yet another. The security cameras live in yet another. And none of them talk to each other.
 
-**Household OS** replaces that fragmented chaos with **one unified, private estate operating system**:
+**Janus** replaces that fragmented chaos with **one unified, private estate operating system**:
 
 * 📱 **One App for Everything**: Lights, climate, pool, gates, locks, energy, irrigation, cameras, Tesla fleet, groceries, calendars, travel, and entertainment—all on one screen.
-* 🧠 **Janus AI Concierge**: A private resident AI assistant with 40+ tool integrations, persistent long-term memory, and the ability to control every connected system via natural conversation—through chat, email, or WhatsApp.
+* 🧠 **AI Concierge at the Core**: A private resident AI assistant with 40+ tool integrations, persistent long-term memory, and the ability to control every connected system via natural conversation—through chat, email, or WhatsApp.
 * 🏡 **Home Assistant First**: Built to leverage [Home Assistant](https://www.home-assistant.io/) as its primary integration hub, connecting 2,000+ device brands through one standardized interface.
 * 🔒 **100% Private & Local-First**: Telemetry stays on your local home network. No third-party cloud data broker collects your family's daily habits.
 * 🎨 **White-Label & Re-Brandable**: Name your property, upload your family crest, and select a bespoke color palette matching your home's interior design.
@@ -64,7 +65,40 @@ However, managing them daily usually requires **15 to 20 different vendor apps**
 
 ---
 
-## Why Household OS Exists
+## 🏛️ Why "Janus"? — The Name Behind the App
+
+<div align="center">
+
+*"Janus, the two-faced god who looks both inward and outward, past and future — the guardian of every doorway, passage, and transition."*
+
+</div>
+
+In Roman mythology, **Janus** (*Ianus*) was one of the most ancient and revered deities — the god of **beginnings, transitions, doorways, and passages**. Unlike any other Roman god, Janus was depicted with **two faces**: one looking forward (toward the future) and one looking backward (toward the past). He was the guardian who stood at every threshold — every gate, every door, every boundary between what was and what would be.
+
+### Why This Name Fits
+
+The metaphor is deliberate and layered:
+
+| Janus the God | Janus the App |
+|---|---|
+| **Guardian of the Doorway** | Janus sits at the threshold of your home — the single gateway between you and every connected system in your estate. Gates, locks, cameras, lights, climate — all pass through Janus. |
+| **Two Faces: Past & Future** | Janus looks backward through **persistent long-term memory** (recalling facts, preferences, and patterns from months ago) and forward through **predictive intelligence** (forecasting energy costs, projecting billing cycles, and anticipating your needs). |
+| **God of Beginnings** | Every interaction starts with Janus — whether you speak to it via chat, email, or WhatsApp, Janus is the beginning of every action your estate takes. |
+| **God of Transitions** | Janus manages the transitions of daily life: morning briefings at dawn, climate scenes as day turns to evening, automated irrigation schedules, school-morning broadcasts for the children. |
+| **Presides Over All Passages** | Roman Janus presided over every passage — physical and metaphorical. Our Janus presides over every data passage between your home's systems: the electrical panel speaks to the billing engine, the weather speaks to the irrigation controller, the calendar speaks to the lighting scenes. |
+| **The First & The Last** | Janus was invoked at the **beginning** of every Roman ceremony and prayer, even before Jupiter. In your estate, Janus is the first thing you open in the morning and the last thing that tucks the house in at night. |
+
+### The Month of January
+
+The month of **January** (*Ianuarius*) is itself named after Janus — the doorway to the new year. Just as January marks the transition from the old year to the new, Janus marks the transition from fragmented vendor apps to one unified household intelligence.
+
+### A Name with Gravitas
+
+We chose "Janus" because managing a modern estate is not a trivial consumer-tech problem. It requires the same operational seriousness as running a boutique hotel, a family office, or a private club. The name reflects that gravitas — a classical, enduring name for a system designed to be the permanent operating backbone of your home for decades, not a disposable app that gets replaced every iOS cycle.
+
+---
+
+## Why Janus Exists
 
 ### The Problem: App Overload
 
@@ -89,7 +123,7 @@ That's **14+ apps** — each with separate credentials, separate notification st
 
 ### The Solution: One Pane of Glass
 
-Household OS connects to these systems through a combination of **Home Assistant** (the recommended backbone), **direct API integrations** (Tesla Fleet API, Verkada, Generac MobileLink, Govee Cloud), and **enterprise network monitoring** (FortiGate firewall, Ruckus wireless) to present a single, coherent view of the entire estate.
+Janus connects to these systems through a combination of **Home Assistant** (the recommended backbone), **direct API integrations** (Tesla Fleet API, Verkada, Generac MobileLink, Govee Cloud), and **enterprise network monitoring** (FortiGate firewall, Ruckus wireless) to present a single, coherent view of the entire estate.
 
 ---
 
@@ -137,16 +171,16 @@ The dashboard is a **Progressive Web App (PWA)** — it installs on iPhones, iPa
 
 ## ⭐ Home Assistant — The Recommended Integration Hub
 
-> **Home Assistant is the single most important integration in Household OS.** If you configure only one thing, make it this.
+> **Home Assistant is the single most important integration in Janus.** If you configure only one thing, make it this.
 
-[Home Assistant](https://www.home-assistant.io/) is the open-source smart home platform that connects over **2,000 brands** of devices and services through a single, local-first hub. Household OS uses Home Assistant as its **primary device layer** — the universal translator between your physical estate and the Household OS dashboard.
+[Home Assistant](https://www.home-assistant.io/) is the open-source smart home platform that connects over **2,000 brands** of devices and services through a single, local-first hub. Janus uses Home Assistant as its **primary device layer** — the universal translator between your physical estate and the Janus dashboard.
 
 ### Why Home Assistant Is the Backbone
 
 ```
 ┌─────────────────────────────────────────────────────┐
-│                   HOUSEHOLD OS                       │
-│         (Dashboard · Janus AI · Automations)         │
+│                      JANUS                           │
+│         (Dashboard · AI Concierge · Automations)     │
 └──────────────────────┬──────────────────────────────┘
                        │ WebSocket + REST API
                        ▼
@@ -167,11 +201,11 @@ The dashboard is a **Progressive Web App (PWA)** — it installs on iPhones, iPa
 └─────────────────────────────────────────────────────┘
 ```
 
-### What Household OS Gets Through Home Assistant
+### What Janus Gets Through Home Assistant
 
 | Capability | How It Works |
 |---|---|
-| **Persistent WebSocket Connection** | Household OS maintains a live WebSocket to your HA instance. Every entity state change (light on, thermostat setpoint change, door lock, sensor reading) streams in real-time — no polling, no delay. |
+| **Persistent WebSocket Connection** | Janus maintains a live WebSocket to your HA instance. Every entity state change (light on, thermostat setpoint change, door lock, sensor reading) streams in real-time — no polling, no delay. |
 | **Crestron Bridge Health Monitoring** | Automatically detects when the Crestron-to-HA bridge goes offline (>20% of light entities become "unavailable") and alerts you. |
 | **Entity State Cache** | All HA entities are cached in-memory on the server, enabling sub-millisecond UI updates and Janus AI queries without hitting HA on every request. |
 | **Scene Activation** | One-tap activation of Crestron lighting scenes from the dashboard or via Janus ("turn on the movie scene in the media room"). |
@@ -191,20 +225,20 @@ The dashboard is a **Progressive Web App (PWA)** — it installs on iPhones, iPa
 1. Install [Home Assistant](https://www.home-assistant.io/installation/) on a Raspberry Pi, NUC, or VM
 2. Add your device integrations (Crestron, iAquaLink, Rain Bird, Emporia, etc.)
 3. Generate a **Long-Lived Access Token** in HA → Profile → Security
-4. Set two environment variables in your Household OS `.env`:
+4. Set two environment variables in your Janus `.env`:
    ```
    HA_URL=http://your-ha-ip:8123
    HA_TOKEN=your-long-lived-access-token
    ```
-5. Household OS will connect via WebSocket, cache all entities, and the dashboard + Janus will immediately have full access to your estate.
+5. Janus will connect via WebSocket, cache all entities, and the dashboard + AI concierge will immediately have full access to your estate.
 
 > **Per-User HA Credentials**: Each household member can also configure their own HA URL and token in Settings → Platform Credentials, with AES-encrypted storage. This supports multi-home or multi-instance setups.
 
 ---
 
-## 🧠 Janus — The Resident AI Concierge
+## 🧠 The Janus AI Concierge
 
-Instead of navigating menus or remembering technical settings, family members can simply speak or text to **Janus**, the built-in household AI assistant:
+Instead of navigating menus or remembering technical settings, family members can simply speak or text to the **Janus AI concierge** — the app's namesake intelligence:
 
 <div align="center">
   <img src="assets/screenshots/janus-voice-ai.svg" alt="Janus AI Assistant" width="100%" />
@@ -396,7 +430,7 @@ Full Tesla Fleet API integration providing unified control and monitoring of all
 ## ⚡ Energy Intelligence & Cost Tracking
 
 ### Real-Time Circuit-Level Monitoring
-Household OS integrates with **Emporia Vue** energy monitors (via Home Assistant) to track electricity consumption at the individual circuit breaker level:
+Janus integrates with **Emporia Vue** energy monitors (via Home Assistant) to track electricity consumption at the individual circuit breaker level:
 
 * **16-channel live wattage** — see exactly which circuits are drawing power right now
 * **Per-circuit daily/monthly kWh** — know your HVAC's exact monthly cost vs. the pool pump vs. the EV charger
@@ -445,16 +479,16 @@ Full integration with Jandy/Zodiac iAquaLink pool automation systems:
 * **Spa Light & Pool Light**: Color mode control
 
 ### Home Assistant Enhanced
-When iAquaLink is also connected through Home Assistant, Household OS gets additional capabilities:
+When iAquaLink is also connected through Home Assistant, Janus gets additional capabilities:
 * Historical temperature data for charting trends
 * Integration with climate/weather data for predictive heating estimates
-* Janus AI control: *"Turn on the spa and set it to 104°F"*
+* AI control: *"Turn on the spa and set it to 104°F"*
 
 ---
 
 ## 🗺️ Interactive Estate Topology & Smart Irrigation
 
-Traditional irrigation controllers present confusing lists of numbered valves (Zone 1, Zone 2...). Household OS maps your estate visually on a 2D interactive canvas:
+Traditional irrigation controllers present confusing lists of numbered valves (Zone 1, Zone 2...). Janus maps your estate visually on a 2D interactive canvas:
 
 <div align="center">
   <img src="assets/screenshots/estate-irrigation-map.svg" alt="Estate Irrigation Map" width="100%" />
@@ -582,7 +616,7 @@ Entertainment events can be synced to the family calendar for a unified view of 
 
 ## ☀️ Morning Executive Briefings
 
-Every morning, Household OS generates a **personalized daily briefing** that reads like a memo from a personal executive assistant:
+Every morning, Janus generates a **personalized daily briefing** that reads like a memo from a personal executive assistant:
 
 ### What's in the Morning Briefing
 
@@ -645,7 +679,7 @@ Weather data feeds directly into the irrigation rain-skip logic — if rain is f
 
 ## ⚙️ Automation Engine & Scheduled Jobs
 
-Household OS runs a comprehensive **cron-based automation engine** with 60+ scheduled jobs:
+Janus runs a comprehensive **cron-based automation engine** with 60+ scheduled jobs:
 
 ### Categories of Automations
 
@@ -675,7 +709,7 @@ Every cron execution is logged with:
 
 ## 🎨 White-Label Customization: Bring Your Own Estate
 
-Household OS is designed to be personalized for every estate:
+Janus is designed to be personalized for every estate:
 
 <div align="center">
   <img src="assets/screenshots/white-label-branding.svg" alt="White Label Rebranding Customizer" width="100%" />
@@ -730,7 +764,7 @@ All branding settings are saved to `localStorage` and persist across sessions. E
 
 ## 🛡️ Self-Healing Infrastructure
 
-Household OS is built with production-grade resilience:
+Janus is built with production-grade resilience:
 
 ### Circuit Breakers
 Six named circuit breaker instances protect against cascading failures:
@@ -760,7 +794,7 @@ Six named circuit breaker instances protect against cascading failures:
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────┐
-│                        HOUSEHOLD OS                                     │
+│                          JANUS                                          │
 │                                                                         │
 │  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐  ┌────────────┐  │
 │  │   React SPA  │  │  Express.js  │  │  PostgreSQL  │  │  Supabase  │  │
@@ -820,7 +854,7 @@ Six named circuit breaker instances protect against cascading failures:
 
 ---
 
-## 📋 The Twenty Pillars of Household OS
+## 📋 The Twenty Pillars of Janus
 
 | # | Subsystem | Daily Benefit for the Household |
 | :--- | :--- | :--- |
@@ -867,7 +901,7 @@ Six named circuit breaker instances protect against cascading failures:
 ## 🖨️ Downloadable & Printable Version
 
 A formatted, magazine-grade HTML and printable PDF document is available in:
-* **[`docs/Household_OS_Executive_Guide.html`](Household_OS_Executive_Guide.html)**
+* **[`docs/Janus_Executive_Guide.html`](Janus_Executive_Guide.html)**
 
 Simply open the HTML file in any browser and choose **Print ➔ Save as PDF** to generate a presentation-ready executive brochure for your family or clients!
 
@@ -875,7 +909,9 @@ Simply open the HTML file in any browser and choose **Print ➔ Save as PDF** to
 
 <div align="center">
 
-*Household OS is open-source software released under the [MIT License](../LICENSE).*
+*Janus is open-source software released under the [MIT License](../LICENSE).*
+
+*Named after the Roman god of doorways, beginnings, and transitions — because your home deserves a guardian at every threshold.*
 
 *Built with ❤️ for families who believe their home deserves the same operational intelligence as a world-class business.*
 

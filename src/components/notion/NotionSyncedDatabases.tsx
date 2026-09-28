@@ -46,7 +46,7 @@ export function NotionSyncedDatabases() {
       <CardHeader>
         <CardTitle className="text-base">Synced Databases</CardTitle>
         <CardDescription className="text-xs">
-          Notion databases connected to Club 34
+          Notion databases connected to Janus
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-3">

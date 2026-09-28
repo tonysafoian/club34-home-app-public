@@ -122,7 +122,7 @@ export default function Search() {
               ref={inputRef}
               value={query}
               onChange={e => setQuery(e.target.value)}
-              placeholder="Search Club 34…"
+              placeholder="Search Janus…"
               className="pl-9 h-10 rounded-full border-border/60 bg-muted/40 focus-visible:ring-primary/40"
               autoComplete="off"
               autoCorrect="off"
@@ -158,7 +158,7 @@ export default function Search() {
               <SearchIcon className="h-8 w-8 text-muted-foreground/60" />
             </div>
             <div>
-              <h2 className="text-lg font-semibold text-foreground mb-1">Search Club 34</h2>
+              <h2 className="text-lg font-semibold text-foreground mb-1">Search Janus</h2>
               <p className="text-sm text-muted-foreground leading-relaxed max-w-[280px]">
                 Find any page, system, feature, or action instantly. Try "pool", "tesla", or "cameras".
               </p>

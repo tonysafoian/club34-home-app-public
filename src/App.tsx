@@ -190,7 +190,7 @@ const App = () => (
                 <Route path="/projects/:id" element={<ProtectedRoute><ProjectWorkspace /></ProtectedRoute>} />
                 <Route path="/updates" element={<ProtectedRoute><Updates /></ProtectedRoute>} />
                 <Route path="/janus" element={<ProtectedRoute><JanusFullscreen /></ProtectedRoute>} />
-                {/* Club34 Time — worker + admin routes (worker-fenced, no Janus FAB) */}
+                {/* Janus Time — worker + admin routes (worker-fenced, no Janus FAB) */}
                 <Route path="/time" element={<WorkerRoute><Time /></WorkerRoute>} />
                 <Route path="/time/admin" element={<TimeAdminRoute><TimeAdmin /></TimeAdminRoute>} />
                 <Route path="/google/callback" element={<GoogleCallback />} />

@@ -2,13 +2,13 @@
 
 One of the greatest obstacles when developing or contributing to smart home software is the hardware dependency barrier: **most developers do not own the exact mix of smart home controllers, vehicle models, or enterprise cameras that a system integrates with.**
 
-Household OS solves this with an integrated **Mock Engine and Graceful Degradation Framework**.
+Janus solves this with an integrated **Mock Engine and Graceful Degradation Framework**.
 
 ---
 
 ## 💡 How Graceful Degradation Works
 
-Every hardware connector in Household OS checks for valid credentials upon startup. If a credential or endpoint is missing:
+Every hardware connector in Janus checks for valid credentials upon startup. If a credential or endpoint is missing:
 1. **The application never crashes or halts**.
 2. Unconfigured hardware routes switch into **Simulated / Mock Mode**.
 3. Realistic, synthetic state data is streamed to the dashboard so UI components, animations, and controls function seamlessly.

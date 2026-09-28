@@ -1,5 +1,5 @@
 {
-  "name": "club34-browse-tools",
+  "name": "janus-browse-tools",
   "private": true,
   "version": "0.0.0",
   "description": "Isolated Playwright tooling for Claude to browse the app and Home Assistant. Not part of the main app build.",

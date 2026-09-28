@@ -1,6 +1,6 @@
 # Janus — Household Operating System Soul
 
-> The canonical identity, philosophy, and operating guidelines for Janus Household OS.
+> The canonical identity, philosophy, and operating guidelines for Janus Janus.
 > This is the single source of truth for the AI assistant persona.
 > Editable via the Admin UI (Settings → Janus Soul).
 

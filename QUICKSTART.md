@@ -1,6 +1,6 @@
-# 🚀 Household OS (Janus) — 5-Minute Quickstart
+# 🚀 Janus — 5-Minute Quickstart
 
-Get Household OS running on your local machine in under five minutes.
+Get Janus running on your local machine in under five minutes.
 
 ---
 
@@ -13,7 +13,7 @@ Before you begin, ensure you have installed:
 - [Git](https://git-scm.com/)
 
 > [!TIP]
-> **No smart home hardware? No problem!** Household OS includes a comprehensive **Mock Engine**. If you do not configure Home Assistant, Tesla, or pool hardware, the platform automatically generates simulated telemetry so you can test all features immediately.
+> **No smart home hardware? No problem!** Janus includes a comprehensive **Mock Engine**. If you do not configure Home Assistant, Tesla, or pool hardware, the platform automatically generates simulated telemetry so you can test all features immediately.
 
 ---
 
@@ -21,8 +21,8 @@ Before you begin, ensure you have installed:
 
 ### 1. Clone the Repository
 ```bash
-git clone https://github.com/tonysafoian/club34-home-app-public.git
-cd club34-home-app-public
+git clone https://github.com/tonysafoian/janus-home-app.git
+cd janus-home-app
 ```
 
 ### 2. Boot Local Backing Services

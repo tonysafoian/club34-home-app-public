@@ -1,6 +1,6 @@
 ---
 name: Notion Tasks & Projects
-description: Query, create, and update the household's Notion task and project databases (Recurring Tasks, Club 34 Projects, TigerDen Projects, TigerDen Consumables). Load BEFORE any Notion tool call for exact property names and people/status filter formats.
+description: Query, create, and update the household's Notion task and project databases (Recurring Tasks, Janus Projects, TigerDen Projects, TigerDen Consumables). Load BEFORE any Notion tool call for exact property names and people/status filter formats.
 channels: [chat, whatsapp, email]
 roles: [admin, member]
 ---
@@ -25,7 +25,7 @@ Never call `recall_facts` to look up a database ID.
 - **Title:** "Task"
 - **Properties:** "Assignee" (people), "Description" (rich_text), "Due date" (date, lowercase 'd'), "Effort level" (select: 5 mins/10 mins/15 min/30 mins/45 mins/1 hr/1hr 30mins/2 hrs/3 hrs), "Priority" (select: High/Medium/Low), "Recur Interval" (number), "Recur Unit" (select: N/A/Day(s)/Week(s)/Month(s)/Year(s)), "Status" (status: Not started/In progress/Done), "Summary" (rich_text), "Task type" (multi_select), "Past due" (formula, read-only)
 
-### 2. Club 34 Projects (`2b8e96d8-93fa-80bb-9428-cd132f827553`)
+### 2. Janus Projects (`2b8e96d8-93fa-80bb-9428-cd132f827553`)
 - **Title:** "Project name"
 - **Properties:**
   - "Assignee" (people)
@@ -43,7 +43,7 @@ Never call `recall_facts` to look up a database ID.
 
 ### 3. TigerDen Projects (`2b8e96d8-93fa-80cc-b1fa-fa4eef48c6fe`)
 - **Title:** "Project name"
-- **Key differences from Club 34:**
+- **Key differences from Janus:**
   - "% Complete" (number/percent — not "Percent Complte")
   - "Status" includes "Cancelled"
   - "Team" is people type (not multi_select)
@@ -57,7 +57,7 @@ Never call `recall_facts` to look up a database ID.
 
 - If creation fails with "property not found", call `get_notion_database` to
   discover real names, then retry.
-- Notes/descriptions in Club 34 or TigerDen Projects go in the page BODY, NOT as
+- Notes/descriptions in Janus or TigerDen Projects go in the page BODY, NOT as
   a property.
 - **Defaults for new projects:** Status = "Not started", Priority = "Medium",
   completion = 0. Never create with just a title.

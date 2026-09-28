@@ -1,9 +1,9 @@
 # 🧠 AI & LLM Provider Setup Guide (Janus Engine)
 
-Household OS is powered by an autonomous, voice-capable AI assistant named **Janus**. Unlike cloud-only smart speakers (Alexa, Google Nest), Janus runs on your own hardware, retains long-term semantic memory in PostgreSQL (`pgvector`), and has access to over 30 physical estate tools.
+Janus is powered by an autonomous, voice-capable AI assistant named **Janus**. Unlike cloud-only smart speakers (Alexa, Google Nest), Janus runs on your own hardware, retains long-term semantic memory in PostgreSQL (`pgvector`), and has access to over 30 physical estate tools.
 
 > [!NOTE]
-> Household OS connects directly to standard public LLM endpoints or local Ollama instances. **To enable Janus, simply configure your preferred model API key.** You can get started completely for **FREE** using Google Gemini.
+> Janus connects directly to standard public LLM endpoints or local Ollama instances. **To enable Janus, simply configure your preferred model API key.** You can get started completely for **FREE** using Google Gemini.
 
 ---
 
@@ -25,7 +25,7 @@ You only need **ONE** API key to unlock the full conversational and memory capab
 ### Why Gemini?
 * **Cost**: Google AI Studio provides generous free tier rate limits (15 requests/minute, 1,500 requests/day).
 * **Speed**: `gemini-2.5-flash` delivers sub-second voice responses for snappy conversational turns.
-* **Memory**: Household OS uses Google's `text-embedding-004` to generate vector embeddings stored in PostgreSQL, allowing Janus to remember past preferences, estate notes, and visitor logs forever.
+* **Memory**: Janus uses Google's `text-embedding-004` to generate vector embeddings stored in PostgreSQL, allowing Janus to remember past preferences, estate notes, and visitor logs forever.
 
 ---
 
@@ -66,7 +66,7 @@ For users who refuse to send household conversations, family schedules, or camer
 
 ## 🛠️ Specialized AI Workers (Optional Power-Ups)
 
-Household OS includes specialized worker pipelines that you can optionally activate by adding their respective keys:
+Janus includes specialized worker pipelines that you can optionally activate by adding their respective keys:
 
 | Service | Environment Variable | Where to Get It | What It Unlocks |
 | :--- | :--- | :--- | :--- |

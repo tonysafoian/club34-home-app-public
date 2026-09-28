@@ -165,7 +165,7 @@ export const SEARCH_INDEX: SearchEntry[] = [
   {
     id: 'dashboard-today',
     title: 'Today View',
-    description: "What's happening today at Club 34",
+    description: "What's happening today at Janus",
     category: 'Feature',
     path: '/',
     hash: 'today',
@@ -726,7 +726,7 @@ export const SEARCH_INDEX: SearchEntry[] = [
   {
     id: 'install-pwa',
     title: 'Install App',
-    description: 'Install Club 34 as a PWA on your home screen',
+    description: 'Install Janus as a PWA on your home screen',
     category: 'Action',
     path: '/install',
     keywords: ['install', 'pwa', 'app', 'home screen', 'add to home', 'mobile app', 'shortcut'],

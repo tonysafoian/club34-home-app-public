@@ -1,13 +1,13 @@
 # 🧠 Janus AI Assistant Integration Guide
 
-Janus is the conversational intelligence and automation brain of Household OS. It combines state-of-the-art Large Language Models (LLMs), real-time tool calling, and long-term semantic memory (`pgvector`) to control the estate through natural language.
+Janus is the conversational intelligence and automation brain of Janus. It combines state-of-the-art Large Language Models (LLMs), real-time tool calling, and long-term semantic memory (`pgvector`) to control the estate through natural language.
 
 ---
 
 ## 🔑 1. Supported Providers
 
 ### Primary: Google Gemini (Recommended)
-Household OS is optimized for **Google Gemini 2.5 Flash** (for ultra-low latency voice turns) and **Gemini 2.5 Pro** (for complex scheduling and reasoning):
+Janus is optimized for **Google Gemini 2.5 Flash** (for ultra-low latency voice turns) and **Gemini 2.5 Pro** (for complex scheduling and reasoning):
 
 1. Obtain an API key from [Google AI Studio](https://aistudio.google.com/).
 2. Add the key to your `.env`:
