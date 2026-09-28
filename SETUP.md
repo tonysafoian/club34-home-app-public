@@ -62,7 +62,7 @@ Janus uses an LLM provider for conversational reasoning and embeddings for memor
 
 ## 5. Production Deployment
 
-Household OS runs on any standard Node.js hosting platform (Replit, Render, Railway, Docker, or self-hosted VPS).
+Household OS runs on any standard Node.js hosting platform (Docker, Railway, Render, Fly.io, or self-hosted VPS / Mini PC).
 
 ### Building for Production:
 ```bash

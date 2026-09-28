@@ -236,7 +236,7 @@ describe("upsertObservedDevice", () => {
     await upsertObservedDevice({ mac: "00:1c:b3:01:02:03", ip: "10.0.22.99", hostname: "iPad-2", ssid: "34_AV" });
     const dev = await getDevice("00:1c:b3:01:02:03");
     expect(dev!.hostnames!.sort()).toEqual(["iPad", "iPad-2"]);
-    expect(dev!.ip_addresses!.sort()).toEqual(["192.168.1.10", "10.0.22.99"]);
+    expect(dev!.ip_addresses!.sort()).toEqual(["10.0.22.99", "192.168.1.10"]);
     expect(dev!.ssids!.sort()).toEqual(["34", "34_AV"]);
   });
 

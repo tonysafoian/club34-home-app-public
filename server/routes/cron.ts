@@ -70,13 +70,13 @@ export function initCronJobs(): void {
   }
   cronInitialized = true;
 
-  const isDeployment = !!process.env.REPLIT_DEPLOYMENT;
+  const isProduction = process.env.NODE_ENV === 'production';
   const forceEnable = process.env.ENABLE_CRON === '1';
-  if (!isDeployment && !forceEnable) {
+  if (!isProduction && !forceEnable) {
     console.log('[cron] Skipping cron initialization (dev environment). Set ENABLE_CRON=1 to override.');
     return;
   }
-  console.log(`[cron] Initializing scheduled jobs... (${isDeployment ? 'deployment' : 'dev+ENABLE_CRON'})`);
+  console.log(`[cron] Initializing scheduled jobs... (${isProduction ? 'production' : 'dev+ENABLE_CRON'})`);
 
   cron.schedule('*/30 * * * * *', () => {
     triggerRoute('/api/janus/email-poll');

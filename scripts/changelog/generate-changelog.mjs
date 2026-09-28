@@ -14,7 +14,7 @@
  *   - "feat:" / "feat(scope):"             → MINOR
  *   - "fix:" / "perf:" / "refactor:"       → PATCH
  *   - "chore:" / "docs:" / "style:" / "test:" / "ci:" / "build:" → NO BUMP (still listed)
- *   - "Published your App" + anything not matching a prefix → SKIPPED ENTIRELY (Replit noise)
+ *   - "Published your App" + anything not matching a prefix → SKIPPED ENTIRELY
  *
  * Usage:
  *   node scripts/changelog/generate-changelog.mjs           # dry-run, prints plan
@@ -52,7 +52,7 @@ function latestSemverTag() {
 // Returns { type, scope, breaking, subject } or null if not a conventional commit
 function parseConventionalCommit(message) {
   const firstLine = message.split('\n')[0];
-  // Skip Replit auto-publish commits entirely
+  // Skip auto-publish commits entirely
   if (/^Published your App/i.test(firstLine)) return null;
   // Skip squash-merge PR boilerplate that's purely a number
   if (/^Merge pull request #\d+/i.test(firstLine)) return null;

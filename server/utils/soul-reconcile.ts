@@ -177,7 +177,7 @@ export async function reconcileSoulSource(opts: {
     }
   } else {
     // We don't write to the repo file from a running server — it would
-    // dirty the working tree on Replit and could be clobbered on the next
+    // dirty the working tree in production and could be clobbered on the next
     // deploy. Surface the gap so a human can run sync-soul.
     console.warn(
       `[janus] SOUL drift NOT auto-resolved (DB is newer than file). Run 'sync-soul' / commit the DB content to ${SOUL_FILE_RELATIVE} to converge.`,

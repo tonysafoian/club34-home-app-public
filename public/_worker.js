@@ -9,20 +9,18 @@
 //
 // Routes:
 //   /api/auth/google/callback  → serve the static handler from /api/auth/google/callback/index.html
-//   /api/*                     → proxy to https://club34.replit.app/api/*
-//   /ws/*                      → not handled here (WebSockets don't work through Pages Functions cleanly;
-//                                clients should connect to wss://club34.replit.app/ws/* directly)
+//   /api/*                     → proxy to backend (configured via BACKEND_URL)
 //   /*                         → fall through to static assets (SPA)
 //
 // Header forwarding:
 //   - Pass through Cookie, Authorization, X-Computer-Token, Content-Type, Accept
-//   - Override Host to club34.replit.app so the backend's CORS / vhost matching works
 //   - Forward the original origin in X-Forwarded-Host for logging
 
-const BACKEND = "https://club34.replit.app";
+const DEFAULT_BACKEND = "http://localhost:5000";
 
 export default {
   async fetch(request, env, ctx) {
+    const backendUrl = (env && env.BACKEND_URL) ? env.BACKEND_URL.replace(/\/$/, '') : DEFAULT_BACKEND;
     const url = new URL(request.url);
 
     // Static OAuth handler. The static asset is served from a FLAT file
@@ -43,9 +41,9 @@ export default {
       );
     }
 
-    // Proxy /api/* to Replit backend
+    // Proxy /api/* to backend
     if (url.pathname.startsWith("/api/")) {
-      const upstreamUrl = BACKEND + url.pathname + url.search;
+      const upstreamUrl = backendUrl + url.pathname + url.search;
       const init = {
         method: request.method,
         headers: new Headers(request.headers),

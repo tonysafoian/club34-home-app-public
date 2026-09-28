@@ -1,15 +1,15 @@
 # Database migrations
 
 Club 34 uses a small custom filename-based migration runner (`scripts/run-migrations.ts`)
-that auto-applies any new `migrations/*.sql` file on Replit boot. This document
+that auto-applies any new `migrations/*.sql` file on server boot. This document
 captures the workflow.
 
 ## TL;DR
 
 - **Add a migration** → write a new `migrations/NNNN_descriptive_name.sql`
   file by hand using the next sequence number. Commit it.
-- **Deploy** applies it automatically via `npm run migrate` during the
-  Replit start command (`.replit` → `[deployment].run`).
+- **Deploy / Boot** applies it automatically via `npm run migrate` during the
+  start command (`npm start` or Docker container boot).
 - **Each migration runs in a transaction.** If it fails, the deploy
   fails fast — the server doesn't start. Logs show the error.
 - **Never edit an applied migration.** The runner detects checksum
@@ -46,7 +46,7 @@ and the existing ledger keeps working — the two are independent.
    surface aligned with the new columns. Tests against `failed_jobs`
    / `janus_chat_logs` etc. assert column existence.
 4. Commit the SQL + the schema change together.
-5. Push → next Replit deploy auto-applies it. You'll see
+5. Push → server deploy / container restart auto-applies it. You'll see
    `[migrate] applied 00NN_short_name.sql in Xms` in the boot logs.
 
 ## Bootstrapping (one-time)
@@ -60,7 +60,7 @@ starts empty. The runner detects this and **refuses to run**:
 [migrate] To bootstrap: run `npm run migrate:seed` once, …
 ```
 
-One-time fix (done from the Replit Shell, against the same
+One-time fix (done from your terminal or container shell, against the same
 `DATABASE_URL` the app uses):
 
 ```bash

@@ -2,13 +2,9 @@
  * In-process approximate-nearest-neighbour recall over janus_memory
  * embeddings.
  *
- * WHY: the pgvector HNSW/ivfflat "speed index" had to be dropped from this
- * Replit-managed Postgres (migrations/0046_drop_janus_memory_vector_index.sql)
- * because Replit's pre-deploy publish-diff cannot represent the required
- * operator class and blocked every Publish. This module brings ANN recall
- * back via a path the publish-diff never sees: it lazily loads a user's
- * embedded memories, builds an in-memory HNSW graph (server/lib/hnsw.ts),
- * and serves recall from that. No DB schema objects are involved.
+ * In-process approximate-nearest-neighbour recall over janus_memory embeddings.
+ * Lazily loads a user's embedded memories, builds an in-memory HNSW graph (server/lib/hnsw.ts),
+ * and serves sub-millisecond semantic recall without relying on heavy external vector engines.
  *
  * Freshness model:
  * - Per-user cache with a short TTL (60 s) catches out-of-band writes

@@ -917,7 +917,7 @@ router.get('/connection-status', requireAuth, async (_req: AuthenticatedRequest,
   try {
     const apiKeyConfigured = !!process.env.VERKADA_API_KEY;
     const orgIdConfigured = !!process.env.VERKADA_ORG_ID;
-    const devDomain = process.env.REPLIT_DEV_DOMAIN || process.env.REPLIT_DOMAIN || null;
+    const devDomain = process.env.APP_DOMAIN || process.env.PUBLIC_DOMAIN || null;
     const webhookUrl = devDomain ? `https://${devDomain}/api/verkada/poi-webhook` : null;
 
     const { rows: eventRows } = await query(
@@ -1492,7 +1492,7 @@ export async function runStartupCatchup(): Promise<void> {
   }
 
   try {
-    const devDomain = process.env.REPLIT_DEV_DOMAIN || process.env.REPLIT_DOMAIN || 'your-server';
+    const devDomain = process.env.APP_DOMAIN || process.env.PUBLIC_DOMAIN || 'localhost:5000';
     const webhookUrl = `https://${devDomain}/api/verkada/poi-webhook`;
     console.log('[verkada] Running startup catch-up...');
     console.log(`[verkada] Active webhook endpoint: POST ${webhookUrl}`);

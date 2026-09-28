@@ -3,7 +3,7 @@
 Household OS is powered by an autonomous, voice-capable AI assistant named **Janus**. Unlike cloud-only smart speakers (Alexa, Google Nest), Janus runs on your own hardware, retains long-term semantic memory in PostgreSQL (`pgvector`), and has access to over 30 physical estate tools.
 
 > [!NOTE]
-> If you deployed from Replit, Replit pre-configures certain AI environment variables automatically. **When self-hosting or running locally, you must provide your own API key.** Fortunately, you can get started completely for **FREE**.
+> Household OS connects directly to standard public LLM endpoints or local Ollama instances. **To enable Janus, simply configure your preferred model API key.** You can get started completely for **FREE** using Google Gemini.
 
 ---
 

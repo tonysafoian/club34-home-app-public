@@ -558,9 +558,9 @@ interface CronAuthenticatedRequest extends Request {
 function isCronAuthorized(req: Request): boolean {
   const secret = process.env.CRON_SECRET;
   if (!secret) {
-    // In a deployment the secret MUST be set — fail closed. In dev we
+    // In production the secret MUST be set — fail closed. In dev we
     // permit unauthenticated calls so smoke tests work without env setup.
-    return process.env.REPLIT_DEPLOYMENT !== '1';
+    return process.env.NODE_ENV !== 'production';
   }
   return req.headers['x-cron-secret'] === secret;
 }

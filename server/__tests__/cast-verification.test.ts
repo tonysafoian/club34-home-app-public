@@ -32,7 +32,7 @@ import { verifyPlaybackState } from '../lib/castBroadcast.js';
 const HA_URL = 'http://homeassistant.local:8123';
 const HA_TOKEN = 'test-token';
 const ENTITY = 'media_player.bedroom_speaker';
-const AUDIO_URL = 'https://club34.replit.app/storage/v1/object/public/voice-replies/broadcasts/school-morning-broadcast-1234567890.mp3';
+const AUDIO_URL = 'http://localhost:5000/storage/v1/object/public/voice-replies/broadcasts/school-morning-broadcast-1234567890.mp3';
 
 function makeHAStateResponse(state: string, mediaContentId: string | null) {
   return {
@@ -85,7 +85,7 @@ describe('verifyPlaybackState — announce mode (announce:true)', () => {
   });
 
   it('fails when urlMatch=false (wrong content loaded — genuine Cast drop)', async () => {
-    const staleUrl = 'https://club34.replit.app/storage/v1/object/public/voice-replies/broadcasts/old-broadcast.mp3';
+    const staleUrl = 'http://localhost:5000/storage/v1/object/public/voice-replies/broadcasts/old-broadcast.mp3';
     mockOkFetch(makeHAStateResponse('idle', staleUrl));
     const result = await verifyPlaybackState(HA_URL, HA_TOKEN, ENTITY, AUDIO_URL, true);
     expect(result.verified).toBe(false);
@@ -115,7 +115,7 @@ describe('verifyPlaybackState — normal mode (announce:false, default)', () => 
   });
 
   it('does NOT verify when state=playing but urlMatch=false (stale state, new audio)', async () => {
-    const staleUrl = 'https://club34.replit.app/storage/v1/object/public/voice-replies/broadcasts/old-broadcast.mp3';
+    const staleUrl = 'http://localhost:5000/storage/v1/object/public/voice-replies/broadcasts/old-broadcast.mp3';
     mockOkFetch(makeHAStateResponse('playing', staleUrl));
     const result = await verifyPlaybackState(HA_URL, HA_TOKEN, ENTITY, AUDIO_URL);
     expect(result.verified).toBe(false);

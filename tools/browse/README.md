@@ -5,8 +5,8 @@ Isolated Playwright setup so Claude can:
 - Open the Club34 web app (production or a preview URL) and take screenshots / read DOM
 - Drive Home Assistant via its REST/websocket API using a Long-Lived Access Token (LLAT)
 
-This directory is **completely separate** from the main app's `package.json`. Replit's
-production install never sees Playwright or its browser binaries.
+This directory is **completely separate** from the main app's `package.json`. Standard
+production installs never see Playwright or its browser binaries.
 
 ## First-time setup (per fresh container)
 
@@ -25,7 +25,7 @@ start of each session. A SessionStart hook can automate it — see the root
 Create `tools/browse/.env` (gitignored). Example:
 
 ```
-APP_URL=https://your-replit-app.example.dev
+APP_URL=http://localhost:5000
 HA_BASE_URL=https://your-ha.example.com
 HA_TOKEN=ey...your_long_lived_access_token...
 ```

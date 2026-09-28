@@ -68,7 +68,7 @@ describe('resolveWifiSource — grouping precedence', () => {
 
   it('falls back to subnet when there is no Ruckus row for this MAC', () => {
     const map = new Map<string, RuckusObservation>();
-    const r = resolveWifiSource('aa:bb:cc:dd:ee:02', '192.168.1.10', map);
+    const r = resolveWifiSource('aa:bb:cc:dd:ee:02', '10.0.22.10', map);
     expect(r.label).toBe('34');
     expect(r.source).toBe('subnet');
     expect(r.ruckus).toBeNull();
@@ -81,7 +81,7 @@ describe('resolveWifiSource — grouping precedence', () => {
     const map = new Map<string, RuckusObservation>([
       ['aa:bb:cc:dd:ee:03', { ssids: [], expected_ssid: null, last_seen: null }],
     ]);
-    const r = resolveWifiSource('aa:bb:cc:dd:ee:03', '192.168.1.10', map);
+    const r = resolveWifiSource('aa:bb:cc:dd:ee:03', '10.0.22.10', map);
     expect(r.label).toBe('34');
     expect(r.source).toBe('subnet');
   });

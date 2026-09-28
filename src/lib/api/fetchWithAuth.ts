@@ -1,12 +1,6 @@
-// Always use relative URLs so requests are same-origin:
-//   - In production (example.com) requests are proxied to the Replit
-//     backend by public/_worker.js, keeping cookies on example.com.
-//   - In dev the Express server and Vite are served on the same port,
-//     so relative URLs hit the backend directly.
-// Setting VITE_API_URL to https://club34.replit.app at build time caused
-// the browser to make cross-origin fetches to the backend, which then
-// failed CORS preflight on routes like /api/db/query.
-const API_BASE = '';
+// Standard relative API base URL for same-origin requests.
+// Supports VITE_API_URL when frontend and backend run on distinct domains.
+const API_BASE = import.meta.env.VITE_API_URL || '';
 
 export function resolveApiUrl(path: string): string {
   if (path.startsWith('http://') || path.startsWith('https://')) {

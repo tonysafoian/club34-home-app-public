@@ -1,14 +1,11 @@
-// Pin the Node process timezone to Pacific Time. The household runs on PT
-// (cron windows, calendar events, "today's ball game", morning briefing,
-// etc.) but Replit deploys run with TZ unset (=UTC), which silently shifts
-// any `new Date(y, m-1, d)` and `Date#toString` results back by 7-8 hours.
-// That caused the month-invite email to render "Tuesday, June 2" for a
-// ball_games.game_date of 2026-06-03 (issue: screenshot from Tony 2026-05-16).
-// Done as the very first line so it lands before V8 reads TZ on first Date
-// construction. Opt-out by setting TZ in env if you need a different zone.
+// Default to Pacific Time if TZ unset. The household automations run on local time
+// (cron windows, calendar events, morning briefings, etc.).
+// Opt-out by setting TZ in your environment (e.g. TZ=America/New_York).
 process.env.TZ = process.env.TZ || "America/Los_Angeles";
 
 import "dotenv/config";
+import fs from "fs";
+import path from "path";
 import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
@@ -21,7 +18,6 @@ import { setupVite } from "./vite";
 import { seedDatabase } from "./seed";
 import { startScheduledTasks } from "./scheduledTasks";
 import { initCronJobs } from "./routes/cron";
-import { startGithubAutosync } from "./lib/githubAutosync";
 import { setupSocketIO, emitToAll } from "./socket";
 import { startHAWebSocket } from "./lib/haWebSocket";
 import { runStartupCatchup } from "./routes/verkada";
@@ -36,12 +32,7 @@ import pg from "pg";
 void initSentry();
 
 // NOTE (2026-05-17): syncAuditLogsFromProd() and checkAuditLogSource() used
-// to backfill audit logs from a separate Supabase-hosted PROD_DATABASE_URL
-// on each boot. The Supabase project was deleted during the Express
-// migration; PROD_DATABASE_URL has been unset since. Both functions were
-// silent no-ops and have been removed. See server/lib/auditLog.ts header
-// for full history. Replit's DATABASE_URL is now the single source of
-// truth for audit logs and IS durable across redeploys.
+// Primary PostgreSQL database (`DATABASE_URL`) is the source of truth for audit logs.
 
 async function checkAuditLogSource(): Promise<void> {
   try {
@@ -53,12 +44,7 @@ async function checkAuditLogSource(): Promise<void> {
 }
 
 const app = express();
-// trust proxy: true — required so req.ip resolves to the real client
-// address through Cloudflare → Replit's edge proxy chain. The Ball
-// liability waiver flow persists req.ip into ball_waivers for audit /
-// legal provenance; a fixed hop count (1) would give us Replit's
-// internal proxy IP rather than the signer's, which is a compliance
-// gap for an e-signed waiver. See issue #74.
+// trust proxy: true — required so req.ip resolves to the real client address behind reverse proxies.
 app.set("trust proxy", true);
 
 const appDomain = process.env.APP_DOMAIN || "example.com";
@@ -66,17 +52,17 @@ const appDomain = process.env.APP_DOMAIN || "example.com";
 const ALLOWED_ORIGINS = [
   `https://${appDomain}`,
   `https://www.${appDomain}`,
-  "https://club34.pages.dev",
-  "https://club34.replit.app",
+  "http://localhost:5000",
+  "http://localhost:5173",
+  "http://localhost:3000",
 ];
 
-if (process.env.REPLIT_DEV_DOMAIN) {
-  ALLOWED_ORIGINS.push(`https://${process.env.REPLIT_DEV_DOMAIN}`);
-}
-if (process.env.REPLIT_DOMAINS) {
-  for (const d of process.env.REPLIT_DOMAINS.split(',')) {
+if (process.env.ADDITIONAL_ALLOWED_ORIGINS) {
+  for (const d of process.env.ADDITIONAL_ALLOWED_ORIGINS.split(',')) {
     const trimmed = d.trim();
-    if (trimmed) ALLOWED_ORIGINS.push(`https://${trimmed}`);
+    if (trimmed) {
+      ALLOWED_ORIGINS.push(trimmed.startsWith("http") ? trimmed : `https://${trimmed}`);
+    }
   }
 }
 
@@ -188,7 +174,7 @@ async function writeDeploymentHeartbeat(port: number): Promise<void> {
       }
     } catch { /* ignore — don't block startup */ }
 
-    const isDeployment = !!process.env.REPLIT_DEPLOYMENT;
+    const isDeployment = process.env.NODE_ENV === 'production';
     await logAudit('server-startup', {
       category: 'system',
       event_type: 'deployment_started',
@@ -196,13 +182,12 @@ async function writeDeploymentHeartbeat(port: number): Promise<void> {
       actor_id: 'system',
       actor_name: 'System',
       channel: 'startup',
-      summary: `Deployment started on port ${port} (${isDeployment ? 'DEPLOYED' : process.env.NODE_ENV || 'development'})${prevStartedAt ? ` — ${Math.round((uptimeSinceLastStartMs ?? 0) / 60000)} min since last start` : ''}`,
+      summary: `Server started on port ${port} (${isDeployment ? 'production' : process.env.NODE_ENV || 'development'})${prevStartedAt ? ` — ${Math.round((uptimeSinceLastStartMs ?? 0) / 60000)} min since last start` : ''}`,
       detail: {
         port,
         node_version: process.version,
         node_env: process.env.NODE_ENV || 'development',
         is_deployment: isDeployment,
-        replit_deployment: process.env.REPLIT_DEPLOYMENT || null,
         git_commit: gitCommit,
         npm_version: process.env.npm_package_version || null,
         prev_started_at: prevStartedAt?.toISOString() ?? null,
@@ -211,9 +196,9 @@ async function writeDeploymentHeartbeat(port: number): Promise<void> {
       },
       status: 'success',
     });
-    console.log(`[startup] Deployment heartbeat written — git: ${gitCommit ?? 'unknown'}, prev start: ${prevStartedAt?.toISOString() ?? 'none'}`);
+    console.log(`[startup] Server heartbeat written — git: ${gitCommit ?? 'unknown'}, prev start: ${prevStartedAt?.toISOString() ?? 'none'}`);
   } catch (e) {
-    console.error('[startup] Failed to write deployment heartbeat:', e);
+    console.error('[startup] Failed to write server heartbeat:', e);
   }
 }
 
@@ -222,14 +207,8 @@ async function writeDeploymentHeartbeat(port: number): Promise<void> {
   // leave a visible audit trail even if subsequent startup steps fail.
   // Awaited with an internal timeout so it completes before risky startup ops,
   // but never blocks startup for more than a few seconds if the DB is slow.
-  // Dev/test only: honor PORT so the server-tests runner can boot an isolated
-  // instance on a separate port without clashing with the running app.
-  // Production (Replit deployment) is always 5000 — the port mapped in
-  // .replit — regardless of any PORT env the platform injects.
-  const port = process.env.REPLIT_DEPLOYMENT
-    ? 5000
-    : Number(process.env.PORT) || 5000;
-  if (process.env.REPLIT_DEPLOYMENT || process.env.ENABLE_CRON === '1') {
+  const port = Number(process.env.PORT) || 5000;
+  if (process.env.NODE_ENV === 'production' || process.env.ENABLE_CRON === '1') {
     await writeDeploymentHeartbeat(port);
   }
 
@@ -277,7 +256,6 @@ async function writeDeploymentHeartbeat(port: number): Promise<void> {
 
   startScheduledTasks();
   initCronJobs();
-  startGithubAutosync();
 
   runStartupCatchup().catch(err => console.error('[startup] Verkada catch-up failed:', err));
 
@@ -299,65 +277,28 @@ async function writeDeploymentHeartbeat(port: number): Promise<void> {
     }
   });
 
-  // CRITICAL: this check decides whether Express serves Vite dev middleware
-  // (HMR HTML for unknown routes) or static built assets from dist/public/.
-  //
-  // Earlier this used `process.env.NODE_ENV !== "production"` as the dev
-  // signal, but Replit's autoscale deployment runs `node dist/index.js`
-  // WITHOUT setting NODE_ENV=production by default. That caused prod to
-  // load Vite dev middleware and serve HMR HTML for every /api/* route
-  // that wasn't a literal exact match in the Express router — masking real
-  // backend endpoints (broadcast, calendar, home-assistant proxy, etc.)
-  // behind a SPA-like 200 fallback.
-  //
-  // The robust signal for "this is the deployed bundle" is
-  // process.env.REPLIT_DEPLOYMENT (set automatically by Replit's autoscale
-  // runtime). That's what line ~292 above already uses to gate cron startup.
-  // Mirror that here.
+  // Decide whether Express serves Vite dev middleware (HMR) or static built assets from dist/public/.
   const isProdRuntime =
-    !!process.env.REPLIT_DEPLOYMENT ||
-    process.env.NODE_ENV === "production";
+    process.env.NODE_ENV === "production" ||
+    process.env.SERVE_STATIC === "true" ||
+    (!process.env.NODE_ENV && fs.existsSync(path.join(process.cwd(), "dist", "public", "index.html")));
 
-  // Defensive logging — make the mode decision loudly visible at startup so a
-  // future regression (like the 2026-05-16 silent-Vite-in-prod incident) is
-  // obvious in the deploy logs instead of being inferred from a wrong HTML
-  // response five hours later. See CT #127.
-  const replitDeploymentEnv = process.env.REPLIT_DEPLOYMENT ?? "<unset>";
   const nodeEnv = process.env.NODE_ENV ?? "<unset>";
-  const replitDeploymentUnsetOrEmpty =
-    process.env.REPLIT_DEPLOYMENT === undefined ||
-    process.env.REPLIT_DEPLOYMENT === "";
-  const nodeEnvUnsetOrEmpty =
-    process.env.NODE_ENV === undefined || process.env.NODE_ENV === "";
-  if (replitDeploymentUnsetOrEmpty && nodeEnvUnsetOrEmpty) {
-    console.warn(
-      `[startup] WARNING: neither REPLIT_DEPLOYMENT nor NODE_ENV is set ` +
-      `(or both are empty). Defaulting to DEV. If this is prod, the ` +
-      `deployment runner is misconfigured.`,
-    );
-  }
 
   let viteWasLoaded = false;
   if (!isProdRuntime && process.env.SKIP_VITE === "1") {
-    // API-only dev instance (used by scripts/run-server-tests.ts when it boots
-    // its own server on a separate port). Skipping Vite avoids a second
-    // chokidar watcher tree, which can exhaust the kernel inotify watcher
-    // limit (ENOSPC) and crash this instance when the main dev server is
-    // also running. Tests only hit /api/* so the frontend is not needed.
     console.log(
       `[startup] Running in DEV mode with SKIP_VITE=1 (API only, no frontend).`,
     );
   } else if (!isProdRuntime) {
     console.log(
-      `[startup] Running in DEV mode. REPLIT_DEPLOYMENT=${replitDeploymentEnv}, ` +
-      `NODE_ENV=${nodeEnv}. Loading Vite HMR.`,
+      `[startup] Running in DEV mode (NODE_ENV=${nodeEnv}). Loading Vite HMR.`,
     );
     await setupVite(app, server);
     viteWasLoaded = true;
   } else {
     console.log(
-      `[startup] Running in PROD mode. REPLIT_DEPLOYMENT=${replitDeploymentEnv}, ` +
-      `NODE_ENV=${nodeEnv}. Serving static, NOT Vite.`,
+      `[startup] Running in PROD mode (NODE_ENV=${nodeEnv}). Serving static built assets.`,
     );
     // In a deployed bundle, serve the static built frontend from dist/public.
     const { serveStatic } = await import("./vite");
@@ -365,10 +306,7 @@ async function writeDeploymentHeartbeat(port: number): Promise<void> {
   }
 
   // Post-load invariant: introspect the router stack so a future regression
-  // (e.g. someone accidentally calling setupVite() from a route file) fails
-  // loudly at startup instead of silently serving HMR HTML for /api/* routes.
-  // The flag check is the authoritative signal; the stack scan is a secondary
-  // belt-and-suspenders guard. CT #127.
+  // fails loudly at startup instead of silently serving HMR HTML for /api/* routes.
   if (isProdRuntime) {
     const stack: Array<{ handle?: { name?: string }; name?: string }> =
       // Express 5 exposes `app.router`; v4 used `app._router`. Tolerate both.
@@ -382,7 +320,7 @@ async function writeDeploymentHeartbeat(port: number): Promise<void> {
     const sentinel = !!(app as any).locals?.__viteLoaded;
     if (viteWasLoaded || sentinel || viteLayer) {
       throw new Error(
-        `Server bootstrap consistency error: REPLIT_DEPLOYMENT=${replitDeploymentEnv} ` +
+        `Server bootstrap consistency error: running in PROD mode ` +
         `but Vite middleware was loaded (viteWasLoaded=${viteWasLoaded}, ` +
         `sentinel=${sentinel}, viteLayerFound=${!!viteLayer}). Refusing to start.`,
       );

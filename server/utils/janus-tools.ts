@@ -1054,8 +1054,8 @@ export async function executeRecallFacts(
         if (embedding) {
           // ANN via the in-process per-user HNSW index (server/lib/memory-index.ts);
           // falls back internally to the exact pgvector sequential scan. The
-          // DB-level ANN index is banned here — Replit's publish-diff cannot
-          // represent pgvector operator classes (see migration 0046).
+          // DB-level ANN index is kept in-process to avoid operator class migration
+          // incompatibilities (see migration 0046).
           const { semanticRecall } = await import("../lib/memory-index.js");
           const rows = await semanticRecall(userId, embedding, SEMANTIC_RECALL_LIMIT);
           const matches = rows.filter(

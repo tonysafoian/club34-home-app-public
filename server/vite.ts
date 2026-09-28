@@ -48,8 +48,8 @@ export async function setupVite(app: Express, server: import("http").Server): Pr
  * catch-all SPA handler installed before /api/* would swallow every
  * API request and serve index.html for them.
  *
- * Used by server/index.ts when running under the deployed Replit bundle
- * (process.env.REPLIT_DEPLOYMENT set). In dev, setupVite() is used
+ * Used by server/index.ts when running in production mode
+ * (NODE_ENV=production or SERVE_STATIC=true). In dev, setupVite() is used
  * instead.
  */
 export function serveStatic(app: Express): void {

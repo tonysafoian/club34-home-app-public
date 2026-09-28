@@ -466,7 +466,7 @@ router.post('/internal/github-push-failure', async (req: Request, res: Response)
     `Cause: ${cause}\n\n` +
     (truncatedOutput ? `Output:\n${truncatedOutput.slice(0, 300)}\n\n` : '') +
     `Cloudflare Pages deploy is NOT running. Frontend is stale.\n\n` +
-    `Fix: Reconnect GitHub in Replit project settings.`;
+    `Fix: Check repository permissions and GITHUB_TOKEN.`;
 
   let whatsappOk = true;
   try {

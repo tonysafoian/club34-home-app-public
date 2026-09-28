@@ -11,7 +11,7 @@
  *
  * SETUP
  *   1. Generate a token:  openssl rand -base64 32
- *   2. Set COMPUTER_ADMIN_TOKEN in Replit Secrets (workspace + deployment)
+ *   2. Set COMPUTER_ADMIN_TOKEN in environment variables (.env)
  *   3. Redeploy. Look for the startup log line confirming token is configured.
  *
  * USAGE FROM COMET / browser_task

@@ -2312,7 +2312,9 @@ router.post('/api/speed-test-freshness-monitor', requireAuth, async (req: any, r
 const NOTION_HEALTH_WINDOW_MINUTES = 30;
 const NOTION_WEBHOOK_DOWN_KEY = 'notion_webhook_down';
 const NOTION_POLLER_DOWN_KEY = 'notion_poller_down';
-const NOTION_WEBHOOK_URL = 'https://club34.replit.app/api/notion/webhook';
+const NOTION_WEBHOOK_URL = process.env.APP_URL
+  ? `${process.env.APP_URL.replace(/\/$/, '')}/api/notion/webhook`
+  : 'http://localhost:5000/api/notion/webhook';
 
 async function notionIncidentActive(
   db: typeof storage,

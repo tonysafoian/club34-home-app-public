@@ -1,4 +1,38 @@
 services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: household-app
+    restart: unless-stopped
+    ports:
+      - "5000:5000"
+    environment:
+      - NODE_ENV=production
+      - PORT=5000
+      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/household_db
+      - REDIS_URL=redis://redis:6379
+      - MQTT_URL=mqtt://mqtt:1883
+      - HA_URL=${HA_URL:-http://homeassistant.local:8123}
+      - HA_TOKEN=${HA_TOKEN:-}
+      - GEMINI_API_KEY=${GEMINI_API_KEY:-}
+      - OPENROUTER_API_KEY=${OPENROUTER_API_KEY:-}
+      - JWT_SECRET=${JWT_SECRET:-household-secret-change-in-production}
+      - SESSION_SECRET=${SESSION_SECRET:-household-session-secret}
+    volumes:
+      - app_data:/app/data
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/api/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
+
   postgres:
     image: pgvector/pgvector:pg16
     container_name: household-postgres
@@ -43,6 +77,7 @@ services:
       - mosquitto_log:/mosquitto/log
 
 volumes:
+  app_data:
   postgres_data:
   redis_data:
   mosquitto_data:

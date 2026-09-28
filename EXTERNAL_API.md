@@ -11,7 +11,7 @@ A read/write HTTP API for sibling apps and external integrations to interact wit
 
 ## Authentication
 
-The API uses a single shared key stored in the `EXTERNAL_API_KEY` Replit secret. Rotate the secret to revoke access. Comparison is constant-time.
+The API uses a single shared key stored in the `EXTERNAL_API_KEY` environment variable. Rotate the key to revoke access. Comparison is constant-time.
 
 ```bash
 curl -H "x-api-key: $EXTERNAL_API_KEY" https://example.com/api/v1/external/health
