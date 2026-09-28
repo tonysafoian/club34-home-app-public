@@ -14,6 +14,7 @@ const BUILD_VERSION = (
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
+  base: "./",
   define: {
     __BUILD_VERSION__: JSON.stringify(BUILD_VERSION),
   },

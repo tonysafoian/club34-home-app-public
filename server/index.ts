@@ -75,11 +75,18 @@ app.use(correlationMiddleware);
 
 app.use(cors({
   origin: (origin, callback) => {
-    if (!origin || ALLOWED_ORIGINS.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(null, false);
+    if (!origin) return callback(null, true);
+    if (ALLOWED_ORIGINS.includes(origin)) return callback(null, true);
+    // Allow Home Assistant ingress, supervisor, dev mode, and private LAN origins
+    if (
+      process.env.SUPERVISOR_TOKEN ||
+      process.env.HASSIO_TOKEN ||
+      process.env.NODE_ENV !== "production" ||
+      /^https?:\/\/(localhost|127\.0\.0\.1|10\.\d+\.\d+\.\d+|192\.168\.\d+\.\d+|172\.(1[6-9]|2\d|3[01])\.\d+\.\d+|.*\.local)(:\d+)?$/.test(origin)
+    ) {
+      return callback(null, true);
     }
+    callback(null, false);
   },
   credentials: true,
   methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
