@@ -10,12 +10,13 @@ LABEL \
     org.opencontainers.image.source="https://github.com/tonysafoian/janus-home-app" \
     org.opencontainers.image.licenses="Apache-2.0"
 
-# Install Node.js 20, PostgreSQL 16, git, and system dependencies
+# Install Node.js 20, PostgreSQL 16 server & client, git, and system dependencies
 RUN apk add --no-cache \
     nodejs \
     npm \
     git \
     postgresql16 \
+    postgresql16-client \
     postgresql16-contrib \
     bash \
     curl \
@@ -27,7 +28,10 @@ WORKDIR /app
 # Home Assistant executes docker build with the add-on subdirectory (janus/) as context.
 # Clone the repository directly so all pre-built bundles, migrations, and manifests are present.
 ARG REPO_URL="https://github.com/tonysafoian/janus-home-app.git"
-RUN git clone --depth 1 "${REPO_URL}" /app
+RUN git clone --depth 1 "${REPO_URL}" /tmp/repo && \
+    cp -r /tmp/repo/* /app/ && \
+    cp -r /tmp/repo/.* /app/ 2>/dev/null || true && \
+    rm -rf /tmp/repo
 
 # Install production runtime dependencies only (fast, reliable, no compiler needed)
 RUN npm ci --omit=dev
