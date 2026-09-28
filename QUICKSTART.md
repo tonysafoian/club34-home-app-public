@@ -73,9 +73,6 @@ To populate sample family profiles and sports roster data:
 ```bash
 # Seed sample household members
 docker exec -i household-postgres psql -U postgres -d household_db < scripts/seed-household-members.example.sql
-
-# Seed sample pickup basketball roster
-docker exec -i household-postgres psql -U postgres -d household_db < scripts/seed-ball-roster.example.sql
 ```
 
 ### 6. Launch the Development Server
@@ -96,7 +93,7 @@ The application will start with:
 3. **Estate Systems**: Explore HVAC thermostats, lighting groups, and water/irrigation maps.
 4. **Pool & Spa**: Monitor water temperatures, heater status, and filter pump cycles.
 5. **Vehicle Fleet**: View simulated battery telemetry and vehicle climate status.
-6. **Community & Sports**: Check the pickup basketball coordinator, roster RSVPs, and court weather.
+6. **Electrical & Energy Telemetry**: Monitor solar production, backup generator status, and real-time circuit power draw.
 
 ---
 
@@ -114,6 +111,8 @@ gitleaks dir --verbose
 
 ## 📚 What to Read Next
 
+- [LLM_SETUP.md](docs/LLM_SETUP.md) — Free Google Gemini key setup, OpenRouter, and local Ollama guide.
+- [HARDWARE_SETUP.md](docs/HARDWARE_SETUP.md) — Home Assistant hardware requirements, Zigbee/Z-Wave USB coordinators, and network architecture.
 - [CUSTOMIZATION.md](docs/CUSTOMIZATION.md) — How to adapt the floor plan SVG, household members, and zones for your own estate.
 - [MOCK_MODE.md](docs/MOCK_MODE.md) — How the graceful degradation and hardware simulation work.
 - [SETUP.md](SETUP.md) — Connecting physical Home Assistant, Tesla, and camera hardware.

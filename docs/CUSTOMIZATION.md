@@ -100,26 +100,16 @@ To map your thermostats:
 
 ---
 
-## 🏀 5. Adapting the Sports / Pickup League Hub
+## ⚡ 5. Electrical & Backup Power Configuration
 
-Household OS includes a dedicated community sports module originally designed for weekly pickup basketball games. You can customize this for **any sport or group activity** (tennis, pickleball, soccer, golf):
+Household OS provides comprehensive estate power observability, including backup generator telemetry, circuit-level wattage monitoring, and utility rate tariff tracking:
 
-### Changing the Sport & Venue
-Configure your `.env` file:
-```env
-BALL_TITLE="Thursday Tennis Club"
-BALL_LOCATION="Local Racquet Club, Court 3"
-HOST_NAME="Alex Johnson"
-HOST_EMAIL="alex@example.com"
-```
+### Backup Generator (Generac Mobile Link / Local Bridge)
+Monitor fuel levels, utility grid presence, transfer switch state, and weekly exercise cycles:
+* In `src/pages/HomeSystems.tsx`, the `GeneracCard` displays real-time generator status (`READY`, `RUNNING_UTILITY_LOSS`, `EXERCISING`).
+* Connect via Home Assistant's Generac Mobile Link integration or local Modbus controller.
 
-### Populating the Member Roster
-Edit [`scripts/seed-ball-roster.example.sql`](../scripts/seed-ball-roster.example.sql) with your players' names and phone numbers:
-```sql
-INSERT INTO ball_roster (name, phone, role, is_active)
-VALUES
-  ('Jordan Miller', '+15553334444', 'regular', true),
-  ('Taylor Smith', '+15554445555', 'substitute', true);
-```
-
-Janus can automatically send game confirmations and tally RSVPs using WATI (WhatsApp) or SMS.
+### Circuit-Level Energy Monitoring (Emporia Vue)
+Monitor high-draw estate circuits (HVAC compressors, EV wall chargers, pool pumps, kitchen sub-panels):
+* Expose 16-channel Emporia Vue CT clamps to Home Assistant via ESPHome or the Emporia cloud integration.
+* Household OS aggregates historical circuit draw into daily and monthly cost reports in `/home-systems?section=energy`.

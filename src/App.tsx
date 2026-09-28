@@ -50,7 +50,6 @@ const ProjectWorkspace = lazy(() => import("./pages/ProjectWorkspace"));
 const Updates = lazy(() => import("./pages/Updates"));
 const JanusFullscreen = lazy(() => import("./pages/JanusFullscreen"));
 const SecurityCameras = lazy(() => import("./pages/SecurityCameras"));
-const Ball = lazy(() => import("./pages/Ball"));
 const Time = lazy(() => import("./pages/Time"));
 const TimeAdmin = lazy(() => import("./pages/TimeAdmin"));
 
@@ -189,30 +188,6 @@ const App = () => (
                 <Route path="/projects/:id" element={<ProtectedRoute><ProjectWorkspace /></ProtectedRoute>} />
                 <Route path="/updates" element={<ProtectedRoute><Updates /></ProtectedRoute>} />
                 <Route path="/janus" element={<ProtectedRoute><JanusFullscreen /></ProtectedRoute>} />
-                <Route path="/ball" element={
-                  <ErrorBoundary name="ball" fallback={
-                    <div style={{ minHeight: '100svh', background: '#0a0a0a', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 16, padding: 24 }}>
-                      <span style={{ fontSize: 40 }}>🏀</span>
-                      <p style={{ color: '#e5e0d8', fontFamily: 'Inter, sans-serif', fontWeight: 600, margin: 0 }}>We couldn't load your RSVP page</p>
-                      <p style={{ color: '#9c9086', fontFamily: 'Inter, sans-serif', fontSize: 14, margin: 0 }}>Try reloading — if it keeps happening, reach out to Tony.</p>
-                      <button onClick={() => void hardReload()} style={{ marginTop: 8, padding: '8px 20px', background: '#d4882a', color: '#0a0a0a', border: 'none', borderRadius: 8, fontFamily: 'Inter, sans-serif', fontWeight: 600, fontSize: 14, cursor: 'pointer' }}>Reload</button>
-                    </div>
-                  }>
-                    <Ball />
-                  </ErrorBoundary>
-                } />
-                <Route path="/ball/p/:token" element={
-                  <ErrorBoundary name="ball-player" fallback={
-                    <div style={{ minHeight: '100svh', background: '#0a0a0a', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 16, padding: 24 }}>
-                      <span style={{ fontSize: 40 }}>🏀</span>
-                      <p style={{ color: '#e5e0d8', fontFamily: 'Inter, sans-serif', fontWeight: 600, margin: 0 }}>We couldn't load your RSVP page</p>
-                      <p style={{ color: '#9c9086', fontFamily: 'Inter, sans-serif', fontSize: 14, margin: 0 }}>Try reloading — if it keeps happening, reach out to Tony.</p>
-                      <button onClick={() => void hardReload()} style={{ marginTop: 8, padding: '8px 20px', background: '#d4882a', color: '#0a0a0a', border: 'none', borderRadius: 8, fontFamily: 'Inter, sans-serif', fontWeight: 600, fontSize: 14, cursor: 'pointer' }}>Reload</button>
-                    </div>
-                  }>
-                    <Ball />
-                  </ErrorBoundary>
-                } />
                 {/* Club34 Time — worker + admin routes (worker-fenced, no Janus FAB) */}
                 <Route path="/time" element={<WorkerRoute><Time /></WorkerRoute>} />
                 <Route path="/time/admin" element={<TimeAdminRoute><TimeAdmin /></TimeAdminRoute>} />

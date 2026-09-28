@@ -37,7 +37,6 @@ import { AdminJanusSkillsContent } from '@/components/admin/AdminJanusSkillsCont
 import { AdminNetworkContent } from '@/components/admin/AdminNetworkContent';
 import { AdminWirelessContent } from '@/components/admin/AdminWirelessContent';
 import { AdminApiContent } from '@/components/admin/AdminApiContent';
-import AdminBallContent from '@/components/admin/AdminBallContent';
 
 const ADMIN_GROUPS: SectionGroup[] = [
   {
@@ -72,7 +71,6 @@ const ADMIN_GROUPS: SectionGroup[] = [
   {
     group: 'Household',
     items: [
-      { id: 'ball', label: 'Ball', icon: Trophy },
       { id: 'vendors-expenses', label: 'Vendors & Expenses', icon: Receipt },
     ],
   },
@@ -250,7 +248,6 @@ export default function Admin() {
             {activeSection === 'wl-aps' && <AdminWirelessContent initialTab="aps" />}
             {activeSection === 'wl-clients' && <AdminWirelessContent initialTab="clients" />}
             {activeSection === 'wl-wlans' && <AdminWirelessContent initialTab="wlans" />}
-            {activeSection === 'ball' && <AdminBallContent />}
           </ErrorBoundary>
         </main>
       </div>

@@ -30,8 +30,6 @@ import perplexityRoutes from './routes/perplexity';
 import fortigateRoutes from './routes/fortigate';
 import wirelessRoutes from './routes/wireless';
 import networkDevicesRoutes from './routes/network-devices';
-import ballRoutes from './routes/ball.js';
-import ballTrackingRoutes from './routes/ballTracking.js';
 import computerAuthRoutes from './routes/computerAuth.js';
 import goaccessRoutes from './routes/goaccess';
 import externalRoutes from './routes/external';
@@ -118,8 +116,6 @@ export async function registerRoutes(app: Express): Promise<void> {
   app.use(groceryRoutes);
   app.use(dataRoutes);
   app.use(updatesAutogenRoutes);
-  app.use(ballRoutes);
-  app.use(ballTrackingRoutes);
   app.use(computerAuthRoutes);
 
   app.use('/api/home-assistant', homeAssistantRoutes);

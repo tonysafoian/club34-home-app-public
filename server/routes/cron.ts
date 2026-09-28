@@ -445,37 +445,6 @@ export function initCronJobs(): void {
     triggerRoute('/api/ha-workflow-reconciler');
   }, { timezone: 'UTC' });
 
-  // ── Club34 Ball — Wednesday Night Pickup Basketball ─────────────
-  //   1st of month, 9:00 AM PT — blast multi-game month invite
-  //   Wed 9:00 AM PT — day-of hard re-confirm (must click to stay IN)
-  //   Wed 11:00 AM PT — decide game ON or OFF, notify re-confirmed dads
-  //   Wed 12:00 PM PT — email confirmed roster to gatehouse (~6h before 6pm game)
-  //   Wed 5:00 PM PT — 1-hour reminder to confirmed dads
-  // All endpoints are idempotent (skip if already sent / wrong status).
-  cron.schedule('0 9 1 * *', () => {
-    console.log('[cron] Ball — sending monthly invite blast');
-    triggerRoute('/api/ball/cron/send-month-invite');
-  }, { timezone: 'America/Los_Angeles' });
-
-  cron.schedule('0 9 * * 3', () => {
-    console.log('[cron] Ball — sending Wed AM hard re-confirm');
-    triggerRoute('/api/ball/cron/reconfirm');
-  }, { timezone: 'America/Los_Angeles' });
-
-  cron.schedule('0 11 * * 3', () => {
-    console.log('[cron] Ball — deciding ON/OFF for tonight');
-    triggerRoute('/api/ball/cron/decide');
-  }, { timezone: 'America/Los_Angeles' });
-
-  cron.schedule('0 12 * * 3', () => {
-    console.log('[cron] Ball — emailing confirmed roster to gatehouse');
-    triggerRoute('/api/ball/cron/email-gate');
-  }, { timezone: 'America/Los_Angeles' });
-
-  cron.schedule('0 17 * * 3', () => {
-    console.log('[cron] Ball — sending 5:00 PM 1-hour reminder');
-    triggerRoute('/api/ball/cron/remind');
-  }, { timezone: 'America/Los_Angeles' });
 
   // Dependency security audit — daily 6:30 AM PT. Runs `npm audit --json
   // --omit=dev`, logs a vulnerability-count snapshot to the audit log, and

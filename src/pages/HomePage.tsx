@@ -16,7 +16,6 @@ import { Button } from '@/components/ui/button';
 import { Slider } from '@/components/ui/slider';
 import { Volume2 } from 'lucide-react';
 import { FolderOpen, Radio, Activity, Loader2, Mic, MicOff, ShoppingBasket, Users, Megaphone, Settings } from 'lucide-react';
-import ballLeagueLogo from '@/assets/ball-league-logo.jpeg';
 import { useUserProfile } from '@/hooks/useUserProfile';
 import { useVoiceInput } from '@/hooks/useVoiceInput';
 
@@ -133,17 +132,6 @@ export default function HomePage() {
               <ShoppingBasket className="h-5 w-5 text-primary" />
               <span className="text-sm font-medium">Grocery Helper</span>
             </button>
-            <button
-              onClick={() => navigate('/ball')}
-              className="glass rounded-xl px-4 py-4 flex items-center gap-3 transition-transform active:scale-[0.98]"
-              data-testid="button-ball"
-            >
-              <img src={ballLeagueLogo} alt="Ball" className="h-5 w-5 rounded-full object-cover shrink-0" />
-              <span className="text-sm font-medium">Ball</span>
-            </button>
-            <ErrorBoundary name="ball-admin-tile" fallback={<span />}>
-              <BallAdminTile />
-            </ErrorBoundary>
           </div>
         </div>
       </main>
@@ -309,21 +297,4 @@ export default function HomePage() {
   );
 }
 
-// Separate component so any hook failure (e.g. useUserProfile errors)
-// gets caught by the surrounding ErrorBoundary without crashing the
-// whole HomePage tree.
-function BallAdminTile() {
-  const profile = useUserProfile();
-  if (profile.loading) return null;
-  if (!profile.isAdmin) return null;
-  return (
-    <a
-      href="/admin?section=ball"
-      className="glass rounded-xl px-4 py-4 flex items-center gap-3 transition-transform active:scale-[0.98] no-underline text-inherit"
-      data-testid="button-ball-admin"
-    >
-      <img src={ballLeagueLogo} alt="Ball Admin" className="h-5 w-5 rounded-full object-cover shrink-0" />
-      <span className="text-sm font-medium">Ball Admin</span>
-    </a>
-  );
-}
+
