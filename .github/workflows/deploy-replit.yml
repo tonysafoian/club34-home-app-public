@@ -1,0 +1,68 @@
+name: Deploy Backend to Replit
+
+on:
+  push:
+    branches: [main]
+    # Only trigger when server-side code actually changes
+    paths:
+      - 'server/**'
+      - 'supabase/**'
+      - 'package.json'
+      - 'package-lock.json'
+      - 'tsconfig*.json'
+      - '.github/workflows/deploy-replit.yml'
+
+jobs:
+  deploy:
+    name: Trigger Replit redeploy
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout (for SHA info)
+        uses: actions/checkout@v4
+
+      - name: Send deploy webhook to Replit
+        env:
+          DEPLOY_SECRET: ${{ secrets.REPLIT_DEPLOY_SECRET }}
+          REPLIT_URL: ${{ vars.REPLIT_URL || 'https://club34.replit.app' }}
+        run: |
+          PAYLOAD=$(jq -nc \
+            --arg ref "$GITHUB_REF" \
+            --arg sha "$GITHUB_SHA" \
+            --arg actor "$GITHUB_ACTOR" \
+            --arg repo "$GITHUB_REPOSITORY" \
+            '{ref: $ref, sha: $sha, actor: $actor, repo: $repo}')
+
+          SIGNATURE="sha256=$(echo -n "$PAYLOAD" | openssl dgst -sha256 -hmac "$DEPLOY_SECRET" | awk '{print $2}')"
+
+          echo "Sending deploy webhook to $REPLIT_URL..."
+          HTTP_STATUS=$(curl -s -o /tmp/deploy_response.json -w "%{http_code}" \
+            -X POST "$REPLIT_URL/api/deploy/webhook" \
+            -H "Content-Type: application/json" \
+            -H "x-deploy-signature: $SIGNATURE" \
+            --data "$PAYLOAD" \
+            --max-time 15)
+
+          echo "Response (HTTP $HTTP_STATUS):"
+          cat /tmp/deploy_response.json
+
+          if [ "$HTTP_STATUS" -ne 200 ]; then
+            echo "::error::Deploy webhook returned HTTP $HTTP_STATUS"
+            exit 1
+          fi
+
+      - name: Wait for server to come back online
+        env:
+          REPLIT_URL: ${{ vars.REPLIT_URL || 'https://club34.replit.app' }}
+        run: |
+          echo "Waiting for server restart (up to 60s)..."
+          for i in $(seq 1 12); do
+            sleep 5
+            STATUS=$(curl -s -o /dev/null -w "%{http_code}" "$REPLIT_URL/api/health" --max-time 5 || echo "000")
+            echo "  Attempt $i: HTTP $STATUS"
+            if [ "$STATUS" = "200" ]; then
+              echo "✅ Server is back online!"
+              exit 0
+            fi
+          done
+          echo "::warning::Server did not respond within 60s — may still be restarting"

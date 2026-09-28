@@ -1,0 +1,16 @@
+{
+  "name": "club34-browse-tools",
+  "private": true,
+  "version": "0.0.0",
+  "description": "Isolated Playwright tooling for Claude to browse the app and Home Assistant. Not part of the main app build.",
+  "type": "module",
+  "scripts": {
+    "install:browsers": "playwright install chromium",
+    "open": "node scripts/open.mjs",
+    "capture": "node scripts/capture-state.mjs",
+    "ha:ping": "node scripts/ha-ping.mjs"
+  },
+  "devDependencies": {
+    "playwright": "^1.49.0"
+  }
+}

@@ -1,0 +1,52 @@
+# ============================================================
+# Home Assistant Speed Test → Club 34 Integration
+# ============================================================
+# Add these snippets to your HA configuration.
+#
+# 1. Add the rest_command to configuration.yaml (or rest_commands.yaml if split)
+# 2. Add the automation to automations.yaml (or via the HA UI)
+# 3. Set HA_WEBHOOK_TOKEN as a Supabase Edge Function secret
+#    (must match the !secret value below)
+# ============================================================
+
+# --- configuration.yaml (or rest_commands.yaml) ---
+# rest_command:
+#   report_speedtest:
+#     url: "https://api.example.com/functions/v1/speedtest-ingest"
+#     method: POST
+#     headers:
+#       Authorization: "Bearer {{ states('input_text.supabase_ha_webhook_token') }}"
+#       Content-Type: "application/json"
+#     payload: >-
+#       {
+#         "provider": "spectrum",
+#         "download_mbps": {{ states('sensor.speedtest_download') | float(0) }},
+#         "upload_mbps": {{ states('sensor.speedtest_upload') | float(0) }},
+#         "latency_ms": {{ states('sensor.speedtest_ping') | float(0) }},
+#         "server_name": "{{ state_attr('sensor.speedtest_download', 'server_name') | default('unknown') }}"
+#       }
+#     timeout: 30
+
+# --- automations.yaml ---
+# - id: speedtest_report_to_club34
+#   alias: "Report Speed Test to Club 34"
+#   description: "Send speed test results to Supabase when a new test completes"
+#   trigger:
+#     - platform: state
+#       entity_id: sensor.speedtest_download
+#   condition:
+#     - condition: template
+#       value_template: >-
+#         {{ trigger.to_state.state not in ['unknown', 'unavailable', ''] 
+#            and trigger.from_state.state != trigger.to_state.state }}
+#   action:
+#     - service: rest_command.report_speedtest
+#       data: {}
+#     - service: logbook.log
+#       data:
+#         name: "Speed Test"
+#         message: >-
+#           Reported to Club 34: {{ states('sensor.speedtest_download') }} Mbps down,
+#           {{ states('sensor.speedtest_upload') }} Mbps up,
+#           {{ states('sensor.speedtest_ping') }} ms ping
+#   mode: single

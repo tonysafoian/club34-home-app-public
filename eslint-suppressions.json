@@ -1,0 +1,331 @@
+{
+  "server/handlers/chat.ts": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 36
+    },
+    "no-empty": {
+      "count": 5
+    },
+    "prefer-const": {
+      "count": 3
+    }
+  },
+  "server/handlers/email-poll.ts": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 32
+    },
+    "no-empty": {
+      "count": 5
+    }
+  },
+  "server/handlers/whatsapp.ts": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 26
+    },
+    "no-control-regex": {
+      "count": 1
+    },
+    "no-empty": {
+      "count": 18
+    },
+    "prefer-const": {
+      "count": 2
+    }
+  },
+  "server/index.ts": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 4
+    }
+  },
+  "server/lib/__tests__/cycle-consumption.test.ts": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 2
+    }
+  },
+  "server/lib/__tests__/fortigate.test.ts": {
+    "no-loss-of-precision": {
+      "count": 1
+    }
+  },
+  "server/lib/__tests__/grocery-email.test.ts": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 6
+    },
+    "@typescript-eslint/no-unsafe-function-type": {
+      "count": 1
+    }
+  },
+  "server/lib/__tests__/wirelessSnapshot.test.ts": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 3
+    }
+  },
+  "server/lib/haWebSocket.ts": {
+    "prefer-const": {
+      "count": 1
+    }
+  },
+  "server/lib/helpers.ts": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 2
+    },
+    "no-empty": {
+      "count": 3
+    }
+  },
+  "server/routes/admin.ts": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 44
+    },
+    "no-empty": {
+      "count": 1
+    },
+    "prefer-const": {
+      "count": 1
+    }
+  },
+  "server/routes/automation.ts": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 8
+    },
+    "no-empty": {
+      "count": 2
+    }
+  },
+  "server/routes/broadcast.ts": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 5
+    }
+  },
+  "server/routes/calendar.ts": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 18
+    },
+    "no-empty": {
+      "count": 1
+    }
+  },
+  "server/routes/data.ts": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 89
+    }
+  },
+  "server/routes/entertainment.ts": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 51
+    },
+    "no-empty": {
+      "count": 2
+    },
+    "no-useless-escape": {
+      "count": 3
+    },
+    "prefer-const": {
+      "count": 2
+    }
+  },
+  "server/routes/followup.ts": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 8
+    },
+    "no-empty": {
+      "count": 1
+    }
+  },
+  "server/routes/generac.ts": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 6
+    },
+    "no-empty": {
+      "count": 3
+    }
+  },
+  "server/routes/google.ts": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 10
+    },
+    "no-empty": {
+      "count": 1
+    }
+  },
+  "server/routes/grocery.ts": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 77
+    }
+  },
+  "server/routes/homeAssistant.ts": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 8
+    },
+    "no-empty": {
+      "count": 1
+    }
+  },
+  "server/routes/monitoring.ts": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 101
+    }
+  },
+  "server/routes/notion.ts": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 10
+    },
+    "no-empty": {
+      "count": 1
+    }
+  },
+  "server/routes/pool.ts": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 8
+    }
+  },
+  "server/routes/proxy.ts": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 10
+    }
+  },
+  "server/routes/reports.ts": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 44
+    },
+    "no-empty": {
+      "count": 3
+    }
+  },
+  "server/routes/scraping.ts": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 7
+    }
+  },
+  "server/routes/shopping.ts": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 25
+    },
+    "no-empty": {
+      "count": 1
+    }
+  },
+  "server/routes/storage-compat.ts": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 5
+    },
+    "no-empty": {
+      "count": 2
+    }
+  },
+  "server/routes/tesla.ts": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 10
+    },
+    "no-empty": {
+      "count": 1
+    }
+  },
+  "server/routes/travel.ts": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 37
+    }
+  },
+  "server/routes/verkada.ts": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 27
+    }
+  },
+  "server/routes/weather.ts": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 37
+    }
+  },
+  "server/routes/wireless.ts": {
+    "@typescript-eslint/no-empty-object-type": {
+      "count": 1
+    }
+  },
+  "server/scheduledTasks.ts": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 5
+    }
+  },
+  "server/seed.ts": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 9
+    }
+  },
+  "server/services/govee.ts": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 5
+    }
+  },
+  "server/storage.ts": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 5
+    }
+  },
+  "server/tests/external-api.smoke.test.ts": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 6
+    }
+  },
+  "server/tests/morning-brief-vacation.test.ts": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 2
+    }
+  },
+  "server/tests/school-broadcast-vacation.test.ts": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 2
+    }
+  },
+  "server/types.ts": {
+    "@typescript-eslint/no-namespace": {
+      "count": 1
+    }
+  },
+  "server/utils/janus-tools.ts": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 61
+    },
+    "no-empty": {
+      "count": 1
+    },
+    "no-misleading-character-class": {
+      "count": 3
+    }
+  },
+  "server/utils/sanitize.ts": {
+    "no-misleading-character-class": {
+      "count": 1
+    }
+  },
+  "server/utils/supabase.ts": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 36
+    },
+    "no-empty": {
+      "count": 2
+    },
+    "prefer-const": {
+      "count": 1
+    }
+  },
+  "server/utils/tools/calendar-maps.ts": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 30
+    }
+  },
+  "server/utils/tools/google-workspace.ts": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 13
+    }
+  },
+  "server/utils/tools/media-trips.ts": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 13
+    }
+  },
+  "server/utils/tools/research-admin.ts": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 10
+    }
+  }
+}

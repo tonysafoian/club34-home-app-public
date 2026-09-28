@@ -1,0 +1,34 @@
+# Sauna Helper Auto-Reset
+# Problem: input_boolean.sauna_power can get stuck 'on' after a session ends
+# (the SaunaLogic heater finishes but nothing resets the HA helper).
+# When the helper stays 'on', the next turn_on call is a no-op (no state change event),
+# so saunalogic_power_on_via_google never fires and the heater doesn't start.
+#
+# Fix: 2 hours after input_boolean.sauna_power turns ON, automatically reset it to OFF.
+# The 8:40 AM cron does a force-toggle (off→on) so it doesn't rely on the reset,
+# but this prevents the stuck-state from accumulating across days.
+#
+# To deploy: paste this into HA File Editor → automations.yaml, or use the UI importer.
+
+- id: sauna_power_auto_reset
+  alias: "SaunaLogic - Auto Reset Helper After Session"
+  description: >
+    Resets input_boolean.sauna_power to OFF 2 hours after it turns on.
+    Prevents the helper from staying stuck 'on' between sessions.
+  triggers:
+    - trigger: state
+      entity_id: input_boolean.sauna_power
+      to: "on"
+      for:
+        hours: 2
+  conditions: []
+  actions:
+    - action: input_boolean.turn_off
+      data:
+        entity_id: input_boolean.sauna_power
+    - action: logbook.log
+      data:
+        name: "SaunaLogic"
+        message: "Auto-reset sauna_power helper to OFF after 2-hour session timeout"
+        entity_id: input_boolean.sauna_power
+  mode: restart

@@ -1,0 +1,176 @@
+# FortiGate Traffic Sensors — Home Assistant Configuration Reference
+#
+# PURPOSE
+# -------
+# The Club 34 Network Command Center reads FortiGate top-talker and top-site
+# data via Home Assistant rather than the direct FortiGate REST tunnel.  The
+# HA path is more reliable (throttled polling, no session-limit issues, no
+# tunnel token expiry).
+#
+# This file documents the HA configuration required to populate two template
+# sensors that the backend reads in server/lib/fortigate-ha.ts:
+#   • sensor.fortigate_top_talkers  (attributes.consumers)
+#   • sensor.fortigate_top_sites    (attributes.sites)
+#
+# HOW IT WORKS
+# ------------
+# 1. A rest_command calls the FortiGate FortiView API through the same
+#    rest_command.fortigate_proxy helper already used for other HA→FortiGate
+#    calls (pattern mirrors docs/ruckus-ha-proxy.yaml).
+# 2. Template sensors reshape the REST response into a clean attribute list.
+# 3. An automation calls the rest_commands on a schedule (every 5 minutes is
+#    sufficient — FortiView data changes slowly).
+#
+# OPERATOR NOTES
+# --------------
+# • Verify which FortiView filter endpoint returns data on your FortiOS version:
+#     - /api/v2/monitor/fortiview/statistics?filter=srcip   → per-source-IP
+#     - /api/v2/monitor/fortiview/statistics?filter=dstip   → per-destination-IP
+#     - /api/v2/monitor/fortiview/statistics?filter=application → by app
+#   The `srcip` filter is the most reliable for top-talkers; `dstip` for sites.
+# • If a single FortiView call with filter=srcip&group_by=dstip returns both
+#   per-client and per-destination stats you can collapse the two sensors into
+#   one and split the attribute keys.
+# • Adjust `count=20` to taste; the backend renders at most 10 entries.
+# • The FortiGate API token used inside fortigate_proxy must have read access
+#   to the fortiview monitor endpoint (Log & Report → FortiView).
+#
+# ─────────────────────────────────────────────────────────────────────────────
+
+# ── rest_command helpers ──────────────────────────────────────────────────────
+# Add to your rest_command: block (or merge into configuration.yaml).
+# Replace FORTIGATE_URL and FORTIGATE_API_TOKEN with your actual values, or
+# better, store them as secrets and reference via !secret.
+
+rest_command:
+  fortigate_top_talkers_fetch:
+    url: "https://FORTIGATE_URL/api/v2/monitor/fortiview/statistics?filter=srcip&count=20&sort_by=bytes&realtime=false"
+    method: GET
+    headers:
+      Authorization: "Bearer FORTIGATE_API_TOKEN"
+    verify_ssl: false
+
+  fortigate_top_sites_fetch:
+    url: "https://FORTIGATE_URL/api/v2/monitor/fortiview/statistics?filter=dstip&count=20&sort_by=bytes&realtime=false"
+    method: GET
+    headers:
+      Authorization: "Bearer FORTIGATE_API_TOKEN"
+    verify_ssl: false
+
+# ── Template sensors ──────────────────────────────────────────────────────────
+# Add to your template: sensor: block.
+
+template:
+  - sensor:
+      - name: fortigate_top_talkers
+        unique_id: fortigate_top_talkers
+        state: "{{ now().isoformat() }}"
+        attributes:
+          # Populated by the fortigate_top_talkers_update automation below.
+          # Shape: list of { ip, bytes, tx_bytes, rx_bytes }
+          consumers: "{{ state_attr('sensor.fortigate_top_talkers', 'consumers') | default([]) }}"
+
+      - name: fortigate_top_sites
+        unique_id: fortigate_top_sites
+        state: "{{ now().isoformat() }}"
+        attributes:
+          # Populated by the fortigate_top_sites_update automation below.
+          # Shape: list of { domain, category, hits, bytes }
+          sites: "{{ state_attr('sensor.fortigate_top_sites', 'sites') | default([]) }}"
+
+# ── Automations ───────────────────────────────────────────────────────────────
+# These automations call the rest_commands and push the parsed results into the
+# template sensor attributes via homeassistant.set_state (or input_text/var).
+# Because HA template sensors cannot self-update from rest_command responses
+# directly, the cleanest approach is to use a script + a var helper, OR to
+# store the raw JSON in an input_text and have the template sensor parse it.
+#
+# RECOMMENDED APPROACH — input_text + template sensor:
+
+input_text:
+  fortigate_top_talkers_json:
+    name: FortiGate Top Talkers JSON
+    max: 10000
+
+  fortigate_top_sites_json:
+    name: FortiGate Top Sites JSON
+    max: 10000
+
+# Revised template sensors that parse the stored JSON:
+# (replace the template sensors above with these)
+#
+# template:
+#   - sensor:
+#       - name: fortigate_top_talkers
+#         unique_id: fortigate_top_talkers
+#         state: "{{ now().isoformat() }}"
+#         attributes:
+#           consumers: >
+#             {% set raw = states('input_text.fortigate_top_talkers_json') %}
+#             {% if raw and raw != 'unknown' %}
+#               {{ raw | from_json | default([]) }}
+#             {% else %}
+#               []
+#             {% endif %}
+#
+#       - name: fortigate_top_sites
+#         unique_id: fortigate_top_sites
+#         state: "{{ now().isoformat() }}"
+#         attributes:
+#           sites: >
+#             {% set raw = states('input_text.fortigate_top_sites_json') %}
+#             {% if raw and raw != 'unknown' %}
+#               {{ raw | from_json | default([]) }}
+#             {% else %}
+#               []
+#             {% endif %}
+
+automation:
+  - alias: "FortiGate — Update Top Talkers"
+    id: fortigate_update_top_talkers
+    trigger:
+      - platform: time_pattern
+        minutes: "/5"
+    action:
+      - service: rest_command.fortigate_top_talkers_fetch
+        response_variable: fg_resp
+      - service: input_text.set_value
+        target:
+          entity_id: input_text.fortigate_top_talkers_json
+        data:
+          # Extract results array and map to { ip, bytes, tx_bytes, rx_bytes }
+          value: >
+            {% set results = fg_resp.content | from_json | default({}) %}
+            {% set entries = results.get('results', []) %}
+            {% set ns = namespace(out=[]) %}
+            {% for e in entries %}
+              {% set ip = e.get('srcip') or e.get('src', '') %}
+              {% if ip %}
+                {% set ns.out = ns.out + [{'ip': ip, 'bytes': e.get('bytes', 0), 'tx_bytes': e.get('tx_bytes', e.get('egress_bytes', 0)), 'rx_bytes': e.get('rx_bytes', e.get('ingress_bytes', 0))}] %}
+              {% endif %}
+            {% endfor %}
+            {{ ns.out | to_json }}
+
+  - alias: "FortiGate — Update Top Sites"
+    id: fortigate_update_top_sites
+    trigger:
+      - platform: time_pattern
+        minutes: "/5"
+    action:
+      - service: rest_command.fortigate_top_sites_fetch
+        response_variable: fg_resp
+      - service: input_text.set_value
+        target:
+          entity_id: input_text.fortigate_top_sites_json
+        data:
+          value: >
+            {% set results = fg_resp.content | from_json | default({}) %}
+            {% set entries = results.get('results', []) %}
+            {% set ns = namespace(out=[]) %}
+            {% for e in entries %}
+              {% set domain = e.get('domain') or e.get('hostname') or e.get('dstip') or e.get('dst', '') %}
+              {% if domain %}
+                {% set ns.out = ns.out + [{'domain': domain, 'category': e.get('category') or e.get('cat'), 'hits': e.get('sessions', e.get('hits', 0)), 'bytes': e.get('bytes', 0)}] %}
+              {% endif %}
+            {% endfor %}
+            {{ ns.out | to_json }}

@@ -1,0 +1,11 @@
+# IMPORTANT: "200!" (with bang) is Cloudflare Pages' "force" syntax. It
+# tells CF Pages to proxy these paths even when a static file would
+# otherwise match. We need this because public/api/auth/google/callback/
+# is a deployed static OAuth handler, and without the force flag CF Pages
+# would shadow the entire /api/* tree with static fallthrough to /index.html.
+# Exception: /api/auth/google/callback must hit the static handler, so we
+# explicitly route it first.
+/api/auth/google/callback   /api/auth/google/callback/index.html   200
+/api/*                      __BACKEND_URL__/api/:splat              200!
+/ws/*                       __BACKEND_URL__/ws/:splat               200!
+/*                          /index.html                             200
