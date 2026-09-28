@@ -12,10 +12,10 @@ Janus is the open-source, AI-orchestrated residential estate operating system an
 
 ## Installation
 
-1. Add this repository to your Home Assistant Add-on Store:
-   - Navigate to **Settings ➔ Add-ons ➔ Add-on Store ➔ ⋮ (top right) ➔ Repositories**.
+1. Add this repository to your Home Assistant:
+   - Navigate to **Settings ➔ Apps** (or **Add-ons** in older versions) **➔ App Store ➔ ⋮ (top right) ➔ Repositories**.
    - Add: `https://github.com/tonysafoian/janus-home-app`
-2. Find **Janus** in the add-on list and click **Install**.
+2. Find **Janus** in the list and click **Install**.
 3. Toggle **Show in sidebar**.
 4. Click **Start**, then click **Open Web UI** (or select Janus from your sidebar).
 

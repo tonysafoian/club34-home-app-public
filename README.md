@@ -13,9 +13,9 @@
 [![React](https://img.shields.io/badge/React-18.x-61dafb.svg)](package.json)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.x-3178c6.svg)](tsconfig.json)
 [![Docker Ready](https://img.shields.io/badge/Docker-Compose%20Ready-2496ed.svg)](docker-compose.yml)
-[![Home Assistant Add-on](https://img.shields.io/badge/Home%20Assistant-Add--on%20Ready-41BDF5.svg?logo=home-assistant&logoColor=white)](addon/DOCS.md)
+[![Home Assistant Add-on](https://img.shields.io/badge/Home%20Assistant-Add--on%20Available-41BDF5.svg?logo=home-assistant&logoColor=white)](docs/HOME_ASSISTANT_ADDON.md)
 
-[5-Minute Quickstart](QUICKSTART.md) • [Home Assistant Add-on](addon/DOCS.md) • [Executive Guide (Non-Technical / PDF)](docs/EXECUTIVE_GUIDE.md) • [System Architecture](ARCHITECTURE.md) • [Customization Guide](docs/CUSTOMIZATION.md) • [Mock Mode](docs/MOCK_MODE.md) • [Roadmap](ROADMAP.md)
+[Home Assistant Add-on (1-Click)](docs/HOME_ASSISTANT_ADDON.md) • [5-Minute Quickstart](QUICKSTART.md) • [Executive Guide (Non-Technical / PDF)](docs/EXECUTIVE_GUIDE.md) • [System Architecture](ARCHITECTURE.md) • [Customization Guide](docs/CUSTOMIZATION.md) • [Mock Mode](docs/MOCK_MODE.md) • [Roadmap](ROADMAP.md)
 
 </div>
 
@@ -80,7 +80,25 @@ flowchart TD
 
 ---
 
-## ⚡ 5-Minute Quickstart
+## 🏛️ Install as a Home Assistant Add-on (1-Click)
+
+Janus runs natively as an official Home Assistant Add-on with zero configuration and seamless **Ingress** integration directly in your Home Assistant sidebar:
+
+<div align="center">
+
+[![Open your Home Assistant instance and show the add-on repository dialog with a specific repository URL pre-filled.](https://my.home-assistant.io/badges/supervisor_add_addon_repository.svg)](https://my.home-assistant.io/redirect/supervisor_add_addon_repository/?repository_url=https%3A%2F%2Fgithub.com%2Ftonysafoian%2Fjanus-home-app)
+
+</div>
+
+* 🔌 **Zero Config**: Automatically links with your Home Assistant Supervisor API — no manual access tokens required.
+* 📦 **Self-Contained**: Runs its own embedded PostgreSQL database engine directly inside Home Assistant storage.
+* ⚡ **Instant Demo Mode**: Test drive all features with 1 click right from the login screen.
+
+See the complete guide in **[HOME_ASSISTANT_ADDON.md](docs/HOME_ASSISTANT_ADDON.md)**.
+
+---
+
+## ⚡ 5-Minute Local Quickstart (Node.js & Docker)
 
 Get Janus running locally in 3 commands:
 
@@ -99,10 +117,10 @@ npm run migrate
 npm run dev
 ```
 
-Open **[http://localhost:5000](http://localhost:5000)** in your browser!
+Open **[http://localhost:5000](http://localhost:5000)** (or **5080** on macOS) in your browser!
 
 > [!TIP]
-> **Zero Hardware Required**: With default credentials in `.env`, Janus runs in **Mock Mode**, generating realistic synthetic telemetry for the dashboard, vehicle fleet, and pool equipment.
+> **Zero Hardware Required**: With default credentials in `.env`, Janus runs in **Mock Mode**, generating realistic synthetic telemetry for the dashboard, vehicle fleet, and pool equipment. Click **[⚡ Enter Demo / Local Test Mode]** on the login page to explore immediately.
 
 ---
 

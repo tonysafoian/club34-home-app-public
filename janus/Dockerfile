@@ -1,6 +1,15 @@
 ARG BUILD_FROM=ghcr.io/home-assistant/alpine:3.19
 FROM ${BUILD_FROM}
 
+LABEL \
+    io.hass.version="1.0.0" \
+    io.hass.type="addon" \
+    io.hass.arch="aarch64|amd64" \
+    org.opencontainers.image.title="Janus" \
+    org.opencontainers.image.description="AI-orchestrated residential estate operating system and command deck." \
+    org.opencontainers.image.source="https://github.com/tonysafoian/janus-home-app" \
+    org.opencontainers.image.licenses="Apache-2.0"
+
 # Install Node.js 20, PostgreSQL 16, and system dependencies
 RUN apk add --no-cache \
     nodejs \
@@ -27,10 +36,10 @@ COPY . .
 RUN npm run build
 
 # Make startup script executable
-RUN chmod a+x /app/addon/run.sh
+RUN chmod a+x /app/janus/run.sh
 
 WORKDIR /app
 
 EXPOSE 5080
 
-CMD [ "/app/addon/run.sh" ]
+CMD [ "/app/janus/run.sh" ]
