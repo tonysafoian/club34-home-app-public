@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.0.1
+
+- **Fix**: Decouple static file serving from Vite/Rolldown so runtime production starts cleanly on Alpine / aarch64 without native binding errors.
+- **Fix**: Add defensive exception guards around pgvector extension in migrations `0010` and `0045` so Janus boots reliably on standard PostgreSQL without pgvector.
+- **Fix**: Include `postgresql16-client` so `psql` and `createdb` utilities are available for embedded database operations.
+
 ## 1.0.0
 
 - Initial release of Janus as an official Home Assistant Add-on.
