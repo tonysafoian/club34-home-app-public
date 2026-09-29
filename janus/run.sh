@@ -10,7 +10,7 @@ GEMINI_KEY=$(jq -r '.gemini_api_key // empty' "$CONFIG_PATH" 2>/dev/null || true
 CUSTOM_DB_URL=$(jq -r '.database_url // empty' "$CONFIG_PATH" 2>/dev/null || true)
 
 echo "===================================================="
-echo " 🏛️ Starting Janus Home Automation (v1.0.3)"
+echo " 🏛️ Starting Janus Home Automation (v1.0.4)"
 echo "===================================================="
 
 # Set up database
@@ -59,6 +59,18 @@ export PORT=5080
 export NODE_ENV=production
 export ENABLE_DEMO_LOGIN="$ENABLE_DEMO_LOGIN"
 export MOCK_MODE="$ENABLE_MOCK_MODE"
+
+# Ensure persistent session/JWT secret exists on /data
+if [ -z "$JWT_SECRET" ] && [ -z "$SESSION_SECRET" ]; then
+    SECRET_FILE=/data/jwt_secret
+    if [ ! -f "$SECRET_FILE" ]; then
+        echo "[janus] Generating secure session secret on /data/jwt_secret..."
+        head -c 32 /dev/urandom | base64 | tr -dc 'a-zA-Z0-9' | head -c 32 > "$SECRET_FILE"
+        chmod 600 "$SECRET_FILE"
+    fi
+    export JWT_SECRET="$(cat "$SECRET_FILE")"
+    export SESSION_SECRET="$JWT_SECRET"
+fi
 
 echo "[janus] Applying database migrations..."
 node dist/run-migrations.js || npm run migrate || echo "[janus] Note: migration step finished."

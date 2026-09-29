@@ -2418,6 +2418,7 @@ var init_auditLog = __esm({
 
 // server/auth.ts
 import jwt from "jsonwebtoken";
+import crypto2 from "crypto";
 function generateToken(user) {
   return jwt.sign(user, JWT_SECRET, { expiresIn: JWT_EXPIRY });
 }
@@ -2569,11 +2570,8 @@ var init_auth = __esm({
     init_storage();
     init_db2();
     JWT_SECRET = process.env.JWT_SECRET || process.env.SESSION_SECRET || (() => {
-      if (process.env.NODE_ENV === "production") {
-        throw new Error("JWT_SECRET or SESSION_SECRET must be set in production");
-      }
-      console.warn("[AUTH] WARNING: Using default JWT secret. Set JWT_SECRET env var for production.");
-      return "janus-dev-secret-change-in-production";
+      console.warn("[AUTH] WARNING: Neither JWT_SECRET nor SESSION_SECRET was configured. Generating secure random secret.");
+      return crypto2.randomBytes(32).toString("hex");
     })();
     JWT_EXPIRY = "7d";
   }
@@ -3913,7 +3911,7 @@ async function getGoogleServiceToken(scopes, sub = "assistant@example.com") {
   const unsigned = `${hB}.${cB}`;
   const pemBody = sa.private_key.replace(/-----BEGIN PRIVATE KEY-----/g, "").replace(/-----END PRIVATE KEY-----/g, "").replace(/\s/g, "");
   const keyBytes = Buffer.from(pemBody, "base64");
-  const cryptoKey = await crypto3.subtle.importKey(
+  const cryptoKey = await crypto4.subtle.importKey(
     "pkcs8",
     keyBytes,
     { name: "RSASSA-PKCS1-v1_5", hash: "SHA-256" },
@@ -3921,7 +3919,7 @@ async function getGoogleServiceToken(scopes, sub = "assistant@example.com") {
     ["sign"]
   );
   const sig = new Uint8Array(
-    await crypto3.subtle.sign("RSASSA-PKCS1-v1_5", cryptoKey, enc.encode(unsigned))
+    await crypto4.subtle.sign("RSASSA-PKCS1-v1_5", cryptoKey, enc.encode(unsigned))
   );
   const jwt3 = `${unsigned}.${base64url2(sig)}`;
   const res = await fetch(sa.token_uri, {
@@ -3937,10 +3935,10 @@ async function getGoogleServiceToken(scopes, sub = "assistant@example.com") {
   _tokenCache.set(cacheKey, { token, expiresAt: Date.now() + TOKEN_CACHE_TTL });
   return token;
 }
-var crypto3, _tokenCache, TOKEN_CACHE_TTL;
+var crypto4, _tokenCache, TOKEN_CACHE_TTL;
 var init_google_jwt = __esm({
   "server/utils/google-jwt.ts"() {
-    crypto3 = webcrypto;
+    crypto4 = webcrypto;
     _tokenCache = /* @__PURE__ */ new Map();
     TOKEN_CACHE_TTL = 50 * 6e4;
   }
@@ -8805,7 +8803,7 @@ import { execFile as execFile3 } from "child_process";
 
 // server/routes/auth.ts
 import { Router } from "express";
-import crypto2 from "crypto";
+import crypto3 from "crypto";
 import jwt2 from "jsonwebtoken";
 init_auth();
 init_helpers();
@@ -8843,7 +8841,7 @@ async function verifyAppleIdToken(idToken, clientId) {
     const keys = await getApplePublicKeys();
     const matchingKey = keys.find((k) => k.kid === header.kid);
     if (!matchingKey) return null;
-    const keyObj = crypto2.createPublicKey({ key: matchingKey, format: "jwk" });
+    const keyObj = crypto3.createPublicKey({ key: matchingKey, format: "jwk" });
     const pem = keyObj.export({ type: "spki", format: "pem" }).toString();
     const payload = jwt2.verify(idToken, pem, {
       algorithms: ["RS256"],
@@ -8924,7 +8922,7 @@ router.get("/api/auth/google", (req, res) => {
     res.status(500).json({ error: "Google OAuth not configured" });
     return;
   }
-  const state2 = crypto2.randomBytes(16).toString("hex");
+  const state2 = crypto3.randomBytes(16).toString("hex");
   res.cookie("oauth_state", state2, {
     httpOnly: true,
     secure: true,
@@ -9262,7 +9260,7 @@ router.get("/api/auth/apple", (req, res) => {
     res.status(500).json({ error: "Apple OAuth not configured" });
     return;
   }
-  const state2 = crypto2.randomBytes(16).toString("hex");
+  const state2 = crypto3.randomBytes(16).toString("hex");
   res.cookie("oauth_state", state2, {
     httpOnly: true,
     secure: true,
@@ -9382,7 +9380,7 @@ router.get("/api/auth/session", requireAuth, async (req, res) => {
 var sseTickets = /* @__PURE__ */ new Map();
 router.post("/api/auth/sse-ticket", requireAuth, (req, res) => {
   const user = req.user;
-  const ticket = crypto2.randomBytes(32).toString("hex");
+  const ticket = crypto3.randomBytes(32).toString("hex");
   sseTickets.set(ticket, { userId: user.userId, expiresAt: Date.now() + 6e4 });
   setTimeout(() => sseTickets.delete(ticket), 6e4);
   res.json({ ticket });
@@ -42139,7 +42137,7 @@ var goaccess_default = router32;
 // server/routes/external.ts
 init_auditLog();
 import { Router as Router34 } from "express";
-import crypto4 from "crypto";
+import crypto5 from "crypto";
 import Ajv from "ajv";
 init_storage();
 init_supabase();
@@ -42200,7 +42198,7 @@ function timingSafeEqualStr(a, b2) {
   const ab = Buffer.from(a, "utf8");
   const bb = Buffer.from(b2, "utf8");
   if (ab.length !== bb.length) return false;
-  return crypto4.timingSafeEqual(ab, bb);
+  return crypto5.timingSafeEqual(ab, bb);
 }
 function clientIp(req) {
   const fwd = (req.headers["x-forwarded-for"] || "").toString().split(",")[0].trim();
@@ -42941,7 +42939,7 @@ var external_default = router33;
 import { Router as Router35 } from "express";
 import { execFile as execFile2 } from "child_process";
 import { promisify as promisify2 } from "util";
-import crypto5 from "crypto";
+import crypto6 from "crypto";
 var execFileAsync2 = promisify2(execFile2);
 var router34 = Router35();
 router34.get("/api/fortigate/config-status", (_req, res) => {
@@ -42964,8 +42962,8 @@ router34.post("/api/deploy/webhook", async (req, res) => {
     return res.status(401).json({ error: "Missing x-deploy-signature header" });
   }
   const bodyStr = JSON.stringify(req.body);
-  const expected = `sha256=${crypto5.createHmac("sha256", secret).update(bodyStr).digest("hex")}`;
-  if (signature.length !== expected.length || !crypto5.timingSafeEqual(Buffer.from(signature), Buffer.from(expected))) {
+  const expected = `sha256=${crypto6.createHmac("sha256", secret).update(bodyStr).digest("hex")}`;
+  if (signature.length !== expected.length || !crypto6.timingSafeEqual(Buffer.from(signature), Buffer.from(expected))) {
     console.warn("[deploy] Invalid signature \u2014 rejecting webhook");
     return res.status(401).json({ error: "Invalid signature" });
   }
@@ -46086,7 +46084,7 @@ init_objectStore();
 import { Router as Router38 } from "express";
 import fs6 from "fs";
 import path7 from "path";
-import crypto6 from "crypto";
+import crypto7 from "crypto";
 import express from "express";
 var router37 = Router38();
 function serviceSecret() {
@@ -46099,7 +46097,7 @@ function timingSafeEqualStr2(a, b2) {
   const ab = Buffer.from(a);
   const bb = Buffer.from(b2);
   if (ab.length !== bb.length) return false;
-  return crypto6.timingSafeEqual(ab, bb);
+  return crypto7.timingSafeEqual(ab, bb);
 }
 function requireServiceAuth(req, res, next) {
   const expected = serviceSecret();

@@ -2,7 +2,7 @@ ARG BUILD_FROM=ghcr.io/home-assistant/alpine:3.19
 FROM ${BUILD_FROM}
 
 LABEL \
-    io.hass.version="1.0.3" \
+    io.hass.version="1.0.4" \
     io.hass.type="addon" \
     io.hass.arch="aarch64|amd64" \
     org.opencontainers.image.title="Janus" \
@@ -31,7 +31,7 @@ WORKDIR /app
 # Home Assistant executes docker build with the add-on subdirectory (janus/) as context.
 # Clone the repository directly so all pre-built bundles, migrations, and manifests are present.
 # BUILD_VERSION busts Docker layer caching on version bumps.
-ARG BUILD_VERSION="1.0.3"
+ARG BUILD_VERSION="1.0.4"
 ARG REPO_URL="https://github.com/tonysafoian/janus-home-app.git"
 RUN git clone --depth 1 -b main "${REPO_URL}" /tmp/repo && \
     cp -r /tmp/repo/* /app/ && \
