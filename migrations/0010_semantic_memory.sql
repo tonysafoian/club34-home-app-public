@@ -14,11 +14,24 @@
 -- publish failure where the prod Postgres pgvector version did not
 -- support HNSW.
 
-CREATE EXTENSION IF NOT EXISTS vector;
+DO $$
+BEGIN
+  BEGIN
+    CREATE EXTENSION IF NOT EXISTS vector;
+  EXCEPTION WHEN OTHERS THEN
+    RAISE WARNING 'pgvector extension is not available on this Postgres system (%). Vector search disabled.', SQLERRM;
+  END;
+END $$;
+
+DO $$
+BEGIN
+  IF EXISTS (SELECT 1 FROM pg_type WHERE typname = 'vector') THEN
+    ALTER TABLE janus_memory ADD COLUMN IF NOT EXISTS embedding vector(768);
+  END IF;
+END $$;
 
 ALTER TABLE janus_memory
-  ADD COLUMN IF NOT EXISTS embedding vector(768),
-  ADD COLUMN IF NOT EXISTS pinned    boolean NOT NULL DEFAULT false;
+  ADD COLUMN IF NOT EXISTS pinned boolean NOT NULL DEFAULT false;
 
 -- Vector index: HNSW → ivfflat → none.
 DO $$

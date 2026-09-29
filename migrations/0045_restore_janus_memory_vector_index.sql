@@ -18,7 +18,14 @@
 -- HNSW, so the HNSW branch succeeds and janus_memory_embedding_hnsw is created
 -- with vector_cosine_ops (matching the cosine-distance `<=>` recall query).
 
-CREATE EXTENSION IF NOT EXISTS vector;
+DO $$
+BEGIN
+  BEGIN
+    CREATE EXTENSION IF NOT EXISTS vector;
+  EXCEPTION WHEN OTHERS THEN
+    RAISE WARNING 'pgvector extension is not available on this Postgres system (%). Vector index restore skipped.', SQLERRM;
+  END;
+END $$;
 
 -- Vector index: HNSW → ivfflat → none.
 DO $$

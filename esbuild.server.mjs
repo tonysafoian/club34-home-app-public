@@ -8,6 +8,7 @@ await build({
   format: "esm",
   outfile: "dist/index.js",
   packages: "external",
+  external: ["vite"],
   banner: {
     js: `
 import { createRequire as __createRequire } from 'module';

@@ -21,7 +21,8 @@ RUN apk add --no-cache \
     bash \
     curl \
     jq \
-    su-exec
+    su-exec && \
+    (apk add --no-cache postgresql-pgvector || apk add --no-cache pgvector || true)
 
 WORKDIR /app
 
