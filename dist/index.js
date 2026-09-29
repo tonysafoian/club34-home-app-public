@@ -3173,14 +3173,14 @@ var init_supabase = __esm({
           const { putObject: putObject2 } = await Promise.resolve().then(() => (init_objectStore(), objectStore_exports));
           await putObject2(this.bucket, filePath, buffer);
           try {
-            const fs11 = await import("fs");
-            const path13 = await import("path");
-            const fullPath = path13.join(process.cwd(), "public", this.bucket, filePath);
-            await fs11.promises.mkdir(path13.dirname(fullPath), { recursive: true });
-            await fs11.promises.writeFile(fullPath, buffer);
-            const distPath = path13.join(process.cwd(), "dist/public", this.bucket, filePath);
-            await fs11.promises.mkdir(path13.dirname(distPath), { recursive: true });
-            await fs11.promises.writeFile(distPath, buffer);
+            const fs10 = await import("fs");
+            const path12 = await import("path");
+            const fullPath = path12.join(process.cwd(), "public", this.bucket, filePath);
+            await fs10.promises.mkdir(path12.dirname(fullPath), { recursive: true });
+            await fs10.promises.writeFile(fullPath, buffer);
+            const distPath = path12.join(process.cwd(), "dist/public", this.bucket, filePath);
+            await fs10.promises.mkdir(path12.dirname(distPath), { recursive: true });
+            await fs10.promises.writeFile(distPath, buffer);
           } catch {
           }
           return { data: { path: filePath }, error: null };
@@ -3194,8 +3194,8 @@ var init_supabase = __esm({
       }
       async remove(paths) {
         try {
-          const fs11 = await import("fs");
-          const path13 = await import("path");
+          const fs10 = await import("fs");
+          const path12 = await import("path");
           const { deleteObject: deleteObject2 } = await Promise.resolve().then(() => (init_objectStore(), objectStore_exports));
           for (const fp of paths) {
             try {
@@ -3204,10 +3204,10 @@ var init_supabase = __esm({
               console.warn(`[supabase-compat] durable remove failed for ${this.bucket}/${fp}: ${delErr?.message}`);
             }
             try {
-              const p1 = path13.join(process.cwd(), "public", this.bucket, fp);
-              const p2 = path13.join(process.cwd(), "dist/public", this.bucket, fp);
-              if (fs11.existsSync(p1)) await fs11.promises.unlink(p1);
-              if (fs11.existsSync(p2)) await fs11.promises.unlink(p2);
+              const p1 = path12.join(process.cwd(), "public", this.bucket, fp);
+              const p2 = path12.join(process.cwd(), "dist/public", this.bucket, fp);
+              if (fs10.existsSync(p1)) await fs10.promises.unlink(p1);
+              if (fs10.existsSync(p2)) await fs10.promises.unlink(p2);
             } catch {
             }
           }
@@ -7590,15 +7590,15 @@ async function fetchT5(url, init = {}, timeoutMs = REQUEST_TIMEOUT_MS2) {
     clearTimeout(t);
   }
 }
-async function fortigateGet(path13) {
-  return fortigateRequest(path13, "GET");
+async function fortigateGet(path12) {
+  return fortigateRequest(path12, "GET");
 }
-async function fortigateRequest(path13, method = "GET", body) {
+async function fortigateRequest(path12, method = "GET", body) {
   if (!FORTIGATE_API_TOKEN) {
     throw new Error("FORTIGATE_API_TOKEN secret is not configured");
   }
   return breakers.fortigate.execute(async () => {
-    const url = `${FORTIGATE_BASE_URL}${path13}`;
+    const url = `${FORTIGATE_BASE_URL}${path12}`;
     const res = await fetchT5(url, {
       method,
       headers: {
@@ -7615,7 +7615,7 @@ async function fortigateRequest(path13, method = "GET", body) {
       );
     }
     if (res.status >= 400) {
-      throw new Error(`FortiGate ${method} ${path13} failed (HTTP ${res.status}): ${text2.slice(0, 200)}`);
+      throw new Error(`FortiGate ${method} ${path12} failed (HTTP ${res.status}): ${text2.slice(0, 200)}`);
     }
     const trimmed = text2.trimStart();
     if (trimmed.startsWith("<")) {
@@ -8090,8 +8090,8 @@ __export(workflowReconciler_exports, {
   fetchAutomationMap: () => fetchAutomationMap,
   reconcileWorkflowTriggers: () => reconcileWorkflowTriggers
 });
-async function haFetch(method, path13, body) {
-  const url = `${HA_URL().replace(/\/$/, "")}${path13}`;
+async function haFetch(method, path12, body) {
+  const url = `${HA_URL().replace(/\/$/, "")}${path12}`;
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), 2e4);
   try {
@@ -8349,9 +8349,9 @@ function getModelApiKey() {
   if (!key) throw new Error("GOOGLE_GENERATIVE_AI_API_KEY is not configured \u2014 cannot run Amazon Fresh automation");
   return key;
 }
-async function stagehandPost3(path13, body) {
+async function stagehandPost3(path12, body) {
   const headers = getStagehandHeaders2();
-  const r = await fetch(`${STAGEHAND_BASE3}${path13}`, {
+  const r = await fetch(`${STAGEHAND_BASE3}${path12}`, {
     method: "POST",
     headers,
     body: JSON.stringify(body)
@@ -8736,52 +8736,10 @@ var init_static = __esm({
   }
 });
 
-// server/vite.ts
-var vite_exports = {};
-__export(vite_exports, {
-  serveStatic: () => serveStatic,
-  setupVite: () => setupVite
-});
-import fs9 from "fs";
-import path11 from "path";
-import { fileURLToPath as fileURLToPath2 } from "url";
-import { createServer as createViteServer } from "vite";
-async function setupVite(app2, server) {
-  const vite = await createViteServer({
-    server: {
-      middlewareMode: true,
-      hmr: { server }
-    },
-    appType: "custom"
-  });
-  app2.locals.__viteLoaded = true;
-  app2.use(vite.middlewares);
-  app2.use("/{*path}", async (req, res, next) => {
-    const url = req.originalUrl;
-    try {
-      const clientTemplate = path11.resolve(__dirname2, "..", "index.html");
-      let template = await fs9.promises.readFile(clientTemplate, "utf-8");
-      template = await vite.transformIndexHtml(url, template);
-      res.status(200).set({ "Content-Type": "text/html" }).end(template);
-    } catch (e) {
-      vite.ssrFixStacktrace(e);
-      next(e);
-    }
-  });
-  return vite;
-}
-var __dirname2;
-var init_vite = __esm({
-  "server/vite.ts"() {
-    init_static();
-    __dirname2 = path11.dirname(fileURLToPath2(import.meta.url));
-  }
-});
-
 // server/index.ts
 import "dotenv/config";
-import fs10 from "fs";
-import path12 from "path";
+import fs9 from "fs";
+import path11 from "path";
 import express3 from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
@@ -9830,9 +9788,9 @@ async function callHAProxy(action, extra = {}) {
     if (action === "get-logbook") {
       const hours = extra.hours || 12;
       const start = new Date(Date.now() - hours * 3600 * 1e3).toISOString();
-      let path13 = `/api/logbook/${start}`;
-      if (extra.entity_id) path13 += `?entity=${extra.entity_id}`;
-      const res = await breakers.ha.execute(() => fetch(`${haUrl}${path13}`, {
+      let path12 = `/api/logbook/${start}`;
+      if (extra.entity_id) path12 += `?entity=${extra.entity_id}`;
+      const res = await breakers.ha.execute(() => fetch(`${haUrl}${path12}`, {
         headers: { Authorization: `Bearer ${HA_TOKEN2}`, "Content-Type": "application/json" }
       }));
       const data = await res.json();
@@ -12010,9 +11968,9 @@ function getHeaders() {
     "x-bb-project-id": projectId
   };
 }
-async function stagehandPost(path13, body) {
+async function stagehandPost(path12, body) {
   const headers = getHeaders();
-  const res = await fetch(`${STAGEHAND_BASE}${path13}`, {
+  const res = await fetch(`${STAGEHAND_BASE}${path12}`, {
     method: "POST",
     headers,
     body: JSON.stringify(body)
@@ -20190,8 +20148,8 @@ router5.get("/govee-ids", requireAuth2, (_req, res) => {
   res.json(getGoveeEntityIdsFromCache());
 });
 var HA_TOKEN_ALERT_COOLDOWN_MS = 60 * 60 * 1e3;
-async function callHA(haUrl, haToken, method, path13, body, opts) {
-  const url = `${haUrl.replace(/\/$/, "")}${path13}`;
+async function callHA(haUrl, haToken, method, path12, body, opts) {
+  const url = `${haUrl.replace(/\/$/, "")}${path12}`;
   const MAX_RETRIES = opts?.maxRetries ?? 3;
   const retryOn401 = opts?.retryOn401 ?? true;
   let lastError = null;
@@ -20221,17 +20179,17 @@ async function callHA(haUrl, haToken, method, path13, body, opts) {
       }
       lastStatus = res.status;
       if (res.status >= 500 && attempt < MAX_RETRIES) {
-        console.warn(`callHA: HA returned ${res.status} on attempt ${attempt}/${MAX_RETRIES} for ${method} ${path13} \u2014 retrying in 2s`);
+        console.warn(`callHA: HA returned ${res.status} on attempt ${attempt}/${MAX_RETRIES} for ${method} ${path12} \u2014 retrying in 2s`);
         await new Promise((r) => setTimeout(r, 2e3));
         continue;
       }
       if (retryOn401 && res.status === 401 && attempt < MAX_RETRIES) {
-        console.warn(`callHA: HA returned 401 on attempt ${attempt}/${MAX_RETRIES} for ${method} ${path13} \u2014 retrying in 2s`);
+        console.warn(`callHA: HA returned 401 on attempt ${attempt}/${MAX_RETRIES} for ${method} ${path12} \u2014 retrying in 2s`);
         await new Promise((r) => setTimeout(r, 2e3));
         continue;
       }
       if (retryOn401 && res.status === 401 && attempt === MAX_RETRIES) {
-        console.error(`callHA: HA returned 401 after ${MAX_RETRIES} attempts for ${method} ${path13} \u2014 HA token likely expired or revoked`);
+        console.error(`callHA: HA returned 401 after ${MAX_RETRIES} attempts for ${method} ${path12} \u2014 HA token likely expired or revoked`);
         logAudit("home-assistant-proxy", {
           category: "home",
           event_type: "ha_auth_failure",
@@ -20239,8 +20197,8 @@ async function callHA(haUrl, haToken, method, path13, body, opts) {
           actor_id: "system",
           actor_name: "System",
           channel: "system",
-          summary: `CRITICAL: Home Assistant rejected auth (401) for ${method} ${path13} after ${MAX_RETRIES} retries. Token may need rotation.`,
-          detail: { method, path: path13, attempts: MAX_RETRIES },
+          summary: `CRITICAL: Home Assistant rejected auth (401) for ${method} ${path12} after ${MAX_RETRIES} retries. Token may need rotation.`,
+          detail: { method, path: path12, attempts: MAX_RETRIES },
           status: "error"
         });
       }
@@ -20248,10 +20206,10 @@ async function callHA(haUrl, haToken, method, path13, body, opts) {
     } catch (err) {
       lastError = err instanceof Error ? err : new Error(String(err));
       if (err instanceof CircuitOpenError) {
-        console.warn(`callHA: breaker open for HA, skipping remaining ${MAX_RETRIES - attempt} retries for ${method} ${path13}`);
+        console.warn(`callHA: breaker open for HA, skipping remaining ${MAX_RETRIES - attempt} retries for ${method} ${path12}`);
         throw err;
       }
-      console.warn(`callHA attempt ${attempt}/${MAX_RETRIES} failed for ${method} ${path13}: ${lastError.message}`);
+      console.warn(`callHA attempt ${attempt}/${MAX_RETRIES} failed for ${method} ${path12}: ${lastError.message}`);
       if (attempt < MAX_RETRIES) {
         await new Promise((r) => setTimeout(r, 500));
       }
@@ -20289,7 +20247,7 @@ router5.post("/", requireAuth2, async (req, res) => {
   const actorName = authUser?.displayName || authUser?.email || "UNKNOWN";
   try {
     const body = req.body;
-    const { action, path: path13, method = "GET", payload } = body;
+    const { action, path: path12, method = "GET", payload } = body;
     if (action === "save-settings") {
       if (userId === "UNKNOWN") {
         res.status(401).json({ error: "Authentication required" });
@@ -20435,14 +20393,14 @@ router5.post("/", requireAuth2, async (req, res) => {
     }
     const HA_URL2 = creds.haUrl;
     const HA_TOKEN2 = creds.haToken;
-    if (action === "proxy" && path13) {
-      if (typeof path13 !== "string" || !path13.startsWith("/") || path13.startsWith("//") || path13.includes("\\")) {
+    if (action === "proxy" && path12) {
+      if (typeof path12 !== "string" || !path12.startsWith("/") || path12.startsWith("//") || path12.includes("\\")) {
         res.status(400).json({ error: "path must be an absolute URL path" });
         return;
       }
       const t0 = Date.now();
-      const { status, data } = await callHA(HA_URL2, HA_TOKEN2, method, path13, payload);
-      if (status >= 400 && path13.startsWith("/api/calendars/")) {
+      const { status, data } = await callHA(HA_URL2, HA_TOKEN2, method, path12, payload);
+      if (status >= 400 && path12.startsWith("/api/calendars/")) {
         console.warn(`Calendar endpoint returned ${status} \u2014 returning empty array`);
         logAudit("home-assistant-proxy", {
           category: "home",
@@ -20451,8 +20409,8 @@ router5.post("/", requireAuth2, async (req, res) => {
           actor_id: userId,
           actor_name: actorName,
           channel: "web",
-          summary: `Home Assistant calendar proxy ${method} ${path13} returned HTTP ${status} (suppressed)`,
-          detail: { method, path: path13, status, suppressed: true },
+          summary: `Home Assistant calendar proxy ${method} ${path12} returned HTTP ${status} (suppressed)`,
+          detail: { method, path: path12, status, suppressed: true },
           status: "error",
           duration_ms: Date.now() - t0
         });
@@ -20470,10 +20428,10 @@ router5.post("/", requireAuth2, async (req, res) => {
           actor_id: userId,
           actor_name: actorName,
           channel: "web",
-          summary: `Home Assistant proxy ${method} ${path13} returned HTTP ${status}`,
+          summary: `Home Assistant proxy ${method} ${path12} returned HTTP ${status}`,
           detail: {
             method,
-            path: path13,
+            path: path12,
             status,
             request_bytes: payloadBytes || void 0,
             response_bytes: responseBytes,
@@ -20492,8 +20450,8 @@ router5.post("/", requireAuth2, async (req, res) => {
           actor_id: userId,
           actor_name: actorName,
           channel: "web",
-          summary: `HA proxy ${method} ${path13}`,
-          detail: { method, path: path13, status, request_bytes: payloadBytes || void 0, response_bytes: responseBytes },
+          summary: `HA proxy ${method} ${path12}`,
+          detail: { method, path: path12, status, request_bytes: payloadBytes || void 0, response_bytes: responseBytes },
           status: "success",
           duration_ms: Date.now() - t0
         });
@@ -23514,7 +23472,7 @@ async function getSignatureKey(key, dateStamp, region, service) {
 async function signRequest(method, url, headers, body, credentials) {
   const parsedUrl = new URL(url);
   const host = parsedUrl.host;
-  const path13 = parsedUrl.pathname;
+  const path12 = parsedUrl.pathname;
   const queryString = parsedUrl.searchParams.toString();
   const now = /* @__PURE__ */ new Date();
   const amzDate = now.toISOString().replace(/[-:]/g, "").replace(/\.\d+Z$/, "Z");
@@ -23526,7 +23484,7 @@ x-amz-date:${amzDate}
 x-amz-security-token:${credentials.SessionToken}
 `;
   const signedHeaders = signedHeadersList.join(";");
-  const canonicalRequest = [method, path13, queryString, canonicalHeaders, signedHeaders, payloadHash].join("\n");
+  const canonicalRequest = [method, path12, queryString, canonicalHeaders, signedHeaders, payloadHash].join("\n");
   const credentialScope = `${dateStamp}/${AWS_REGION}/${AWS_SERVICE}/aws4_request`;
   const stringToSign = ["AWS4-HMAC-SHA256", amzDate, credentialScope, await sha256(canonicalRequest)].join("\n");
   const signingKey = await getSignatureKey(credentials.SecretKey, dateStamp, AWS_REGION, AWS_SERVICE);
@@ -23568,9 +23526,9 @@ async function getIaqualinkSession() {
   console.log("iAqualink session established for user", userId);
   return cachedSession2;
 }
-async function iaqualinkSignedPut(path13, session, body) {
+async function iaqualinkSignedPut(path12, session, body) {
   const qs = new URLSearchParams({ api_key: IAQUALINK_API_KEY, authentication_token: session.authToken, user_id: session.userId });
-  const url = `${IAQUALINK_BASE}${path13}?${qs.toString()}`;
+  const url = `${IAQUALINK_BASE}${path12}?${qs.toString()}`;
   const bodyStr = JSON.stringify(body);
   const signedHeaders = await signRequest("PUT", url, { "Accept": "application/json", "Content-Type": "application/json" }, bodyStr, session.credentials);
   const response = await fetch(url, { method: "PUT", headers: signedHeaders, body: bodyStr });
@@ -23581,9 +23539,9 @@ async function iaqualinkSignedPut(path13, session, body) {
     return { data: { raw: text2 }, ok: response.ok, status: response.status };
   }
 }
-async function iaqualinkSimpleGet(path13, session) {
+async function iaqualinkSimpleGet(path12, session) {
   const qs = new URLSearchParams({ api_key: IAQUALINK_API_KEY, authentication_token: session.authToken, user_id: session.userId });
-  const url = `${IAQUALINK_BASE}${path13}?${qs.toString()}`;
+  const url = `${IAQUALINK_BASE}${path12}?${qs.toString()}`;
   const response = await fetch(url, { method: "GET", headers: { "Accept": "application/json" } });
   return response.json();
 }
@@ -23744,8 +23702,8 @@ async function fetchHAHistory(entityId, hours) {
   if (!haUrl || !haToken) throw new Error("HA_URL or HA_TOKEN not configured");
   const end = (/* @__PURE__ */ new Date()).toISOString();
   const start = new Date(Date.now() - hours * 3600 * 1e3).toISOString();
-  const path13 = `/api/history/period/${start}?end_time=${encodeURIComponent(end)}&minimal_response&filter_entity_id=${entityId}`;
-  const url = `${haUrl.replace(/\/$/, "")}${path13}`;
+  const path12 = `/api/history/period/${start}?end_time=${encodeURIComponent(end)}&minimal_response&filter_entity_id=${entityId}`;
+  const url = `${haUrl.replace(/\/$/, "")}${path12}`;
   const res = await fetchT2(url, {
     method: "GET",
     headers: { "Authorization": `Bearer ${haToken}`, "Content-Type": "application/json" }
@@ -26584,8 +26542,8 @@ async function getNoSchoolDates(supabase, schoolYear) {
   }
   return noSchoolDates;
 }
-async function callHAWithRetry2(haUrl, haToken, path13, body, timeoutMs = 15e3) {
-  const url = `${haUrl.replace(/\/$/, "")}${path13}`;
+async function callHAWithRetry2(haUrl, haToken, path12, body, timeoutMs = 15e3) {
+  const url = `${haUrl.replace(/\/$/, "")}${path12}`;
   const MAX_RETRIES = 3;
   let lastStatus = 0;
   let lastErrorText = "";
@@ -26609,7 +26567,7 @@ async function callHAWithRetry2(haUrl, haToken, path13, body, timeoutMs = 15e3) 
       }
       lastErrorText = await res.text().catch(() => "");
       if (res.status === 401 && attempt < MAX_RETRIES) {
-        console.warn(`[broadcast] callHAWithRetry: 401 on attempt ${attempt}/${MAX_RETRIES} for ${path13} \u2014 retrying in 2s`);
+        console.warn(`[broadcast] callHAWithRetry: 401 on attempt ${attempt}/${MAX_RETRIES} for ${path12} \u2014 retrying in 2s`);
         await new Promise((r) => setTimeout(r, 2e3));
         continue;
       }
@@ -26620,7 +26578,7 @@ async function callHAWithRetry2(haUrl, haToken, path13, body, timeoutMs = 15e3) 
       return { ok: false, status: lastStatus, errorText: lastErrorText };
     } catch (e) {
       lastErrorText = e instanceof Error ? e.message : "unknown";
-      console.warn(`[broadcast] callHAWithRetry attempt ${attempt}/${MAX_RETRIES} failed for ${path13}: ${lastErrorText}`);
+      console.warn(`[broadcast] callHAWithRetry attempt ${attempt}/${MAX_RETRIES} failed for ${path12}: ${lastErrorText}`);
       if (attempt < MAX_RETRIES) {
         await new Promise((r) => setTimeout(r, 500));
       }
@@ -30827,8 +30785,8 @@ router18.post("/api/entertainment-sync", async (req, res) => {
   }
 });
 var TMDB_IMAGE = "https://image.tmdb.org/t/p/w500";
-async function tmdbGet(path13, bearerToken, apiKey, params = {}) {
-  const url = new URL(`https://api.themoviedb.org/3${path13}`);
+async function tmdbGet(path12, bearerToken, apiKey, params = {}) {
+  const url = new URL(`https://api.themoviedb.org/3${path12}`);
   if (apiKey) url.searchParams.set("api_key", apiKey);
   for (const [k, v] of Object.entries(params)) url.searchParams.set(k, v);
   const headers = { "Accept": "application/json" };
@@ -33855,9 +33813,9 @@ function getStagehandHeaders() {
   if (!projectId) throw new Error("BROWSERBASE_PROJECT_ID not configured");
   return { "Content-Type": "application/json", "x-bb-api-key": apiKey, "x-bb-project-id": projectId };
 }
-async function stagehandPost2(path13, body) {
+async function stagehandPost2(path12, body) {
   const headers = getStagehandHeaders();
-  const r = await fetch(`${STAGEHAND_BASE2}${path13}`, { method: "POST", headers, body: JSON.stringify(body) });
+  const r = await fetch(`${STAGEHAND_BASE2}${path12}`, { method: "POST", headers, body: JSON.stringify(body) });
   const data = await r.json();
   if (!r.ok) throw new Error(`Stagehand ${r.status}: ${JSON.stringify(data).slice(0, 500)}`);
   return data;
@@ -39249,9 +39207,9 @@ function requireAdmin2(req, res, next) {
   }
   next();
 }
-async function fortigateRequest2(path13, method = "GET", body) {
+async function fortigateRequest2(path12, method = "GET", body) {
   try {
-    const data = await fortigateRequest(path13, method, body);
+    const data = await fortigateRequest(path12, method, body);
     return { status: 200, data };
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err);
@@ -39726,9 +39684,9 @@ router28.get("/api/fortigate/traffic", requireAuth2, requireAdmin2, async (_req,
         "/api/v2/monitor/firewall/session?count=1000&sub_type=user&summary=true",
         "/api/v2/monitor/firewall/session?count=1000"
       ];
-      for (const path13 of sessionCandidates) {
+      for (const path12 of sessionCandidates) {
         try {
-          const sessRes = await fortigateRequest2(path13);
+          const sessRes = await fortigateRequest2(path12);
           if (!isSuccessStatus(sessRes.status)) continue;
           const aggregated = aggregateTopTalkersFromSessions(sessRes.data);
           if (aggregated.length > 0) {
@@ -39898,9 +39856,9 @@ router28.get("/api/fortigate/top-sites", requireAuth2, requireAdmin2, async (_re
       "/api/v2/log/memory/utm/webfilter?rows=500&start=0",
       "/api/v2/log/disk/utm/webfilter?rows=500&start=0"
     ];
-    for (const path13 of webfilterCandidates) {
+    for (const path12 of webfilterCandidates) {
       try {
-        const result = await fortigateRequest2(path13);
+        const result = await fortigateRequest2(path12);
         if (!isSuccessStatus(result.status)) continue;
         const wfData = result.data;
         const wfResults = wfData["results"];
@@ -39925,7 +39883,7 @@ router28.get("/api/fortigate/top-sites", requireAuth2, requireAdmin2, async (_re
           }
         }
         sites = Array.from(siteMap.entries()).map(([domain, v]) => ({ domain, ...v })).sort((a, b2) => b2.hits - a.hits || b2.bytes - a.bytes).slice(0, 20);
-        console.info(`[FortiGate] top-sites: ${path13} \u2192 ${entries.length} entries \u2192 ${sites.length} unique domains`);
+        console.info(`[FortiGate] top-sites: ${path12} \u2192 ${entries.length} entries \u2192 ${sites.length} unique domains`);
         break;
       } catch (_ignored) {
       }
@@ -40382,25 +40340,25 @@ router28.get("/api/fortigate/dns-dhcp", requireAuth2, requireAdmin2, async (_req
     return null;
   }
   async function tryPaths(paths) {
-    for (const path13 of paths) {
+    for (const path12 of paths) {
       try {
-        const result = await fortigateRequest2(path13);
+        const result = await fortigateRequest2(path12);
         if (!isSuccessStatus(result.status)) {
-          console.warn(`[FortiGate] dns-dhcp path ${path13} returned ${result.status}`);
+          console.warn(`[FortiGate] dns-dhcp path ${path12} returned ${result.status}`);
           continue;
         }
         const data = result.data;
         const results = data["results"];
         const entries = Array.isArray(results) ? results.filter((e) => e !== null && typeof e === "object") : [];
         if (entries.length === 0) {
-          console.info(`[FortiGate] dns-dhcp path ${path13} returned 0 entries, trying next`);
+          console.info(`[FortiGate] dns-dhcp path ${path12} returned 0 entries, trying next`);
           continue;
         }
-        console.info(`[FortiGate] dns-dhcp path ${path13} success \u2014 ${entries.length} entries`);
-        return { entries, source: path13 };
+        console.info(`[FortiGate] dns-dhcp path ${path12} success \u2014 ${entries.length} entries`);
+        return { entries, source: path12 };
       } catch (err) {
         const msg = err instanceof Error ? err.message : "unknown";
-        console.warn(`[FortiGate] dns-dhcp path ${path13} threw: ${msg}`);
+        console.warn(`[FortiGate] dns-dhcp path ${path12} threw: ${msg}`);
       }
     }
     return null;
@@ -45625,10 +45583,10 @@ async function getZoneRuntimeMinutes(entityIds, start, end) {
   const result = {};
   if (!haUrl || !haToken || entityIds.length === 0) return result;
   const filter = entityIds.join(",");
-  const path13 = `/api/history/period/${start.toISOString()}?end_time=${encodeURIComponent(end.toISOString())}&filter_entity_id=${encodeURIComponent(filter)}&minimal_response`;
+  const path12 = `/api/history/period/${start.toISOString()}?end_time=${encodeURIComponent(end.toISOString())}&filter_entity_id=${encodeURIComponent(filter)}&minimal_response`;
   try {
     const res = await fetchT2(
-      `${haUrl.replace(/\/$/, "")}${path13}`,
+      `${haUrl.replace(/\/$/, "")}${path12}`,
       { headers: { Authorization: `Bearer ${haToken}`, "Content-Type": "application/json" } },
       3e4
     );
@@ -49348,11 +49306,11 @@ init_correlation();
 import cron from "node-cron";
 init_fortigate();
 var BASE_URL2 = process.env.BASE_URL || `http://localhost:${process.env.PORT || 5e3}`;
-async function triggerRoute(path13, body = {}) {
+async function triggerRoute(path12, body = {}) {
   const t0 = Date.now();
   const correlationId = `cron:${generateCorrelationId()}`;
   try {
-    const res = await fetch(`${BASE_URL2}${path13}`, {
+    const res = await fetch(`${BASE_URL2}${path12}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -49363,15 +49321,15 @@ async function triggerRoute(path13, body = {}) {
     });
     const durationMs = Date.now() - t0;
     const status = res.ok ? "ok" : `error ${res.status}`;
-    console.log(`[cron] ${path13} \u2192 ${status} (cid=${correlationId})`);
+    console.log(`[cron] ${path12} \u2192 ${status} (cid=${correlationId})`);
     logAudit("cron-trigger", {
       category: "automation",
       event_type: "cron_route_triggered",
       severity: "info",
       actor_id: "system",
       channel: "cron",
-      summary: `Cron triggered ${path13}${res.ok ? "" : ` (HTTP ${res.status})`}`,
-      detail: { path: path13, http_status: res.status, body: Object.keys(body).length > 0 ? body : void 0 },
+      summary: `Cron triggered ${path12}${res.ok ? "" : ` (HTTP ${res.status})`}`,
+      detail: { path: path12, http_status: res.status, body: Object.keys(body).length > 0 ? body : void 0 },
       status: res.ok ? "success" : "error",
       duration_ms: durationMs,
       correlation_id: correlationId
@@ -49379,15 +49337,15 @@ async function triggerRoute(path13, body = {}) {
   } catch (err) {
     const durationMs = Date.now() - t0;
     const message = err instanceof Error ? err.message : String(err);
-    console.error(`[cron] ${path13} failed (cid=${correlationId}):`, message);
+    console.error(`[cron] ${path12} failed (cid=${correlationId}):`, message);
     logAudit("cron-trigger", {
       category: "automation",
       event_type: "cron_route_failed",
       severity: "error",
       actor_id: "system",
       channel: "cron",
-      summary: `Cron trigger failed for ${path13}: ${message}`,
-      detail: { path: path13, error: message },
+      summary: `Cron trigger failed for ${path12}: ${message}`,
+      detail: { path: path12, error: message },
       status: "error",
       duration_ms: durationMs,
       correlation_id: correlationId
@@ -49748,7 +49706,7 @@ app.use(computerTokenMiddleware);
 logComputerTokenStartup();
 app.use((req, res, next) => {
   const start = Date.now();
-  const path13 = req.path;
+  const path12 = req.path;
   let capturedJsonResponse = void 0;
   const originalResJson = res.json;
   res.json = function(bodyJson, ...args) {
@@ -49757,8 +49715,8 @@ app.use((req, res, next) => {
   };
   res.on("finish", () => {
     const duration = Date.now() - start;
-    if (path13.startsWith("/api")) {
-      let logLine = `${req.method} ${path13} ${res.statusCode} in ${duration}ms`;
+    if (path12.startsWith("/api")) {
+      let logLine = `${req.method} ${path12} ${res.statusCode} in ${duration}ms`;
       if (capturedJsonResponse) {
         logLine += ` :: ${JSON.stringify(capturedJsonResponse).substring(0, 80)}`;
       }
@@ -49883,7 +49841,7 @@ async function writeDeploymentHeartbeat(port) {
       res.status(status).json({ message });
     }
   });
-  const isProdRuntime = process.env.NODE_ENV === "production" || process.env.SERVE_STATIC === "true" || !process.env.NODE_ENV && fs10.existsSync(path12.join(process.cwd(), "dist", "public", "index.html"));
+  const isProdRuntime = process.env.NODE_ENV === "production" || process.env.SERVE_STATIC === "true" || !process.env.NODE_ENV && fs9.existsSync(path11.join(process.cwd(), "dist", "public", "index.html"));
   const nodeEnv = process.env.NODE_ENV ?? "<unset>";
   let viteWasLoaded = false;
   if (!isProdRuntime && process.env.SKIP_VITE === "1") {
@@ -49894,8 +49852,12 @@ async function writeDeploymentHeartbeat(port) {
     console.log(
       `[startup] Running in DEV mode (NODE_ENV=${nodeEnv}). Loading Vite HMR.`
     );
-    const { setupVite: setupVite2 } = await Promise.resolve().then(() => (init_vite(), vite_exports));
-    await setupVite2(app, server);
+    const viteModule = "./vite.js";
+    const { setupVite } = await import(
+      /* @vite-ignore */
+      viteModule
+    );
+    await setupVite(app, server);
     viteWasLoaded = true;
   } else {
     console.log(

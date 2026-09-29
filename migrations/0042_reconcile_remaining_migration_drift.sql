@@ -34,11 +34,13 @@ DO $$
 DECLARE
   missing text := '';
 BEGIN
-  -- 0010: janus_memory must carry the semantic-memory columns.
-  IF NOT EXISTS (
-    SELECT 1 FROM information_schema.columns
-    WHERE table_schema='public' AND table_name='janus_memory' AND column_name='embedding'
-  ) THEN missing := missing || ' janus_memory.embedding'; END IF;
+  -- 0010: janus_memory must carry the semantic-memory columns (if pgvector is available).
+  IF EXISTS (SELECT 1 FROM pg_type WHERE typname = 'vector') THEN
+    IF NOT EXISTS (
+      SELECT 1 FROM information_schema.columns
+      WHERE table_schema='public' AND table_name='janus_memory' AND column_name='embedding'
+    ) THEN missing := missing || ' janus_memory.embedding'; END IF;
+  END IF;
   IF NOT EXISTS (
     SELECT 1 FROM information_schema.columns
     WHERE table_schema='public' AND table_name='janus_memory' AND column_name='pinned'

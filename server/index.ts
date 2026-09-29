@@ -300,7 +300,8 @@ async function writeDeploymentHeartbeat(port: number): Promise<void> {
     console.log(
       `[startup] Running in DEV mode (NODE_ENV=${nodeEnv}). Loading Vite HMR.`,
     );
-    const { setupVite } = await import("./vite");
+    const viteModule = "./vite.js";
+    const { setupVite } = await import(/* @vite-ignore */ viteModule);
     await setupVite(app, server);
     viteWasLoaded = true;
   } else {
