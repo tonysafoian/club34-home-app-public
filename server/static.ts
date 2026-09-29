@@ -39,11 +39,19 @@ export function serveStatic(app: Express): void {
       return next();
     }
     const indexPath = path.join(root, "index.html");
+    const ingressHeader = (req.headers["x-ingress-path"] as string) || "";
     fs.promises
       .readFile(indexPath, "utf-8")
-      .then((html) =>
-        res.status(200).set({ "Content-Type": "text/html" }).end(html),
-      )
+      .then((html) => {
+        let content = html;
+        if (ingressHeader) {
+          content = content.replace(
+            "<head>",
+            `<head><script>window.__INGRESS_PATH__=${JSON.stringify(ingressHeader)};</script>`,
+          );
+        }
+        res.status(200).set({ "Content-Type": "text/html" }).end(content);
+      })
       .catch(next);
   });
 }
