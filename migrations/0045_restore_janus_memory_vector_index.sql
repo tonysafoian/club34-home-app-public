@@ -30,17 +30,22 @@ END $$;
 -- Vector index: HNSW → ivfflat → none.
 DO $$
 BEGIN
-  BEGIN
-    EXECUTE 'CREATE INDEX IF NOT EXISTS janus_memory_embedding_hnsw ON janus_memory USING hnsw (embedding vector_cosine_ops)';
-    RAISE NOTICE 'janus_memory: HNSW index created';
-  EXCEPTION WHEN OTHERS THEN
-    RAISE NOTICE 'janus_memory: HNSW unsupported (%), trying ivfflat', SQLERRM;
+  IF EXISTS (
+    SELECT 1 FROM information_schema.columns 
+    WHERE table_name = 'janus_memory' AND column_name = 'embedding'
+  ) THEN
     BEGIN
-      EXECUTE 'CREATE INDEX IF NOT EXISTS janus_memory_embedding_ivfflat ON janus_memory USING ivfflat (embedding vector_cosine_ops) WITH (lists = 50)';
-      RAISE NOTICE 'janus_memory: ivfflat index created';
+      EXECUTE 'CREATE INDEX IF NOT EXISTS janus_memory_embedding_hnsw ON janus_memory USING hnsw (embedding vector_cosine_ops)';
+      RAISE NOTICE 'janus_memory: HNSW index created';
     EXCEPTION WHEN OTHERS THEN
-      RAISE WARNING 'janus_memory: no vector index created (%); recall will fall back to sequential scan. Fine at small scale.', SQLERRM;
+      RAISE NOTICE 'janus_memory: HNSW unsupported (%), trying ivfflat', SQLERRM;
+      BEGIN
+        EXECUTE 'CREATE INDEX IF NOT EXISTS janus_memory_embedding_ivfflat ON janus_memory USING ivfflat (embedding vector_cosine_ops) WITH (lists = 50)';
+        RAISE NOTICE 'janus_memory: ivfflat index created';
+      EXCEPTION WHEN OTHERS THEN
+        RAISE WARNING 'janus_memory: no vector index created (%); recall will fall back to sequential scan. Fine at small scale.', SQLERRM;
+      END;
     END;
-  END;
+  END IF;
 END
 $$;
