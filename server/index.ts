@@ -14,7 +14,6 @@ import { correlationMiddleware } from "./lib/correlation";
 import { createServer } from "http";
 import { execFile } from "child_process";
 import { registerRoutes } from "./routes";
-import { setupVite } from "./vite";
 import { seedDatabase } from "./seed";
 import { startScheduledTasks } from "./scheduledTasks";
 import { initCronJobs } from "./routes/cron";
@@ -301,6 +300,7 @@ async function writeDeploymentHeartbeat(port: number): Promise<void> {
     console.log(
       `[startup] Running in DEV mode (NODE_ENV=${nodeEnv}). Loading Vite HMR.`,
     );
+    const { setupVite } = await import("./vite");
     await setupVite(app, server);
     viteWasLoaded = true;
   } else {
@@ -308,7 +308,7 @@ async function writeDeploymentHeartbeat(port: number): Promise<void> {
       `[startup] Running in PROD mode (NODE_ENV=${nodeEnv}). Serving static built assets.`,
     );
     // In a deployed bundle, serve the static built frontend from dist/public.
-    const { serveStatic } = await import("./vite");
+    const { serveStatic } = await import("./static.js");
     serveStatic(app);
   }
 
