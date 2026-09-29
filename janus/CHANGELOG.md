@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.0.2
+
+- **Fix**: Completely decouple Vite in production bundles by using dynamic module evaluation so `node dist/index.js` never evaluates Vite or Rolldown native bindings at startup.
+- **Fix**: Guard `0042_reconcile_remaining_migration_drift.sql` so missing `janus_memory.embedding` is only checked if the `vector` type is installed, preventing migration abort on standard PostgreSQL installations.
+- **Fix**: Enable Alpine community repository in `Dockerfile` to reliably install `postgresql-pgvector`.
+
 ## 1.0.1
 
 - **Fix**: Decouple static file serving from Vite/Rolldown so runtime production starts cleanly on Alpine / aarch64 without native binding errors.
