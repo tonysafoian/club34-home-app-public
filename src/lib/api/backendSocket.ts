@@ -1,4 +1,5 @@
 import { io, Socket } from "socket.io-client";
+import { getIngressPath } from "@/lib/ingress";
 
 let sharedSocket: Socket | null = null;
 let refCount = 0;
@@ -25,8 +26,10 @@ function readAuthToken(): string | undefined {
 
 function createSocket(): Socket {
   const target = getSocketTarget();
+  const ingress = getIngressPath();
+  const wsPath = ingress ? `${ingress}/ws` : "/ws";
   const opts = {
-    path: "/ws",
+    path: wsPath,
     withCredentials: true,
     transports: ["websocket", "polling"] as ("websocket" | "polling")[],
     auth: { token: readAuthToken() },

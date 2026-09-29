@@ -20,6 +20,7 @@ import { Loader2 } from "lucide-react";
 import { useGoogleCacheReset } from '@/hooks/useGoogleCalendar';
 import { useDashboardPrefetch } from '@/hooks/useDashboardPrefetch';
 import { ServiceWorkerUpdater } from '@/components/ServiceWorkerUpdater';
+import { getIngressPath } from '@/lib/ingress';
 
 // Lazy-load JanusDrawer — it pulls in mammoth + xlsx (~50-80KB)
 const LazyJanusDrawer = lazy(() => import('@/components/janus/JanusDrawer').then(m => ({ default: m.JanusDrawer })));
@@ -148,7 +149,7 @@ const App = () => (
           <TooltipProvider>
             <Toaster />
             <HAEntitiesProvider>
-            <BrowserRouter>
+            <BrowserRouter basename={getIngressPath() || undefined}>
             <ServiceWorkerUpdater />
             <ErrorBoundary name="app-root" fallback={
               <div className="min-h-screen flex flex-col items-center justify-center bg-background gap-4">

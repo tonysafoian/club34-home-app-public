@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.5
+
+- **Fix**: Support Home Assistant Ingress subpath routing (`/api/hassio_ingress/<token>/`) across React Router, API fetch client, and WebSocket connections so the web UI loads seamlessly inside Home Assistant.
+
 ## 1.0.4
 
 - **Fix**: Automatically generate and persist `JWT_SECRET` / `SESSION_SECRET` on `/data/jwt_secret` in Home Assistant add-on startup, with safe cryptographic fallback in `server/auth.ts` so the server never crashes on missing secrets.

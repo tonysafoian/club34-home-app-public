@@ -8722,9 +8722,17 @@ function serveStatic(app2) {
       return next();
     }
     const indexPath = path10.join(root, "index.html");
-    fs8.promises.readFile(indexPath, "utf-8").then(
-      (html) => res.status(200).set({ "Content-Type": "text/html" }).end(html)
-    ).catch(next);
+    const ingressHeader = req.headers["x-ingress-path"] || "";
+    fs8.promises.readFile(indexPath, "utf-8").then((html) => {
+      let content = html;
+      if (ingressHeader) {
+        content = content.replace(
+          "<head>",
+          `<head><script>window.__INGRESS_PATH__=${JSON.stringify(ingressHeader)};</script>`
+        );
+      }
+      res.status(200).set({ "Content-Type": "text/html" }).end(content);
+    }).catch(next);
   });
 }
 var __dirname;

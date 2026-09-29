@@ -1,3 +1,5 @@
+import { getIngressPath } from '@/lib/ingress';
+
 // Standard relative API base URL for same-origin requests.
 // Supports VITE_API_URL when frontend and backend run on distinct domains.
 const API_BASE = import.meta.env.VITE_API_URL || '';
@@ -6,7 +8,12 @@ export function resolveApiUrl(path: string): string {
   if (path.startsWith('http://') || path.startsWith('https://')) {
     return path;
   }
-  return `${API_BASE}${path}`;
+  const ingress = getIngressPath();
+  const normalized = path.startsWith('/') ? path : `/${path}`;
+  if (ingress && !normalized.startsWith(ingress)) {
+    return `${ingress}${normalized}`;
+  }
+  return `${API_BASE}${normalized}`;
 }
 
 export function getStoredToken(): string | null {

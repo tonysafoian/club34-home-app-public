@@ -4,6 +4,7 @@ import { Loader2, Key } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { JanusLogo } from '@/components/brand/JanusLogo';
 import { resolveApiUrl } from '@/lib/api/fetchWithAuth';
+import { resolveAppPath } from '@/lib/ingress';
 
 export function AuthPage() {
   const [loading, setLoading] = useState(false);
@@ -23,7 +24,7 @@ export function AuthPage() {
             localStorage.setItem('auth_token', data.token);
           } catch {}
         }
-        window.location.href = '/';
+        window.location.href = resolveAppPath('/');
       } else {
         throw new Error(data.error || 'Demo sign in failed');
       }
