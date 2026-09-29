@@ -1,15 +1,13 @@
 import type { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
+import crypto from "crypto";
 import { storage } from "./storage";
 import "./types";
 import { query } from "./lib/db.js";
 
 const JWT_SECRET = process.env.JWT_SECRET || process.env.SESSION_SECRET || (() => {
-  if (process.env.NODE_ENV === "production") {
-    throw new Error("JWT_SECRET or SESSION_SECRET must be set in production");
-  }
-  console.warn("[AUTH] WARNING: Using default JWT secret. Set JWT_SECRET env var for production.");
-  return "janus-dev-secret-change-in-production";
+  console.warn("[AUTH] WARNING: Neither JWT_SECRET nor SESSION_SECRET was configured. Generating secure random secret.");
+  return crypto.randomBytes(32).toString("hex");
 })();
 const JWT_EXPIRY = "7d";
 
