@@ -6,6 +6,30 @@ process.env.TZ = process.env.TZ || "America/Los_Angeles";
 import "dotenv/config";
 import fs from "fs";
 import path from "path";
+
+// In Home Assistant Add-ons (s6-overlay), Supervisor injects environment variables
+// into /var/run/s6/container_environment/ or /run/s6/container_environment/.
+for (const s6Dir of ['/var/run/s6/container_environment', '/run/s6/container_environment']) {
+  try {
+    if (fs.existsSync(s6Dir)) {
+      const files = fs.readdirSync(s6Dir);
+      for (const file of files) {
+        if (!process.env[file]) {
+          try {
+            process.env[file] = fs.readFileSync(path.join(s6Dir, file), 'utf8').trim();
+          } catch {}
+        }
+      }
+    }
+  } catch {}
+}
+
+const supervisorToken = process.env.SUPERVISOR_TOKEN || process.env.HASSIO_TOKEN;
+if (supervisorToken) {
+  if (!process.env.HA_URL) process.env.HA_URL = 'http://supervisor/core';
+  if (!process.env.HA_TOKEN) process.env.HA_TOKEN = supervisorToken;
+}
+
 import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
