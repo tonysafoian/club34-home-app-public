@@ -189,8 +189,9 @@ export async function callHAService(
 }
 
 export function startHAWebSocket(): void {
-  const HA_URL = process.env.HA_URL;
-  const HA_TOKEN = process.env.HA_TOKEN;
+  const supervisorToken = process.env.SUPERVISOR_TOKEN || process.env.HASSIO_TOKEN;
+  const HA_URL = process.env.HA_URL || (supervisorToken ? 'http://supervisor/core' : undefined);
+  const HA_TOKEN = process.env.HA_TOKEN || supervisorToken;
 
   if (!HA_URL || !HA_TOKEN) {
     console.log('[HA-WS] HA_URL or HA_TOKEN not configured — skipping WebSocket connection');

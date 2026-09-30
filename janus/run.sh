@@ -1,5 +1,19 @@
-#!/usr/bin/env bash
+#!/usr/bin/with-contenv bash
 set -e
+
+# Load s6 container environment variables if present
+for env_dir in /var/run/s6/container_environment /run/s6/container_environment; do
+    if [ -d "$env_dir" ]; then
+        for f in "$env_dir"/*; do
+            if [ -f "$f" ]; then
+                var_name="$(basename "$f")"
+                if [ -z "${!var_name}" ]; then
+                    export "$var_name"="$(cat "$f")"
+                fi
+            fi
+        done
+    fi
+done
 
 CONFIG_PATH=/data/options.json
 
@@ -10,7 +24,7 @@ GEMINI_KEY=$(jq -r '.gemini_api_key // empty' "$CONFIG_PATH" 2>/dev/null || true
 CUSTOM_DB_URL=$(jq -r '.database_url // empty' "$CONFIG_PATH" 2>/dev/null || true)
 
 echo "===================================================="
-echo " 🏛️ Starting Janus Home Automation (v1.0.6)"
+echo " 🏛️ Starting Janus Home Automation (v1.0.8)"
 echo "===================================================="
 
 # Set up database

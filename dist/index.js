@@ -7009,8 +7009,9 @@ async function callHAService(domain, service, serviceData = {}) {
   });
 }
 function startHAWebSocket() {
-  const HA_URL2 = process.env.HA_URL;
-  const HA_TOKEN2 = process.env.HA_TOKEN;
+  const supervisorToken2 = process.env.SUPERVISOR_TOKEN || process.env.HASSIO_TOKEN;
+  const HA_URL2 = process.env.HA_URL || (supervisorToken2 ? "http://supervisor/core" : void 0);
+  const HA_TOKEN2 = process.env.HA_TOKEN || supervisorToken2;
   if (!HA_URL2 || !HA_TOKEN2) {
     console.log("[HA-WS] HA_URL or HA_TOKEN not configured \u2014 skipping WebSocket connection");
     return;
@@ -19960,10 +19961,10 @@ async function resolveHACreds(userId) {
     }
   }
   if (!creds) {
-    const supervisorToken = process.env.SUPERVISOR_TOKEN || process.env.HASSIO_TOKEN;
-    const envUrl = process.env.HA_URL || process.env.HOME_ASSISTANT_URL || (supervisorToken ? "http://supervisor/core" : "");
-    const envToken = process.env.HA_TOKEN || process.env.HOME_ASSISTANT_TOKEN || supervisorToken || "";
-    if (envUrl && envToken) creds = { haUrl: envUrl, haToken: envToken, source: supervisorToken ? "supervisor" : "env" };
+    const supervisorToken2 = process.env.SUPERVISOR_TOKEN || process.env.HASSIO_TOKEN;
+    const envUrl = process.env.HA_URL || process.env.HOME_ASSISTANT_URL || (supervisorToken2 ? "http://supervisor/core" : "");
+    const envToken = process.env.HA_TOKEN || process.env.HOME_ASSISTANT_TOKEN || supervisorToken2 || "";
+    if (envUrl && envToken) creds = { haUrl: envUrl, haToken: envToken, source: supervisorToken2 ? "supervisor" : "env" };
   }
   haCredsCache.set(cacheKey, { creds, fetchedAt: Date.now() });
   return creds;
@@ -49698,6 +49699,27 @@ function captureException(err) {
 // server/index.ts
 import pg2 from "pg";
 process.env.TZ = process.env.TZ || "America/Los_Angeles";
+for (const s6Dir of ["/var/run/s6/container_environment", "/run/s6/container_environment"]) {
+  try {
+    if (fs9.existsSync(s6Dir)) {
+      const files = fs9.readdirSync(s6Dir);
+      for (const file of files) {
+        if (!process.env[file]) {
+          try {
+            process.env[file] = fs9.readFileSync(path11.join(s6Dir, file), "utf8").trim();
+          } catch {
+          }
+        }
+      }
+    }
+  } catch {
+  }
+}
+var supervisorToken = process.env.SUPERVISOR_TOKEN || process.env.HASSIO_TOKEN;
+if (supervisorToken) {
+  if (!process.env.HA_URL) process.env.HA_URL = "http://supervisor/core";
+  if (!process.env.HA_TOKEN) process.env.HA_TOKEN = supervisorToken;
+}
 void initSentry();
 async function checkAuditLogSource() {
   try {
