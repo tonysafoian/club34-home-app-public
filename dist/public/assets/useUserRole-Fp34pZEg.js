@@ -1,0 +1,1 @@
+import{I as e}from"./index-CX2-5aRu.js";function t(){let{role:t,isAdmin:n,loading:r}=e();return{role:t,isAdmin:n,loading:r}}export{t};

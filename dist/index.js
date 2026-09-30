@@ -6148,8 +6148,10 @@ var init_google = __esm({
         if (action === "authorize") {
           const auth = await authenticateRequest(req.headers.authorization, req.cookies?.auth_token);
           if (auth.error) return res.status(401).json({ error: auth.error });
-          const state2 = auth.userId;
-          const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${encodeURIComponent(GOOGLE_CLIENT_ID)}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&response_type=code&scope=${encodeURIComponent(SCOPES)}&access_type=offline&prompt=consent&hd=example.com&state=${encodeURIComponent(state2)}`;
+          let authUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${encodeURIComponent(GOOGLE_CLIENT_ID)}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&response_type=code&scope=${encodeURIComponent(SCOPES)}&access_type=offline&prompt=consent&state=${encodeURIComponent(state)}`;
+          if (process.env.HOUSEHOLD_DOMAIN && process.env.HOUSEHOLD_DOMAIN !== "example.com") {
+            authUrl += `&hd=${encodeURIComponent(process.env.HOUSEHOLD_DOMAIN)}`;
+          }
           return res.json({ success: true, url: authUrl });
         }
         if (action === "callback") {
@@ -6940,8 +6942,8 @@ async function checkCrestronBridge() {
   console.log(`[Crestron] Bridge state: ${prevState} \u2192 ${newState} (${unavailable}/${lights.length} unavailable)`);
   await fireCrestronAlert(newState, unavailable, lights.length);
 }
-async function fireCrestronAlert(state2, unavailable, total) {
-  const alertKey = state2 === "offline" ? "crestron_bridge_offline" : "crestron_bridge_recovered";
+async function fireCrestronAlert(state3, unavailable, total) {
+  const alertKey = state3 === "offline" ? "crestron_bridge_offline" : "crestron_bridge_recovered";
   try {
     const { rows } = await query2(
       `SELECT id FROM system_audit_log WHERE event_type = 'crestron_alert' AND detail->>'alert_key' = $1 AND created_at > NOW() - INTERVAL '${CRESTRON_DEDUP_MINUTES} minutes' LIMIT 1`,
@@ -6954,11 +6956,11 @@ async function fireCrestronAlert(state2, unavailable, total) {
   } catch (e) {
     console.error("[Crestron] Dedup query failed:", e);
   }
-  const summary = state2 === "offline" ? `Crestron bridge offline: ${unavailable}/${total} lights unavailable (${Math.round(unavailable / total * 100)}%)` : `Crestron bridge recovered: lights back online (${total} total)`;
+  const summary = state3 === "offline" ? `Crestron bridge offline: ${unavailable}/${total} lights unavailable (${Math.round(unavailable / total * 100)}%)` : `Crestron bridge recovered: lights back online (${total} total)`;
   await logAudit("crestron-bridge-monitor", {
     category: "crestron_bridge",
     event_type: "crestron_alert",
-    severity: state2 === "offline" ? "warn" : "info",
+    severity: state3 === "offline" ? "warn" : "info",
     actor_id: "system",
     actor_name: "Crestron Bridge Monitor",
     channel: "system",
@@ -6969,12 +6971,12 @@ async function fireCrestronAlert(state2, unavailable, total) {
       total,
       pct: Math.round(unavailable / total * 100)
     },
-    status: state2 === "offline" ? "error" : "success"
+    status: state3 === "offline" ? "error" : "success"
   });
   try {
     const { getAlertPhoneNumber: getAlertPhoneNumber6, sendWhatsAppTo: sendWhatsAppTo2 } = await Promise.resolve().then(() => (init_helpers(), helpers_exports));
     const phone = await getAlertPhoneNumber6();
-    const msg = state2 === "offline" ? `\u{1F534} *Crestron Home bridge offline*
+    const msg = state3 === "offline" ? `\u{1F534} *Crestron Home bridge offline*
 ${unavailable}/${total} lights are unavailable. Open Janus \u2192 Home Lights to reload.` : `\u2705 *Crestron Home bridge recovered*
 Unavailable lights dropped below threshold (${unavailable}/${total} still offline).`;
     await sendWhatsAppTo2(phone, msg);
@@ -8780,8 +8782,8 @@ router.get("/api/auth/google", (req, res) => {
     res.status(500).json({ error: "Google OAuth not configured" });
     return;
   }
-  const state2 = crypto3.randomBytes(16).toString("hex");
-  res.cookie("oauth_state", state2, {
+  const state3 = crypto3.randomBytes(16).toString("hex");
+  res.cookie("oauth_state", state3, {
     httpOnly: true,
     secure: true,
     sameSite: "lax",
@@ -8798,23 +8800,26 @@ router.get("/api/auth/google", (req, res) => {
     "https://www.googleapis.com/auth/drive.readonly",
     "https://www.googleapis.com/auth/contacts.readonly"
   ].join(" ");
-  const params = new URLSearchParams({
+  const queryParams = {
     client_id: clientId,
     redirect_uri: redirectUri,
     response_type: "code",
     scope: fullScopes,
-    state: state2,
-    hd: process.env.HOUSEHOLD_DOMAIN || "example.com",
+    state: state3,
     access_type: "offline",
     prompt: "consent"
-  });
+  };
+  if (process.env.HOUSEHOLD_DOMAIN && process.env.HOUSEHOLD_DOMAIN !== "example.com") {
+    queryParams.hd = process.env.HOUSEHOLD_DOMAIN;
+  }
+  const params = new URLSearchParams(queryParams);
   res.redirect(`https://accounts.google.com/o/oauth2/v2/auth?${params}`);
 });
 router.get("/api/auth/google/callback", async (req, res) => {
   try {
-    const { code, state: state2 } = req.query;
+    const { code, state: state3 } = req.query;
     const savedState = req.cookies?.oauth_state;
-    if (!state2 || state2 !== savedState) {
+    if (!state3 || state3 !== savedState) {
       logAudit("auth-google", {
         category: "security",
         event_type: "login_error",
@@ -9118,8 +9123,8 @@ router.get("/api/auth/apple", (req, res) => {
     res.status(500).json({ error: "Apple OAuth not configured" });
     return;
   }
-  const state2 = crypto3.randomBytes(16).toString("hex");
-  res.cookie("oauth_state", state2, {
+  const state3 = crypto3.randomBytes(16).toString("hex");
+  res.cookie("oauth_state", state3, {
     httpOnly: true,
     secure: true,
     sameSite: "none",
@@ -9133,15 +9138,15 @@ router.get("/api/auth/apple", (req, res) => {
     response_type: "code id_token",
     scope: "name email",
     response_mode: "form_post",
-    state: state2
+    state: state3
   });
   res.redirect(`https://appleid.apple.com/auth/authorize?${params}`);
 });
 router.post("/api/auth/apple/callback", async (req, res) => {
   try {
-    const { state: state2, id_token, user: appleUser } = req.body;
+    const { state: state3, id_token, user: appleUser } = req.body;
     const savedState = req.cookies?.oauth_state;
-    if (!state2 || state2 !== savedState) {
+    if (!state3 || state3 !== savedState) {
       htmlRedirect(res, "/?error=invalid_state");
       return;
     }
@@ -11741,28 +11746,28 @@ var laDateFormatter = new Intl.DateTimeFormat("en-CA", {
 function laDayKey(now = /* @__PURE__ */ new Date()) {
   return laDateFormatter.format(now);
 }
-var state = {
+var state2 = {
   dayKey: laDayKey(),
   count: 0,
   lastAllowedAtMs: 0
 };
 function rolloverIfNeeded(now) {
   const today = laDayKey(now);
-  if (today !== state.dayKey) {
-    state.dayKey = today;
-    state.count = 0;
-    state.lastAllowedAtMs = 0;
+  if (today !== state2.dayKey) {
+    state2.dayKey = today;
+    state2.count = 0;
+    state2.lastAllowedAtMs = 0;
   }
 }
 async function enforceBrowseWebsiteQuota(ctx) {
   const now = /* @__PURE__ */ new Date();
   rolloverIfNeeded(now);
-  const sinceLastMs = now.getTime() - state.lastAllowedAtMs;
-  if (state.lastAllowedAtMs > 0 && sinceLastMs < MIN_SPACING_MS) {
+  const sinceLastMs = now.getTime() - state2.lastAllowedAtMs;
+  if (state2.lastAllowedAtMs > 0 && sinceLastMs < MIN_SPACING_MS) {
     const waitS = Math.max(1, Math.ceil((MIN_SPACING_MS - sinceLastMs) / 1e3));
     await safeAudit("blocked_spacing", ctx, {
-      day_la: state.dayKey,
-      count_today: state.count,
+      day_la: state2.dayKey,
+      count_today: state2.count,
       cap: DAILY_CAP,
       since_last_ms: sinceLastMs,
       wait_s: waitS
@@ -11772,10 +11777,10 @@ async function enforceBrowseWebsiteQuota(ctx) {
       message: `I just browsed a website. Let me wait ${waitS} seconds before browsing again.`
     };
   }
-  if (state.count >= DAILY_CAP) {
+  if (state2.count >= DAILY_CAP) {
     await safeAudit("blocked_daily_cap", ctx, {
-      day_la: state.dayKey,
-      count_today: state.count,
+      day_la: state2.dayKey,
+      count_today: state2.count,
       cap: DAILY_CAP
     });
     return {
@@ -11783,11 +11788,11 @@ async function enforceBrowseWebsiteQuota(ctx) {
       message: `I've hit my daily browser-use cap (${DAILY_CAP}/day). Tell Tony if this needs to go higher.`
     };
   }
-  state.count += 1;
-  state.lastAllowedAtMs = now.getTime();
+  state2.count += 1;
+  state2.lastAllowedAtMs = now.getTime();
   await safeAudit("allowed", ctx, {
-    day_la: state.dayKey,
-    count_today: state.count,
+    day_la: state2.dayKey,
+    count_today: state2.count,
     cap: DAILY_CAP,
     cost_usd: COST_USD_PER_CALL
   });
@@ -12352,9 +12357,9 @@ async function _getSystemInfo() {
     raw: sysinfo
   };
 }
-function deriveApStatus(state2) {
-  if (!state2) return "unknown";
-  const lower = state2.toLowerCase();
+function deriveApStatus(state3) {
+  if (!state3) return "unknown";
+  const lower = state3.toLowerCase();
   if (lower === "join" || lower === "joined" || lower === "connect" || lower === "connected" || lower === "online" || lower === "1" || lower === "2") {
     return "joined";
   }
@@ -12374,14 +12379,14 @@ async function _getAccessPoints() {
   const apList = asArray(stat.ap ?? response.ap ?? obj(response.aps).ap);
   return apList.map((apRaw) => {
     const ap = obj(apRaw);
-    const state2 = s(ap.state ?? ap.status);
+    const state3 = s(ap.state ?? ap.status);
     return {
       mac: s(ap.mac) ?? "",
       name: s(ap["ap-name"] ?? ap["device-name"] ?? ap.name) ?? s(ap.mac) ?? "Unknown",
       model: s(ap.model),
       ip: s(ap.ip),
-      state: state2,
-      status: deriveApStatus(state2),
+      state: state3,
+      status: deriveApStatus(state3),
       gateway: s(ap.gateway),
       hw_version: s(ap["hardware-version"] ?? ap["hw-version"] ?? ap.hwversion),
       build_version: s(ap["build-version"] ?? ap.buildversion ?? ap.firmware),
@@ -19617,10 +19622,10 @@ async function verifyPlaybackState(haUrl, haToken, entityId, expectedUrl, announ
     });
     if (!res.ok) return { verified: false, state: null, contentId: null, urlMatch: null };
     const data = await res.json();
-    const state2 = data?.state ?? "unknown";
+    const state3 = data?.state ?? "unknown";
     const contentId = data?.attributes?.media_content_id ?? null;
-    const isPlaying = state2 === "playing";
-    const isUnavailable = state2 === "unavailable";
+    const isPlaying = state3 === "playing";
+    const isUnavailable = state3 === "unavailable";
     let urlMatch = null;
     if (expectedUrl) {
       urlMatch = contentId !== null && contentId === expectedUrl;
@@ -19631,7 +19636,7 @@ async function verifyPlaybackState(haUrl, haToken, entityId, expectedUrl, announ
     } else {
       verified = isPlaying && (urlMatch === null || urlMatch === true);
     }
-    return { verified, state: state2, contentId, urlMatch };
+    return { verified, state: state3, contentId, urlMatch };
   } catch {
     return { verified: false, state: null, contentId: null, urlMatch: null };
   }
@@ -23070,9 +23075,9 @@ router8.all("/setup", requireAuth2, async (req, res) => {
       }
       const appDomain2 = process.env.APP_DOMAIN || "example.com";
       const redirectUri = `https://${appDomain2}/tesla-callback`;
-      const state2 = crypto.randomUUID();
-      const authUrl = `https://auth.tesla.com/oauth2/v3/authorize?client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=code&scope=${encodeURIComponent("openid offline_access vehicle_device_data vehicle_location vehicle_cmds vehicle_charging_cmds")}&state=${state2}`;
-      res.json({ auth_url: authUrl, state: state2 });
+      const state3 = crypto.randomUUID();
+      const authUrl = `https://auth.tesla.com/oauth2/v3/authorize?client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=code&scope=${encodeURIComponent("openid offline_access vehicle_device_data vehicle_location vehicle_cmds vehicle_charging_cmds")}&state=${state3}`;
+      res.json({ auth_url: authUrl, state: state3 });
       return;
     }
     if (action === "exchange-code") {
@@ -23615,12 +23620,12 @@ async function fetchHAHistory(entityId, hours) {
 function aggregateToDailyAverages(historyPoints) {
   const buckets3 = {};
   for (const point of historyPoints) {
-    const state2 = parseFloat(point.state ?? point.s);
-    if (isNaN(state2)) continue;
+    const state3 = parseFloat(point.state ?? point.s);
+    if (isNaN(state3)) continue;
     const ts = point.last_changed ?? point.lu;
     const date2 = typeof ts === "number" ? new Date(ts * 1e3).toISOString().split("T")[0] : new Date(ts).toISOString().split("T")[0];
     if (!buckets3[date2]) buckets3[date2] = [];
-    buckets3[date2].push(state2);
+    buckets3[date2].push(state3);
   }
   return Object.entries(buckets3).sort(([a], [b2]) => a.localeCompare(b2)).map(([date2, values]) => ({
     date: date2,
@@ -29507,13 +29512,13 @@ function parseSeatGeekEvent(evt, category) {
   if (!evt.title || !evt.datetime_utc) return null;
   const venue = evt.venue?.name || "Los Angeles";
   const city = evt.venue?.city || "Los Angeles";
-  const state2 = evt.venue?.state || "CA";
+  const state3 = evt.venue?.state || "CA";
   return {
     category,
     title: evt.title,
     venue,
     event_date: new Date(evt.datetime_utc).toISOString(),
-    location: `${city}, ${state2}`,
+    location: `${city}, ${state3}`,
     ticket_url: evt.url || null,
     source: "seatgeek",
     image_url: evt.performers?.[0]?.image || null,
@@ -29608,13 +29613,13 @@ async function syncConcerts(db2) {
         const venueObj = evt._embedded?.venues?.[0];
         const venue = venueObj?.name || "Los Angeles";
         const city = venueObj?.city?.name || "Los Angeles";
-        const state2 = venueObj?.state?.stateCode || "CA";
+        const state3 = venueObj?.state?.stateCode || "CA";
         allConcerts.push({
           category: "concert",
           title,
           venue,
           event_date: eventDate,
-          location: `${city}, ${state2}`,
+          location: `${city}, ${state3}`,
           ticket_url: evt.url || null,
           source: "ticketmaster",
           image_url: pickBestImage(evt.images || [])
@@ -39957,19 +39962,19 @@ router31.post("/auth", async (req, res) => {
     if (action === "authorize") {
       const auth = await authenticateRequest(req.headers.authorization, req.cookies?.auth_token);
       if (auth.error) return res.status(401).json({ error: auth.error });
-      const state2 = `goaccess_${auth.userId}`;
-      const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${encodeURIComponent(GOOGLE_CLIENT_ID)}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&response_type=code&scope=${encodeURIComponent(GOACCESS_SCOPES)}&access_type=offline&prompt=consent&login_hint=${encodeURIComponent(GOACCESS_EMAIL)}&state=${encodeURIComponent(state2)}`;
+      const state3 = `goaccess_${auth.userId}`;
+      const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${encodeURIComponent(GOOGLE_CLIENT_ID)}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&response_type=code&scope=${encodeURIComponent(GOACCESS_SCOPES)}&access_type=offline&prompt=consent&login_hint=${encodeURIComponent(GOACCESS_EMAIL)}&state=${encodeURIComponent(state3)}`;
       return res.json({ success: true, url: authUrl });
     }
     if (action === "callback") {
       const auth = await authenticateRequest(req.headers.authorization, req.cookies?.auth_token);
       if (auth.error) return res.status(401).json({ error: auth.error });
       const code = req.query.code || req.body?.code;
-      const state2 = req.query.state || req.body?.state;
+      const state3 = req.query.state || req.body?.state;
       if (!code) return res.status(400).json({ success: false, error: "Missing authorization code" });
       const expectedState = `goaccess_${auth.userId}`;
-      if (!state2 || state2 !== expectedState) {
-        console.error(`[goaccess] OAuth state mismatch: got "${state2}", expected "${expectedState}"`);
+      if (!state3 || state3 !== expectedState) {
+        console.error(`[goaccess] OAuth state mismatch: got "${state3}", expected "${expectedState}"`);
         return res.status(400).json({ success: false, error: "OAuth state validation failed" });
       }
       const clientSecret = process.env.GOOGLE_CLIENT_SECRET;

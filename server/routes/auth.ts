@@ -190,16 +190,19 @@ router.get("/api/auth/google", (req, res) => {
     "https://www.googleapis.com/auth/drive.readonly",
     "https://www.googleapis.com/auth/contacts.readonly",
   ].join(" ");
-  const params = new URLSearchParams({
+  const queryParams: Record<string, string> = {
     client_id: clientId,
     redirect_uri: redirectUri,
     response_type: "code",
     scope: fullScopes,
     state,
-    hd: process.env.HOUSEHOLD_DOMAIN || "example.com",
     access_type: "offline",
     prompt: "consent",
-  });
+  };
+  if (process.env.HOUSEHOLD_DOMAIN && process.env.HOUSEHOLD_DOMAIN !== "example.com") {
+    queryParams.hd = process.env.HOUSEHOLD_DOMAIN;
+  }
+  const params = new URLSearchParams(queryParams);
 
   res.redirect(`https://accounts.google.com/o/oauth2/v2/auth?${params}`);
 });
