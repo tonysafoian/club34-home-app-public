@@ -311,7 +311,7 @@ Janus is not just a chatbot — it's an **agentic AI** with structured tool-call
 #### 🧠 Memory & Knowledge
 | Tool | What It Does |
 |---|---|
-| `remember_fact` | Store a permanent fact ("Tony's wine cellar target is 55°F"). Supports pinning for critical facts that survive FIFO eviction. |
+| `remember_fact` | Store a permanent fact ("Primary wine cellar target is 55°F"). Supports pinning for critical facts that survive FIFO eviction. |
 | `recall_facts` | Search memory by key prefix or semantic similarity |
 
 #### 🔍 Research & Information
@@ -346,7 +346,7 @@ Janus is not just a chatbot — it's an **agentic AI** with structured tool-call
 | Tool | What It Does |
 |---|---|
 | `wifi_who_is_online` | "Who's on the WiFi?" — lists connected devices grouped by family member/role |
-| `wifi_label_device` | Label a device by MAC address ("That's Tony's iPhone 16 Pro") |
+| `wifi_label_device` | Label a device by MAC address ("That's Jordan's iPhone 16 Pro") |
 | `wifi_unknown_devices` | Find new/unknown devices on the network |
 | `get_network_history` | FortiGate health snapshots over time for diagnosing outages |
 
@@ -423,7 +423,7 @@ Full Tesla Fleet API integration providing unified control and monitoring of all
 
 ### Janus Integration
 > *"Hey Janus, what's the Tesla at?"*
-> *"Tony's Model X is at 78%, 241 miles of range, parked at home, and plugged in but not charging."*
+> *"The Model X is at 78%, 241 miles of range, parked at home, and plugged in but not charging."*
 
 ---
 
@@ -528,7 +528,7 @@ Full integration with Verkada Command for AI-powered security:
 ### Activity Timeline
 All security events flow into the unified activity log:
 * Gate opened at 3:42 PM
-* Front door unlocked by Tony at 3:43 PM
+* Front door unlocked by Alex at 3:43 PM
 * Unknown vehicle detected by driveway camera at 4:15 PM
 
 ---
@@ -544,7 +544,7 @@ All security events flow into the unified activity log:
 
 ### Ruckus Wireless
 * **Connected Clients**: Real-time list of all WiFi devices
-* **Device Inventory**: Labeled device database — "Tony's iPhone 16 Pro" instead of MAC addresses
+* **Device Inventory**: Labeled device database — "Jordan's iPhone 16 Pro" instead of MAC addresses
 * **Unknown Device Detection**: Automatic flagging of new, unlabeled devices appearing on the network
 * **Person Grouping**: Devices grouped by family member, staff, guest, IoT, or unknown
 
@@ -555,7 +555,7 @@ All security events flow into the unified activity log:
 
 ### Janus Network Intelligence
 > *"Hey Janus, who's on the WiFi right now?"*
-> *"There are 23 devices online: Tony's iPhone and MacBook, Lana's iPad, 4 cameras, 12 IoT sensors, and 4 unknown devices. Want me to show you the unknown ones?"*
+> *"There are 23 devices online: Alex's iPhone and MacBook, Jordan's iPad, 4 cameras, 12 IoT sensors, and 4 unknown devices. Want me to show you the unknown ones?"*
 
 ---
 
@@ -564,8 +564,8 @@ All security events flow into the unified activity log:
 ### Google Calendar Integration
 * **Multi-calendar view**: See all family members' schedules in one place
 * **Today's agenda**: Dashboard strip showing what's happening today
-* **Event creation via Janus**: *"Schedule a dentist appointment for Isla next Tuesday at 3 PM"*
-* **Availability checking**: *"When are Tony and Lana both free this week?"*
+* **Event creation via Janus**: *"Schedule a dentist appointment for Taylor next Tuesday at 3 PM"*
+* **Availability checking**: *"When are Alex and Jordan both free this week?"*
 
 ### Travel Itinerary Management
 Complete trip lifecycle management:
@@ -574,27 +574,20 @@ Complete trip lifecycle management:
 * **Flight Details**: Airline, flight number, departure/arrival times, cabin class, confirmation codes
 * **Hotel Details**: Property name, address, check-in/out dates, room type, confirmation codes
 * **Gmail Travel Parsing**: Automatic extraction of travel itineraries from confirmation emails
-* **Janus Integration**: *"Create a trip to New York for Tony and Lana, November 15–18, staying at The Peninsula"*
+* **Janus Integration**: *"Create a trip to New York for Alex and Jordan, November 15–18, staying at The Peninsula"*
 
 ---
 
-## 🛒 Grocery & Shopping Automation
+## 📦 Shopping & Order Tracking
 
-### Weekly Grocery Workflow
-1. **Catalog Management**: Maintain a product catalog with preferred items, categories, and images
-2. **AI Cart Assembly**: Janus can build a weekly staples order based on household preferences and past purchases
-3. **Cart Review**: Visual cart review with item images, quantities, and prices
-4. **One-Click Approval**: Approve the order via WhatsApp or the dashboard
-5. **Order History**: Complete run history showing past orders and spending
-
-### Amazon Order Tracking
-* **Amazon Order Integration**: Track Amazon deliveries with expected arrival dates
+### Amazon Order Integration
+* **Order & Delivery Tracking**: Track Amazon deliveries with expected arrival dates
+* **Visual Cart**: View and manage pending household items
 * **Item Images**: Proxied product images for visual order review
 
 ### Janus Shopping
-> *"Add organic whole milk and sourdough bread to the grocery cart."*
 > *"What's in my cart right now?"*
-> *"Clear the cart and start over."*
+> *"Track my pending deliveries."*
 
 ---
 

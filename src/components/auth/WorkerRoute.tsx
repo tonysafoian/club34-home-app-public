@@ -37,7 +37,7 @@ export function WorkerRoute({ children }: { children: ReactNode }) {
         <JanusLogo size="xl" variant="icon" />
         <h1 className="text-xl font-semibold text-foreground">Access Restricted</h1>
         <p className="text-muted-foreground text-center max-w-sm">
-          Janus Time is only available to registered workers. Contact Tony if you believe this is an error.
+          Janus Time is only available to registered workers. Contact the estate administrator if you believe this is an error.
         </p>
       </div>
     );

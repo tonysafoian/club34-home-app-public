@@ -2332,9 +2332,9 @@ var init_storage = __esm({
 // server/lib/db.ts
 var db_exports = {};
 __export(db_exports, {
-  query: () => query
+  query: () => query2
 });
-async function query(text2, params) {
+async function query2(text2, params) {
   return storage.query(text2, params);
 }
 var init_db2 = __esm({
@@ -2404,7 +2404,7 @@ async function logAudit(edgeFunction, entry) {
   const ph = keys.map((_, i) => `$${i + 1}`);
   const sql2 = `INSERT INTO system_audit_log (${keys.join(", ")}) VALUES (${ph.join(", ")})`;
   try {
-    await query(sql2, values);
+    await query2(sql2, values);
   } catch (e) {
     console.error("[auditLog] Audit log failed:", e);
   }
@@ -2491,7 +2491,7 @@ function requireRole(...roles) {
 }
 async function linkWorkerProfile(profileId, email) {
   try {
-    await query(
+    await query2(
       `UPDATE tt_workers SET user_id = $1 WHERE email = $2 AND user_id IS NULL`,
       [profileId, email.toLowerCase()]
     );
@@ -2714,7 +2714,7 @@ async function callRpc(fn, args) {
     const entries = Object.entries(args || {}).filter(([k]) => COLUMN_RE.test(k));
     const params = entries.map(([, v]) => v);
     const argSql = entries.map(([k], i) => `${k} := $${i + 1}`).join(", ");
-    const { rows } = await query(`SELECT * FROM ${fn}(${argSql})`, params);
+    const { rows } = await query2(`SELECT * FROM ${fn}(${argSql})`, params);
     if (rows.length === 1 && rows[0] && Object.keys(rows[0]).length === 1 && fn in rows[0]) {
       return { data: rows[0][fn], error: null };
     }
@@ -3040,7 +3040,7 @@ var init_supabase = __esm({
           if (this.method === "select") {
             if (this.headOnly) {
               const { clause: clause2, params: params2 } = this.buildWhere();
-              const { rows: rows2 } = await query(
+              const { rows: rows2 } = await query2(
                 `SELECT COUNT(*) AS count FROM ${this.table}${clause2}`,
                 params2
               );
@@ -3071,7 +3071,7 @@ var init_supabase = __esm({
               params.push(this.offsetCount);
               idx++;
             }
-            const { rows, rowCount } = await query(sql2, params);
+            const { rows, rowCount } = await query2(sql2, params);
             const data = this.singleResult ? rows[0] || null : rows;
             const result = { data, error: null };
             if (this.countMode) result.count = rowCount ?? rows.length;
@@ -3082,7 +3082,7 @@ var init_supabase = __esm({
             const keys = Object.keys(item).filter((k) => COLUMN_RE.test(k));
             const values = keys.map((k) => serializeValue(item[k]));
             const ph = keys.map((_, i) => `$${i + 1}`);
-            const { rows } = await query(
+            const { rows } = await query2(
               `INSERT INTO ${this.table} (${keys.join(", ")}) VALUES (${ph.join(", ")}) RETURNING *`,
               values
             );
@@ -3100,7 +3100,7 @@ var init_supabase = __esm({
             }
             const { clause, params: whereParams } = this.buildWhere(idx);
             params.push(...whereParams);
-            const { rows } = await query(`UPDATE ${this.table} SET ${setClauses.join(", ")}${clause} RETURNING *`, params);
+            const { rows } = await query2(`UPDATE ${this.table} SET ${setClauses.join(", ")}${clause} RETURNING *`, params);
             return { data: this.singleResult ? rows[0] || null : rows, error: null };
           }
           if (this.method === "upsert") {
@@ -3112,7 +3112,7 @@ var init_supabase = __esm({
             const nonConflict = keys.filter((k) => k !== conflictCol);
             const updateClauses = nonConflict.map((k) => `${k} = EXCLUDED.${k}`);
             const conflictAction = updateClauses.length > 0 ? `DO UPDATE SET ${updateClauses.join(", ")}` : "DO NOTHING";
-            const { rows } = await query(
+            const { rows } = await query2(
               `INSERT INTO ${this.table} (${keys.join(", ")}) VALUES (${ph.join(", ")}) ON CONFLICT (${conflictCol}) ${conflictAction} RETURNING *`,
               values
             );
@@ -3120,7 +3120,7 @@ var init_supabase = __esm({
           }
           if (this.method === "delete") {
             const { clause, params } = this.buildWhere();
-            const { rows } = await query(`DELETE FROM ${this.table}${clause} RETURNING *`, params);
+            const { rows } = await query2(`DELETE FROM ${this.table}${clause} RETURNING *`, params);
             return { data: this.singleResult ? rows[0] || null : rows, error: null };
           }
           return { data: null, error: { message: "Invalid method" } };
@@ -3132,7 +3132,7 @@ var init_supabase = __esm({
     };
     ServerAuthAdmin = class {
       async getUserById(userId) {
-        const { rows } = await query(`SELECT * FROM profiles WHERE user_id = $1 LIMIT 1`, [userId]);
+        const { rows } = await query2(`SELECT * FROM profiles WHERE user_id = $1 LIMIT 1`, [userId]);
         if (rows.length === 0) return { data: { user: null }, error: null };
         const p = rows[0];
         return {
@@ -3147,7 +3147,7 @@ var init_supabase = __esm({
         };
       }
       async listUsers() {
-        const { rows } = await query(`SELECT * FROM profiles ORDER BY created_at DESC`);
+        const { rows } = await query2(`SELECT * FROM profiles ORDER BY created_at DESC`);
         return {
           data: {
             users: rows.map((p) => ({
@@ -3496,12 +3496,16 @@ var init_breakers = __esm({
 // server/lib/helpers.ts
 var helpers_exports = {};
 __export(helpers_exports, {
+  ADMIN_EMAIL: () => ADMIN_EMAIL,
   EMME_EMAIL: () => EMME_EMAIL,
   GOOGLE_CLIENT_ID: () => GOOGLE_CLIENT_ID,
   HOME_LAT: () => HOME_LAT,
   HOME_LNG: () => HOME_LNG,
   ISLA_EMAIL: () => ISLA_EMAIL,
   JANUS_EMAIL: () => JANUS_EMAIL,
+  MEMBER2_EMAIL: () => MEMBER2_EMAIL,
+  MEMBER3_EMAIL: () => MEMBER3_EMAIL,
+  MEMBER_EMAIL: () => MEMBER_EMAIL,
   MOM_EMAIL: () => MOM_EMAIL,
   PROJECT_ID: () => PROJECT_ID,
   REDIRECT_URI: () => REDIRECT_URI,
@@ -3861,17 +3865,21 @@ async function callAIJSON(prompt, maxTokens = 4e3) {
     return JSON.parse(m ? m[1] || m[0] : content);
   }
 }
-var PROJECT_ID, TONY_EMAIL, JANUS_EMAIL, MOM_EMAIL, EMME_EMAIL, ISLA_EMAIL, HOME_LAT, HOME_LNG, GOOGLE_CLIENT_ID, APP_DOMAIN, GOOGLE_REDIRECT_BASE, REDIRECT_URI, _alertPhone, _fallbackPhone;
+var PROJECT_ID, ADMIN_EMAIL, TONY_EMAIL, JANUS_EMAIL, MEMBER_EMAIL, MOM_EMAIL, MEMBER2_EMAIL, EMME_EMAIL, MEMBER3_EMAIL, ISLA_EMAIL, HOME_LAT, HOME_LNG, GOOGLE_CLIENT_ID, APP_DOMAIN, GOOGLE_REDIRECT_BASE, REDIRECT_URI, _alertPhone, _fallbackPhone;
 var init_helpers = __esm({
   "server/lib/helpers.ts"() {
     init_supabase();
     init_breakers();
     PROJECT_ID = process.env.PROJECT_ID || "sample-project-id";
-    TONY_EMAIL = process.env.ADMIN_EMAIL || "admin@example.com";
+    ADMIN_EMAIL = process.env.ADMIN_EMAIL || "admin@example.com";
+    TONY_EMAIL = ADMIN_EMAIL;
     JANUS_EMAIL = process.env.ASSISTANT_EMAIL || "assistant@example.com";
-    MOM_EMAIL = process.env.MEMBER_EMAIL || "member@example.com";
-    EMME_EMAIL = "member2@example.com";
-    ISLA_EMAIL = "member3@example.com";
+    MEMBER_EMAIL = process.env.MEMBER_EMAIL || "member@example.com";
+    MOM_EMAIL = MEMBER_EMAIL;
+    MEMBER2_EMAIL = process.env.MEMBER2_EMAIL || "member2@example.com";
+    EMME_EMAIL = MEMBER2_EMAIL;
+    MEMBER3_EMAIL = process.env.MEMBER3_EMAIL || "member3@example.com";
+    ISLA_EMAIL = MEMBER3_EMAIL;
     HOME_LAT = Number(process.env.HOME_LAT) || 34.0522;
     HOME_LNG = Number(process.env.HOME_LNG) || -118.2437;
     GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID || process.env.GOOGLE_CLIENT_ID || "";
@@ -4004,8 +4012,8 @@ function composeSchoolMorningAnnouncement(input) {
 var WAKE_UP, DEPARTURE, MAX_HEADLINE_WORDS, MAX_MARKET_WORDS, ENCOURAGEMENTS;
 var init_schoolMorningBriefing = __esm({
   "server/services/schoolMorningBriefing.ts"() {
-    WAKE_UP = "Good morning, Emme and Isla. It is time to get up and get ready for school.";
-    DEPARTURE = "Emme and Isla, it is time to come downstairs. We're leaving in five minutes or less. Please bring everything you need for school.";
+    WAKE_UP = "Good morning! It is time to get up and get ready for the day.";
+    DEPARTURE = "Good morning, everyone. It is time to head downstairs. We're leaving in five minutes or less. Please bring everything you need.";
     MAX_HEADLINE_WORDS = 11;
     MAX_MARKET_WORDS = 20;
     ENCOURAGEMENTS = [
@@ -4030,8 +4038,8 @@ __export(perplexity_exports, {
   perplexityDeepSearch: () => perplexityDeepSearch,
   perplexitySearch: () => perplexitySearch
 });
-function getCacheKey(query2, model) {
-  return `${model}:${query2.toLowerCase().trim()}`;
+function getCacheKey(query3, model) {
+  return `${model}:${query3.toLowerCase().trim()}`;
 }
 function getCached(key) {
   const entry = responseCache.get(key);
@@ -4067,13 +4075,13 @@ function formatCitations(answer, citations) {
 ${citationBlock}`;
   return formatted;
 }
-async function callPerplexity(query2, model, systemPrompt) {
+async function callPerplexity(query3, model, systemPrompt) {
   const apiKey = process.env.PERPLEXITY_API_KEY;
   if (!apiKey) throw new Error("PERPLEXITY_API_KEY not configured");
-  const cacheKey = getCacheKey(query2, model);
+  const cacheKey = getCacheKey(query3, model);
   const cached = getCached(cacheKey);
   if (cached) {
-    console.log(`[Perplexity] Cache hit for: ${query2.slice(0, 60)}`);
+    console.log(`[Perplexity] Cache hit for: ${query3.slice(0, 60)}`);
     return cached;
   }
   await rateLimit();
@@ -4081,7 +4089,7 @@ async function callPerplexity(query2, model, systemPrompt) {
   if (systemPrompt) {
     messages.push({ role: "system", content: systemPrompt });
   }
-  messages.push({ role: "user", content: query2 });
+  messages.push({ role: "user", content: query3 });
   const res = await fetchT2(
     PERPLEXITY_API_URL,
     {
@@ -4118,23 +4126,23 @@ async function callPerplexity(query2, model, systemPrompt) {
   setCache(cacheKey, result);
   return result;
 }
-async function perplexitySearch(query2) {
+async function perplexitySearch(query3) {
   return callPerplexity(
-    query2,
+    query3,
     MODEL_SEARCH,
     "You are a helpful search assistant. Provide concise, accurate, well-cited answers. Focus on facts and current information."
   );
 }
-async function perplexityDeepSearch(query2) {
+async function perplexityDeepSearch(query3) {
   return callPerplexity(
-    query2,
+    query3,
     MODEL_DEEP,
     "You are a thorough research assistant. Provide comprehensive, well-structured, and well-cited answers with detailed analysis."
   );
 }
-async function executePerplexitySearch(query2, deep = false) {
+async function executePerplexitySearch(query3, deep = false) {
   try {
-    const result = deep ? await perplexityDeepSearch(query2) : await perplexitySearch(query2);
+    const result = deep ? await perplexityDeepSearch(query3) : await perplexitySearch(query3);
     const formatted = formatCitations(result.answer, result.citations);
     logAudit("perplexity-search", {
       category: "research",
@@ -4143,9 +4151,9 @@ async function executePerplexitySearch(query2, deep = false) {
       actor_id: "system",
       actor_name: "Janus",
       channel: "system",
-      summary: `Janus searched Perplexity${deep ? " (deep)" : ""}: "${query2.slice(0, 80)}"`,
+      summary: `Janus searched Perplexity${deep ? " (deep)" : ""}: "${query3.slice(0, 80)}"`,
       detail: {
-        query: query2,
+        query: query3,
         model: result.model,
         citation_count: result.citations.length,
         answer_length: result.answer.length
@@ -4185,8 +4193,8 @@ async function fetchSituationalAwareness(location = "Beverly Hills, CA") {
       day: "numeric",
       year: "numeric"
     });
-    const query2 = `What are the most important things happening right now in ${location} and Los Angeles area today (${dateStr})? Include: breaking news, weather advisories, traffic disruptions, notable local events, and any safety alerts. Be extremely concise \u2014 3 to 5 bullet points max, one line each.`;
-    const result = await perplexitySearch(query2);
+    const query3 = `What are the most important things happening right now in ${location} and Los Angeles area today (${dateStr})? Include: breaking news, weather advisories, traffic disruptions, notable local events, and any safety alerts. Be extremely concise \u2014 3 to 5 bullet points max, one line each.`;
+    const result = await perplexitySearch(query3);
     if (!result.answer || result.answer.length < 20) return "";
     const lines = result.answer.split("\n").filter((l) => l.trim().length > 0).slice(0, 5);
     return `\u2500\u2500 SITUATIONAL AWARENESS (${dateStr}) \u2500\u2500
@@ -4200,8 +4208,8 @@ async function fetchTravelIntelligence(destination, departureDate, returnDate) {
   try {
     const apiKey = process.env.PERPLEXITY_API_KEY;
     if (!apiKey) return "";
-    const query2 = `I'm traveling to ${destination} from ${departureDate} to ${returnDate}. Provide a brief travel intelligence briefing covering: (1) weather forecast for those dates, (2) any safety or health advisories, (3) 2-3 local tips or must-knows, (4) any relevant current events at the destination. Be concise and actionable.`;
-    const result = await perplexityDeepSearch(query2);
+    const query3 = `I'm traveling to ${destination} from ${departureDate} to ${returnDate}. Provide a brief travel intelligence briefing covering: (1) weather forecast for those dates, (2) any safety or health advisories, (3) 2-3 local tips or must-knows, (4) any relevant current events at the destination. Be concise and actionable.`;
+    const result = await perplexityDeepSearch(query3);
     return formatCitations(result.answer, result.citations);
   } catch (e) {
     console.error("[Perplexity] Travel intelligence fetch failed:", e);
@@ -4212,8 +4220,8 @@ async function fetchTroubleshootingAdvice(system, issue, location = "Beverly Hil
   try {
     const apiKey = process.env.PERPLEXITY_API_KEY;
     if (!apiKey) return "";
-    const query2 = `Home ${system} issue: ${issue}. Location: ${location}. Provide: (1) likely causes, (2) immediate troubleshooting steps the homeowner can try, (3) when to call a professional, (4) recommend 1-2 highly-rated local service providers near ${location} if applicable. Be concise and practical.`;
-    const result = await perplexitySearch(query2);
+    const query3 = `Home ${system} issue: ${issue}. Location: ${location}. Provide: (1) likely causes, (2) immediate troubleshooting steps the homeowner can try, (3) when to call a professional, (4) recommend 1-2 highly-rated local service providers near ${location} if applicable. Be concise and practical.`;
+    const result = await perplexitySearch(query3);
     return formatCitations(result.answer, result.citations);
   } catch (e) {
     console.error("[Perplexity] Troubleshooting advice fetch failed:", e);
@@ -4231,8 +4239,8 @@ async function fetchGlobalNewsBriefing() {
       month: "long",
       day: "numeric"
     });
-    const query2 = `Today is ${dateStr}. Give exactly three distinct, major global news stories that matter most this morning. Prioritize consequential international developments across different regions or topics. Each item must be one factual spoken sentence of at most 11 words. Return exactly three lines and nothing else. No headings, citations, links, bullets, commentary, or predictions.`;
-    const result = await perplexitySearch(query2);
+    const query3 = `Today is ${dateStr}. Give exactly three distinct, major global news stories that matter most this morning. Prioritize consequential international developments across different regions or topics. Each item must be one factual spoken sentence of at most 11 words. Return exactly three lines and nothing else. No headings, citations, links, bullets, commentary, or predictions.`;
+    const result = await perplexitySearch(query3);
     if (!result.answer) return [];
     const headlines = cleanGlobalHeadlines(result.answer);
     return headlines.length === 3 ? headlines : [];
@@ -4252,8 +4260,8 @@ async function fetchMarketBriefing() {
       month: "long",
       day: "numeric"
     });
-    const query2 = `Today is ${dateStr}. Give a current, neutral U.S. stock-market update for a spoken family briefing. State the broad direction of the S&P 500, Dow, and Nasdaq futures or latest session, plus the single dominant driver. Use one sentence of at most 20 words. Avoid investment advice, individual-stock recommendations, unsupported precision, headings, citations, links, bullets, and market jargon.`;
-    const result = await perplexitySearch(query2);
+    const query3 = `Today is ${dateStr}. Give a current, neutral U.S. stock-market update for a spoken family briefing. State the broad direction of the S&P 500, Dow, and Nasdaq futures or latest session, plus the single dominant driver. Use one sentence of at most 20 words. Avoid investment advice, individual-stock recommendations, unsupported precision, headings, citations, links, bullets, and market jargon.`;
+    const result = await perplexitySearch(query3);
     return cleanMarketUpdate(result.answer ?? "");
   } catch (e) {
     console.error("[Perplexity] Market briefing fetch failed:", e);
@@ -4611,7 +4619,7 @@ function parseEmbedding(text2) {
   }
 }
 async function buildUserIndex(userId) {
-  const { rows } = await query(
+  const { rows } = await query2(
     `SELECT key, value, context, updated_at, pinned, embedding::text AS embedding
        FROM janus_memory
       WHERE user_id = $1 AND embedding IS NOT NULL`,
@@ -4663,7 +4671,7 @@ async function getUserIndex(userId) {
   return p;
 }
 async function seqScanRecall(userId, embedding, limit) {
-  const { rows } = await query(
+  const { rows } = await query2(
     `SELECT key, value, context, updated_at, pinned,
             (1 - (embedding <=> $1::vector)) AS similarity
      FROM janus_memory
@@ -4716,7 +4724,7 @@ var init_memory_index = __esm({
 // server/utils/janus-tools.ts
 async function logAudit3(edgeFunction, entry) {
   try {
-    const { query: query2 } = await Promise.resolve().then(() => (init_db2(), db_exports));
+    const { query: query3 } = await Promise.resolve().then(() => (init_db2(), db_exports));
     const enriched = { ...entry };
     if (!("correlation_id" in enriched)) {
       const { getCurrentCorrelationId: getCurrentCorrelationId2 } = await Promise.resolve().then(() => (init_correlation(), correlation_exports));
@@ -4727,19 +4735,19 @@ async function logAudit3(edgeFunction, entry) {
     const keys = ["edge_function", ...safeEntries.map(([k]) => k)];
     const values = [edgeFunction, ...safeEntries.map(([, v]) => typeof v === "object" && v !== null ? JSON.stringify(v) : v)];
     const ph = keys.map((_, i) => `$${i + 1}`);
-    await query2(`INSERT INTO system_audit_log (${keys.join(", ")}) VALUES (${ph.join(", ")})`, values);
+    await query3(`INSERT INTO system_audit_log (${keys.join(", ")}) VALUES (${ph.join(", ")})`, values);
   } catch (e) {
     console.error("Audit log failed:", e);
   }
 }
 async function enqueueFailedJob2(functionName, error, payload) {
   try {
-    const { query: query2 } = await Promise.resolve().then(() => (init_db2(), db_exports));
+    const { query: query3 } = await Promise.resolve().then(() => (init_db2(), db_exports));
     const { getCurrentCorrelationId: getCurrentCorrelationId2 } = await Promise.resolve().then(() => (init_correlation(), correlation_exports));
     const errorMessage = error instanceof Error ? error.message : String(error);
     const errorDetail = error instanceof Error ? { stack: error.stack, name: error.name } : { raw: String(error) };
     const correlationId = getCurrentCorrelationId2() || null;
-    await query2(
+    await query3(
       `INSERT INTO failed_jobs (function_name, error_message, error_detail, payload, correlation_id) VALUES ($1, $2, $3, $4, $5)`,
       [functionName, errorMessage.slice(0, 2e3), JSON.stringify(errorDetail), JSON.stringify(payload || {}), correlationId]
     );
@@ -4752,8 +4760,8 @@ async function getAlertPhoneNumber2() {
     return _cachedAlertPhone;
   }
   try {
-    const { query: query2 } = await Promise.resolve().then(() => (init_db2(), db_exports));
-    const { rows } = await query2(`SELECT value FROM system_configs WHERE key = 'alert_phone_number' LIMIT 1`);
+    const { query: query3 } = await Promise.resolve().then(() => (init_db2(), db_exports));
+    const { rows } = await query3(`SELECT value FROM system_configs WHERE key = 'alert_phone_number' LIMIT 1`);
     if (rows.length > 0 && rows[0].value) {
       _cachedAlertPhone = rows[0].value;
       _alertPhoneFetchedAt = Date.now();
@@ -4923,14 +4931,14 @@ async function executeSendEmail(to, subject, body, auditChannel = "chat", auditE
     return `Error sending email: ${e instanceof Error ? e.message : "unknown"}`;
   }
 }
-async function executeGmailSearch(query2, maxResults = 10) {
+async function executeGmailSearch(query3, maxResults = 10) {
   try {
     const accessToken = await getGoogleServiceToken(["https://mail.google.com/"], "admin@example.com");
-    const params = new URLSearchParams({ q: query2, maxResults: String(Math.min(maxResults, 20)) });
+    const params = new URLSearchParams({ q: query3, maxResults: String(Math.min(maxResults, 20)) });
     const listRes = await fetch(`https://gmail.googleapis.com/gmail/v1/users/me/messages?${params}`, { headers: { Authorization: `Bearer ${accessToken}` } });
     const listData = await listRes.json();
     if (!listRes.ok) return `Gmail search failed: ${listData.error?.message || listRes.status}`;
-    if (!listData.messages?.length) return `No emails found matching "${query2}".`;
+    if (!listData.messages?.length) return `No emails found matching "${query3}".`;
     const msgIds = listData.messages.map((m) => m.id);
     const boundary = `batch_${Date.now()}`;
     const batchParts = msgIds.map(
@@ -4958,7 +4966,7 @@ GET /gmail/v1/users/me/messages/${id}?format=metadata&metadataHeaders=From&metad
         const headers = msg.payload?.headers || [];
         return { id: msg.id, from: headers.find((h) => h.name === "From")?.value || "", subject: headers.find((h) => h.name === "Subject")?.value || "(No subject)", date: headers.find((h) => h.name === "Date")?.value || "", snippet: msg.snippet || "", unread: msg.labelIds?.includes("UNREAD") || false };
       }));
-      return JSON.stringify({ count: messages.filter(Boolean).length, query: query2, results: messages.filter(Boolean) });
+      return JSON.stringify({ count: messages.filter(Boolean).length, query: query3, results: messages.filter(Boolean) });
     }
     const batchText = await batchRes.text();
     const respBoundary = batchRes.headers.get("Content-Type")?.match(/boundary=([^\s;]+)/)?.[1] || boundary;
@@ -4974,7 +4982,7 @@ GET /gmail/v1/users/me/messages/${id}?format=metadata&metadataHeaders=From&metad
         return null;
       }
     }).filter(Boolean);
-    return JSON.stringify({ count: results.length, query: query2, results });
+    return JSON.stringify({ count: results.length, query: query3, results });
   } catch (e) {
     return `Error searching Gmail: ${e instanceof Error ? e.message : "unknown"}`;
   }
@@ -5368,14 +5376,14 @@ async function executeGetNotionDatabase(database_id) {
     return `Error getting Notion database: ${e instanceof Error ? e.message : "unknown"}`;
   }
 }
-async function executeWebSearch(query2, limit = 10) {
+async function executeWebSearch(query3, limit = 10) {
   const apiKey = process.env.FIRECRAWL_API_KEY;
   if (!apiKey) return "Firecrawl API key not configured.";
   try {
     const res = await fetch("https://api.firecrawl.dev/v1/search", {
       method: "POST",
       headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
-      body: JSON.stringify({ query: query2, limit: Math.min(limit, 20) })
+      body: JSON.stringify({ query: query3, limit: Math.min(limit, 20) })
     });
     const data = await res.json();
     if (!res.ok) return `Search failed: ${data.error || res.status}`;
@@ -5531,9 +5539,9 @@ async function executeSaveToCart(svc, userId, platform, productName, productUrl,
 }
 async function executeViewCart(svc, userId, platform) {
   try {
-    let query2 = svc.from("shopping_cart_items").select("platform, product_name, product_url, price, quantity, notes").eq("user_id", userId).eq("status", "pending").order("created_at", { ascending: false });
-    if (platform) query2 = query2.eq("platform", platform.toLowerCase());
-    const { data, error } = await query2;
+    let query3 = svc.from("shopping_cart_items").select("platform, product_name, product_url, price, quantity, notes").eq("user_id", userId).eq("status", "pending").order("created_at", { ascending: false });
+    if (platform) query3 = query3.eq("platform", platform.toLowerCase());
+    const { data, error } = await query3;
     if (error) return `Failed: ${error.message}`;
     if (!data || data.length === 0) return platform ? `Your ${platform} cart is empty.` : "Your shopping cart is empty.";
     const items = data.map((item) => ({
@@ -5551,9 +5559,9 @@ async function executeViewCart(svc, userId, platform) {
 }
 async function executeClearCart(svc, userId, platform) {
   try {
-    let query2 = svc.from("shopping_cart_items").update({ status: "cleared" }).eq("user_id", userId).eq("status", "pending");
-    if (platform) query2 = query2.eq("platform", platform.toLowerCase());
-    const { error } = await query2;
+    let query3 = svc.from("shopping_cart_items").update({ status: "cleared" }).eq("user_id", userId).eq("status", "pending");
+    if (platform) query3 = query3.eq("platform", platform.toLowerCase());
+    const { error } = await query3;
     if (error) return `Failed: ${error.message}`;
     return platform ? `Cleared your ${platform} cart.` : "Cleared your entire shopping cart.";
   } catch (e) {
@@ -5581,8 +5589,8 @@ async function executeRememberFact(svc, userId, key, value, context, pinned) {
         `${key} ${value} ${context ?? ""}`.trim()
       );
       if (embedding) {
-        const { query: query2 } = await Promise.resolve().then(() => (init_db2(), db_exports));
-        await query2(
+        const { query: query3 } = await Promise.resolve().then(() => (init_db2(), db_exports));
+        await query3(
           `UPDATE janus_memory SET embedding = $1::vector WHERE user_id = $2 AND key = $3`,
           [toPgVectorLiteral2(embedding), userId, key]
         );
@@ -5609,9 +5617,9 @@ async function executeRememberFact(svc, userId, key, value, context, pinned) {
 }
 async function executeRecallFacts(svc, userId, keySearch) {
   try {
-    let query2 = svc.from("janus_memory").select("key, value, context, updated_at, pinned").eq("user_id", userId).order("key");
-    if (keySearch) query2 = query2.ilike("key", `${keySearch}%`);
-    const { data, error } = await query2;
+    let query3 = svc.from("janus_memory").select("key, value, context, updated_at, pinned").eq("user_id", userId).order("key");
+    if (keySearch) query3 = query3.ilike("key", `${keySearch}%`);
+    const { data, error } = await query3;
     if (error) return `Failed to recall: ${error.message}`;
     if (data && data.length > 0) {
       return JSON.stringify({
@@ -6420,12 +6428,26 @@ var init_google = __esm({
           return res.json({ success: true });
         }
         if (action === "list-family-events") {
-          const FAMILY = [
-            { key: "tony", email: "admin@example.com" },
-            { key: "lana", email: "member@example.com" },
-            { key: "isla", email: "member2@example.com" },
-            { key: "emme", email: "member3@example.com" }
-          ];
+          let FAMILY = [];
+          try {
+            const { rows } = await query(
+              `SELECT id, display_name, email FROM household_members WHERE is_active = true AND email IS NOT NULL ORDER BY created_at ASC`
+            );
+            if (rows && rows.length > 0) {
+              FAMILY = rows.map((r) => ({
+                key: r.id,
+                email: r.email
+              }));
+            }
+          } catch (err) {
+            console.warn("[Google] Error fetching household_members for family events:", err);
+          }
+          if (FAMILY.length === 0) {
+            FAMILY = [
+              { key: "admin", email: process.env.ADMIN_EMAIL || "admin@example.com" },
+              { key: "member", email: process.env.MEMBER_EMAIL || "member@example.com" }
+            ];
+          }
           const params = new URLSearchParams({
             singleEvents: "true",
             orderBy: "startTime",
@@ -6571,7 +6593,7 @@ async function upsertObservedDevice(input) {
   const mac = normalizeMac(input.mac);
   if (!mac) return;
   const vendor = inferVendorFromMac(mac);
-  const existing = await query(
+  const existing = await query2(
     `SELECT hostnames, ip_addresses, ssids FROM network_devices WHERE mac_address = $1`,
     [mac]
   );
@@ -6579,7 +6601,7 @@ async function upsertObservedDevice(input) {
   const nextHostnames = dedupeAppend(Array.isArray(cur.hostnames) ? cur.hostnames : null, input.hostname);
   const nextIps = dedupeAppend(Array.isArray(cur.ip_addresses) ? cur.ip_addresses : null, input.ip);
   const nextSsids = dedupeAppend(Array.isArray(cur.ssids) ? cur.ssids : null, input.ssid);
-  await query(
+  await query2(
     `INSERT INTO network_devices (
        mac_address, device_vendor, hostnames, ip_addresses, ssids,
        first_seen, last_seen
@@ -6610,7 +6632,7 @@ function recordObservedDevice(input) {
 async function getDevice(mac) {
   const normalized = normalizeMac(mac);
   if (!normalized) return null;
-  const res = await query(`SELECT * FROM network_devices WHERE mac_address = $1`, [normalized]);
+  const res = await query2(`SELECT * FROM network_devices WHERE mac_address = $1`, [normalized]);
   if (res.rows.length === 0) return null;
   return rowToDevice(res.rows[0]);
 }
@@ -6618,7 +6640,7 @@ async function getDevicesByIps(ips) {
   const out = /* @__PURE__ */ new Map();
   const unique = Array.from(new Set(ips.filter((ip) => typeof ip === "string" && ip.trim().length > 0)));
   if (unique.length === 0) return out;
-  const res = await query(
+  const res = await query2(
     `SELECT mac_address, label, hostnames, ip_addresses, last_seen
        FROM network_devices
       WHERE ip_addresses ?| $1::text[]
@@ -6660,13 +6682,13 @@ async function listDevices(filters = {}) {
   const where = wheres.length ? `WHERE ${wheres.join(" AND ")}` : "";
   const limit = Math.max(1, Math.min(500, filters.limit ?? 200));
   const offset = Math.max(0, filters.offset ?? 0);
-  const totalRes = await query(`SELECT COUNT(*)::int AS c FROM network_devices ${where}`, params);
+  const totalRes = await query2(`SELECT COUNT(*)::int AS c FROM network_devices ${where}`, params);
   const total = Number(totalRes.rows[0]?.c ?? 0);
   params.push(limit);
   const limitIdx = params.length;
   params.push(offset);
   const offsetIdx = params.length;
-  const res = await query(
+  const res = await query2(
     `SELECT * FROM network_devices ${where}
      ORDER BY last_seen DESC
      LIMIT $${limitIdx} OFFSET $${offsetIdx}`,
@@ -6679,7 +6701,7 @@ async function listDevices(filters = {}) {
 }
 async function unknownDevices(window_hours = 24) {
   const hours = Math.max(1, Math.min(24 * 30, Math.floor(window_hours)));
-  const res = await query(
+  const res = await query2(
     `SELECT * FROM network_devices
      WHERE label IS NULL AND owner_person_id IS NULL AND trusted = false
        AND last_seen >= now() - ($1 || ' hours')::interval
@@ -6692,7 +6714,7 @@ async function unknownDevices(window_hours = 24) {
 async function labelDevice(mac, patch, labeled_by) {
   const normalized = normalizeMac(mac);
   if (!normalized) return null;
-  await query(
+  await query2(
     `INSERT INTO network_devices (mac_address, first_seen, last_seen)
      VALUES ($1, now(), now())
      ON CONFLICT (mac_address) DO NOTHING`,
@@ -6717,7 +6739,7 @@ async function labelDevice(mac, patch, labeled_by) {
   sets.push(`last_labeled_by = $${params.length}`);
   sets.push(`last_labeled_at = now()`);
   params.push(normalized);
-  await query(
+  await query2(
     `UPDATE network_devices SET ${sets.join(", ")} WHERE mac_address = $${params.length}`,
     params
   );
@@ -6726,7 +6748,7 @@ async function labelDevice(mac, patch, labeled_by) {
 async function deleteDevice(mac) {
   const normalized = normalizeMac(mac);
   if (!normalized) return false;
-  const res = await query(`DELETE FROM network_devices WHERE mac_address = $1`, [normalized]);
+  const res = await query2(`DELETE FROM network_devices WHERE mac_address = $1`, [normalized]);
   return (res.rowCount ?? 0) > 0;
 }
 function macFromDeviceTrackerId(entityId) {
@@ -6921,7 +6943,7 @@ async function checkCrestronBridge() {
 async function fireCrestronAlert(state2, unavailable, total) {
   const alertKey = state2 === "offline" ? "crestron_bridge_offline" : "crestron_bridge_recovered";
   try {
-    const { rows } = await query(
+    const { rows } = await query2(
       `SELECT id FROM system_audit_log WHERE event_type = 'crestron_alert' AND detail->>'alert_key' = $1 AND created_at > NOW() - INTERVAL '${CRESTRON_DEDUP_MINUTES} minutes' LIMIT 1`,
       [alertKey]
     );
@@ -8136,7 +8158,7 @@ async function fetchAutomationMap() {
 }
 async function countRecentRedeployAudits(ruleId) {
   try {
-    const { rows } = await query(
+    const { rows } = await query2(
       `SELECT COUNT(*) AS cnt FROM system_audit_log
        WHERE event_type = 'workflow_trigger_redeployed'
          AND detail->>'rule_id' = $1
@@ -8150,7 +8172,7 @@ async function countRecentRedeployAudits(ruleId) {
 }
 async function hasRecentRepeatAlert(ruleId) {
   try {
-    const { rows } = await query(
+    const { rows } = await query2(
       `SELECT id FROM system_audit_log
        WHERE event_type = 'workflow_trigger_repeat_redeploy'
          AND detail->>'rule_id' = $1
@@ -8325,191 +8347,6 @@ var init_workflowReconciler = __esm({
   }
 });
 
-// server/services/grocery-submit.ts
-var grocery_submit_exports = {};
-__export(grocery_submit_exports, {
-  buildCartNotification: () => buildCartNotification,
-  buildItemList: () => buildItemList,
-  submitGroceryOrder: () => submitGroceryOrder
-});
-function requireEnv(name) {
-  const v = process.env[name];
-  if (!v) throw new Error(`${name} is not configured \u2014 cannot run Amazon Fresh automation`);
-  return v;
-}
-function getStagehandHeaders2() {
-  return {
-    "Content-Type": "application/json",
-    "x-bb-api-key": requireEnv("BROWSERBASE_API_KEY"),
-    "x-bb-project-id": requireEnv("BROWSERBASE_PROJECT_ID")
-  };
-}
-function getModelApiKey() {
-  const key = process.env.GOOGLE_GENERATIVE_AI_API_KEY || process.env.GEMINI_API_KEY;
-  if (!key) throw new Error("GOOGLE_GENERATIVE_AI_API_KEY is not configured \u2014 cannot run Amazon Fresh automation");
-  return key;
-}
-async function stagehandPost3(path12, body) {
-  const headers = getStagehandHeaders2();
-  const r = await fetch(`${STAGEHAND_BASE3}${path12}`, {
-    method: "POST",
-    headers,
-    body: JSON.stringify(body)
-  });
-  const data = await r.json();
-  if (!r.ok) throw new Error(`Stagehand ${r.status}: ${JSON.stringify(data).slice(0, 500)}`);
-  return data;
-}
-async function closeSession3(sessionId) {
-  try {
-    const headers = getStagehandHeaders2();
-    await fetch(`${STAGEHAND_BASE3}/sessions/${sessionId}/close`, {
-      method: "POST",
-      headers,
-      body: "{}"
-    });
-  } catch {
-  }
-}
-function actReportsNoMatch(actResult) {
-  if (actResult == null) return false;
-  try {
-    return JSON.stringify(actResult).toUpperCase().includes(NO_MATCH_SENTINEL);
-  } catch {
-    return false;
-  }
-}
-function buildItemList(items) {
-  return items.map((it) => {
-    const nameParts = [it.brand, it.name].filter(Boolean);
-    return {
-      name: nameParts.join(" "),
-      quantity: it.quantity,
-      size: it.size ?? null
-    };
-  });
-}
-function buildCartNotification(log) {
-  const { item_count, items_added, items_failed, session_replay_url, items } = log;
-  const lines = ["\u{1F6D2} *Grocery Cart Ready*", ""];
-  if (items_failed === 0) {
-    lines.push(
-      `All ${item_count} item(s) are in the Amazon Fresh cart \u2014 review and check out when ready.`
-    );
-  } else {
-    lines.push(
-      `Added ${items_added} of ${item_count} item(s) to the Amazon Fresh cart \u2014 review and check out when ready.`
-    );
-  }
-  lines.push("", `\u2705 Added: ${items_added}`);
-  if (items_failed > 0) lines.push(`\u26A0\uFE0F Failed: ${items_failed}`);
-  const failedItems = items.filter((it) => it.status !== "added");
-  if (failedItems.length > 0) {
-    lines.push("", "Couldn't add (please add manually):");
-    for (const it of failedItems) lines.push(`\u2022 ${it.name}`);
-  }
-  lines.push("", `Replay: ${session_replay_url}`);
-  return lines.join("\n");
-}
-async function submitGroceryOrder(items, notifyPhones) {
-  getStagehandHeaders2();
-  const modelApiKey = getModelApiKey();
-  const submittedAt = (/* @__PURE__ */ new Date()).toISOString();
-  const session = await stagehandPost3("/sessions/start", {
-    model_name: "google/gemini-2.5-flash",
-    model_api_key: modelApiKey
-  });
-  const sessionId = session.data?.session_id || session.session_id || session.id;
-  if (!sessionId) throw new Error("Stagehand did not return a session ID");
-  const sessionReplayUrl = `https://browserbase.com/sessions/${sessionId}`;
-  const results = [];
-  try {
-    for (const item of items) {
-      const searchQuery = [item.name, item.size].filter(Boolean).join(" ");
-      const searchUrl = `${AMAZON_FRESH_BASE}/s?k=${encodeURIComponent(searchQuery)}&i=amazonfresh`;
-      try {
-        await stagehandPost3(`/sessions/${sessionId}/navigate`, { url: searchUrl });
-        await new Promise((resolve2) => setTimeout(resolve2, 3e3));
-        const actResult = await stagehandPost3(`/sessions/${sessionId}/act`, {
-          action: `Find the first available grocery product result on this Amazon Fresh search page that best matches "${searchQuery}". Click its "Add to Cart" button. If no "Add to Cart" button is visible on the search results page, click the first product to open its detail page, then click "Add to Cart". If no product on the page reasonably matches "${searchQuery}" \u2014 for example the item is out of stock or the search returned no relevant grocery results \u2014 do NOT click any product. Instead respond with exactly this text: ${NO_MATCH_SENTINEL}`
-        });
-        if (actReportsNoMatch(actResult)) {
-          results.push({
-            name: item.name,
-            quantity: item.quantity,
-            size: item.size,
-            status: "not_found",
-            error: `No matching in-stock product found for "${searchQuery}" on Amazon Fresh`
-          });
-          continue;
-        }
-        if (item.quantity > 1) {
-          for (let q = 1; q < item.quantity; q++) {
-            await stagehandPost3(`/sessions/${sessionId}/act`, {
-              action: `Increment the quantity of "${item.name}" in the cart or on the page by 1.`
-            });
-          }
-        }
-        results.push({ name: item.name, quantity: item.quantity, size: item.size, status: "added" });
-      } catch (itemErr) {
-        const msg = itemErr instanceof Error ? itemErr.message : String(itemErr);
-        results.push({ name: item.name, quantity: item.quantity, size: item.size, status: "failed", error: msg });
-      }
-    }
-  } finally {
-    await closeSession3(sessionId);
-  }
-  const itemsAdded = results.filter((r) => r.status === "added").length;
-  const itemsNotFound = results.filter((r) => r.status === "not_found").length;
-  const itemsFailed = results.filter((r) => r.status === "failed").length;
-  const itemsUnsuccessful = itemsNotFound + itemsFailed;
-  const overallSuccess = itemsUnsuccessful === 0 && itemsAdded > 0;
-  const breakdown = [
-    itemsNotFound > 0 ? `${itemsNotFound} not found` : null,
-    itemsFailed > 0 ? `${itemsFailed} failed to add` : null
-  ].filter(Boolean).join(", ");
-  const errorMsg = overallSuccess ? void 0 : itemsAdded === 0 ? `All ${items.length} item(s) failed to be added to the Amazon Fresh cart (${breakdown})` : `${itemsUnsuccessful} of ${items.length} item(s) failed (${breakdown}) \u2014 run kept locked for manual review`;
-  const result = {
-    success: overallSuccess,
-    log: {
-      submission_method: "stagehand_amazon_fresh",
-      submitted_at: submittedAt,
-      session_id: sessionId,
-      session_replay_url: sessionReplayUrl,
-      item_count: items.length,
-      items_added: itemsAdded,
-      items_not_found: itemsNotFound,
-      items_failed: itemsFailed,
-      items: results
-    },
-    error: errorMsg
-  };
-  const recipients = Array.from(
-    new Set((Array.isArray(notifyPhones) ? notifyPhones : [notifyPhones]).filter((p) => !!p))
-  );
-  if (recipients.length > 0 && itemsAdded > 0) {
-    const message = buildCartNotification(result.log);
-    for (const phone of recipients) {
-      try {
-        await sendWhatsAppTo(phone, message);
-      } catch (notifyErr) {
-        const msg = notifyErr instanceof Error ? notifyErr.message : String(notifyErr);
-        console.error(`[grocery-submit] cart confirmation WhatsApp failed for ${phone}:`, msg);
-      }
-    }
-  }
-  return result;
-}
-var STAGEHAND_BASE3, AMAZON_FRESH_BASE, NO_MATCH_SENTINEL;
-var init_grocery_submit = __esm({
-  "server/services/grocery-submit.ts"() {
-    init_helpers();
-    STAGEHAND_BASE3 = "https://api.stagehand.dev";
-    AMAZON_FRESH_BASE = "https://www.amazon.com";
-    NO_MATCH_SENTINEL = "NO_MATCH";
-  }
-});
-
 // server/lib/deviceRulesCache.ts
 var deviceRulesCache_exports = {};
 __export(deviceRulesCache_exports, {
@@ -8521,7 +8358,7 @@ function getDbVendorRules() {
 }
 async function loadVendorRulesFromDb() {
   try {
-    const { rows } = await query(
+    const { rows } = await query2(
       `SELECT match_keyword, category, subcategory, vendor_label, priority
        FROM vendor_category_rules
        ORDER BY priority ASC, id ASC`
@@ -9494,45 +9331,45 @@ router2.post("/api/db/query", requireAuth, async (req, res) => {
       console.log(`[DB Proxy] entertainment_events query - filters: ${JSON.stringify(filters)}, order: ${JSON.stringify(order)}, limit: ${limit}`);
     }
     const supabase = getServiceClient();
-    let query2 = supabase.from(table).select(select || "*");
+    let query3 = supabase.from(table).select(select || "*");
     if (filters && Array.isArray(filters)) {
       for (const f of filters) {
-        if (f.op === "eq") query2 = query2.eq(f.column, f.value);
-        else if (f.op === "neq") query2 = query2.neq(f.column, f.value);
-        else if (f.op === "gt") query2 = query2.gt(f.column, f.value);
-        else if (f.op === "gte") query2 = query2.gte(f.column, f.value);
-        else if (f.op === "lt") query2 = query2.lt(f.column, f.value);
-        else if (f.op === "lte") query2 = query2.lte(f.column, f.value);
-        else if (f.op === "like") query2 = query2.like(f.column, f.value);
-        else if (f.op === "ilike") query2 = query2.ilike(f.column, f.value);
-        else if (f.op === "is") query2 = query2.is(f.column, f.value);
-        else if (f.op === "in") query2 = query2.in(f.column, f.value);
-        else if (f.op === "contains") query2 = query2.contains(f.column, f.value);
-        else if (f.op === "containedBy") query2 = query2.containedBy(f.column, f.value);
+        if (f.op === "eq") query3 = query3.eq(f.column, f.value);
+        else if (f.op === "neq") query3 = query3.neq(f.column, f.value);
+        else if (f.op === "gt") query3 = query3.gt(f.column, f.value);
+        else if (f.op === "gte") query3 = query3.gte(f.column, f.value);
+        else if (f.op === "lt") query3 = query3.lt(f.column, f.value);
+        else if (f.op === "lte") query3 = query3.lte(f.column, f.value);
+        else if (f.op === "like") query3 = query3.like(f.column, f.value);
+        else if (f.op === "ilike") query3 = query3.ilike(f.column, f.value);
+        else if (f.op === "is") query3 = query3.is(f.column, f.value);
+        else if (f.op === "in") query3 = query3.in(f.column, f.value);
+        else if (f.op === "contains") query3 = query3.contains(f.column, f.value);
+        else if (f.op === "containedBy") query3 = query3.containedBy(f.column, f.value);
       }
     }
     if (order) {
       if (Array.isArray(order)) {
         for (const o of order) {
-          query2 = query2.order(o.column, { ascending: o.ascending ?? true, nullsFirst: o.nullsFirst });
+          query3 = query3.order(o.column, { ascending: o.ascending ?? true, nullsFirst: o.nullsFirst });
         }
       } else {
-        query2 = query2.order(order.column, { ascending: order.ascending ?? true, nullsFirst: order.nullsFirst });
+        query3 = query3.order(order.column, { ascending: order.ascending ?? true, nullsFirst: order.nullsFirst });
       }
     }
-    if (limit) query2 = query2.limit(limit);
+    if (limit) query3 = query3.limit(limit);
     if (typeof offset === "number" && limit) {
-      query2 = query2.range(offset, offset + limit - 1);
+      query3 = query3.range(offset, offset + limit - 1);
     }
     if (single) {
-      const { data, error } = await query2.single();
+      const { data, error } = await query3.single();
       if (error) {
         res.status(error.code === "PGRST116" ? 404 : 400).json({ error: error.message });
         return;
       }
       res.json({ data });
     } else {
-      const result = req.body.count ? await query2.select(select || "*", { count: "exact", head: req.body.head }) : await query2;
+      const result = req.body.count ? await query3.select(select || "*", { count: "exact", head: req.body.head }) : await query3;
       if (result.error) {
         res.status(400).json({ error: result.error.message });
         return;
@@ -9553,17 +9390,17 @@ router2.post("/api/db/count", requireAuth, async (req, res) => {
     }
     if (!checkTableAccess(table, req, res)) return;
     const supabase = getServiceClient();
-    let query2 = supabase.from(table).select("*", { count: "exact", head: true });
+    let query3 = supabase.from(table).select("*", { count: "exact", head: true });
     if (filters && Array.isArray(filters)) {
       for (const f of filters) {
-        if (f.op === "eq") query2 = query2.eq(f.column, f.value);
-        else if (f.op === "in") query2 = query2.in(f.column, f.value);
-        else if (f.op === "gte") query2 = query2.gte(f.column, f.value);
-        else if (f.op === "lte") query2 = query2.lte(f.column, f.value);
-        else if (f.op === "is") query2 = query2.is(f.column, f.value);
+        if (f.op === "eq") query3 = query3.eq(f.column, f.value);
+        else if (f.op === "in") query3 = query3.in(f.column, f.value);
+        else if (f.op === "gte") query3 = query3.gte(f.column, f.value);
+        else if (f.op === "lte") query3 = query3.lte(f.column, f.value);
+        else if (f.op === "is") query3 = query3.is(f.column, f.value);
       }
     }
-    const { count, error } = await query2;
+    const { count, error } = await query3;
     if (error) {
       res.status(400).json({ error: error.message });
       return;
@@ -9583,11 +9420,11 @@ router2.post("/api/db/insert", requireAuth, async (req, res) => {
     }
     if (!checkTableAccess(table, req, res)) return;
     const supabase = getServiceClient();
-    let query2 = supabase.from(table).insert(insertData);
+    let query3 = supabase.from(table).insert(insertData);
     if (returnData !== false) {
-      query2 = query2.select();
+      query3 = query3.select();
     }
-    const { data, error } = await query2;
+    const { data, error } = await query3;
     if (error) {
       res.status(400).json({ error: error.message });
       return;
@@ -9611,14 +9448,14 @@ router2.post("/api/db/update", requireAuth, async (req, res) => {
       return;
     }
     const supabase = getServiceClient();
-    let query2 = supabase.from(table).update(updateData);
+    let query3 = supabase.from(table).update(updateData);
     if (filters && Array.isArray(filters)) {
       for (const f of filters) {
-        if (f.op === "eq") query2 = query2.eq(f.column, f.value);
-        else if (f.op === "in") query2 = query2.in(f.column, f.value);
+        if (f.op === "eq") query3 = query3.eq(f.column, f.value);
+        else if (f.op === "in") query3 = query3.in(f.column, f.value);
       }
     }
-    const { error } = await query2;
+    const { error } = await query3;
     if (error) {
       res.status(400).json({ error: error.message });
       return;
@@ -9638,13 +9475,13 @@ router2.post("/api/db/delete", requireAuth, async (req, res) => {
     }
     if (!checkTableAccess(table, req, res)) return;
     const supabase = getServiceClient();
-    let query2 = supabase.from(table).delete();
+    let query3 = supabase.from(table).delete();
     if (filters && Array.isArray(filters)) {
       for (const f of filters) {
-        if (f.op === "eq") query2 = query2.eq(f.column, f.value);
+        if (f.op === "eq") query3 = query3.eq(f.column, f.value);
       }
     }
-    const { error } = await query2;
+    const { error } = await query3;
     if (error) {
       res.status(400).json({ error: error.message });
       return;
@@ -9664,21 +9501,21 @@ router2.post("/api/db/maybeSingle", requireAuth, async (req, res) => {
     }
     if (!checkTableAccess(table, req, res)) return;
     const supabase = getServiceClient();
-    let query2 = supabase.from(table).select(select || "*");
+    let query3 = supabase.from(table).select(select || "*");
     if (filters && Array.isArray(filters)) {
       for (const f of filters) {
-        if (f.op === "eq") query2 = query2.eq(f.column, f.value);
-        else if (f.op === "in") query2 = query2.in(f.column, f.value);
-        else if (f.op === "is") query2 = query2.is(f.column, f.value);
+        if (f.op === "eq") query3 = query3.eq(f.column, f.value);
+        else if (f.op === "in") query3 = query3.in(f.column, f.value);
+        else if (f.op === "is") query3 = query3.is(f.column, f.value);
       }
     }
     if (order) {
-      query2 = query2.order(order.column, { ascending: order.ascending ?? true });
+      query3 = query3.order(order.column, { ascending: order.ascending ?? true });
     }
     if (limit) {
-      query2 = query2.limit(limit);
+      query3 = query3.limit(limit);
     }
-    const { data, error } = await query2.maybeSingle();
+    const { data, error } = await query3.maybeSingle();
     if (error) {
       res.status(400).json({ error: error.message });
       return;
@@ -10187,19 +10024,19 @@ async function executeCreateCalendarEvent(calendarId, title, start, end, descrip
     const effectiveCalId = calendarId || process.env.PRIMARY_CALENDAR_ID || "primary";
     const normalizedStart = start ? normalizeToPacific(start) : start;
     const normalizedEnd = end ? normalizeToPacific(end) : end;
-    const TONY_EMAIL5 = process.env.PRIMARY_CALENDAR_ID || "primary";
-    const isTonysCalendar = effectiveCalId.toLowerCase() === TONY_EMAIL5;
-    const involvesTony = isTonysCalendar || (attendees || []).some((a) => a.toLowerCase() === TONY_EMAIL5);
+    const TONY_EMAIL4 = process.env.PRIMARY_CALENDAR_ID || "primary";
+    const isTonysCalendar = effectiveCalId.toLowerCase() === TONY_EMAIL4;
+    const involvesTony = isTonysCalendar || (attendees || []).some((a) => a.toLowerCase() === TONY_EMAIL4);
     if (involvesTony && normalizedStart && normalizedEnd) {
       try {
         const availData = await callCalendarProxy({
           action: "check-availability",
-          emails: [TONY_EMAIL5],
+          emails: [TONY_EMAIL4],
           timeMin: normalizedStart,
           timeMax: normalizedEnd
         });
         if (availData.success && availData.availability) {
-          const tonyBusy = availData.availability[TONY_EMAIL5] || availData.availability[Object.keys(availData.availability)[0]];
+          const tonyBusy = availData.availability[TONY_EMAIL4] || availData.availability[Object.keys(availData.availability)[0]];
           if (Array.isArray(tonyBusy) && tonyBusy.length > 0) {
             const conflicts = tonyBusy.map((b2) => `${b2.start} \u2013 ${b2.end}`).join(", ");
             return JSON.stringify({
@@ -10350,11 +10187,11 @@ async function executeGetDirections(destination, origin, mode) {
     return `Error: ${e instanceof Error ? e.message : "unknown"}`;
   }
 }
-async function executeSearchPlaces(query2, near, type) {
+async function executeSearchPlaces(query3, near, type) {
   const apiKey = process.env.GOOGLE_MAPS_API_KEY;
   if (!apiKey) return "Google Maps API key not configured.";
   try {
-    const searchQuery = `${query2} near ${near || "Beverly Hills, CA"}`;
+    const searchQuery = `${query3} near ${near || "Beverly Hills, CA"}`;
     const params = new URLSearchParams({ query: searchQuery, key: apiKey });
     if (type) params.set("type", type);
     const res = await fetch(`https://maps.googleapis.com/maps/api/place/textsearch/json?${params}`);
@@ -10369,7 +10206,7 @@ async function executeSearchPlaces(query2, near, type) {
       maps_url: `https://www.google.com/maps/place/?q=place_id:${p.place_id}`,
       open_now: p.opening_hours?.open_now ?? null
     }));
-    return JSON.stringify({ count: places.length, query: query2, places });
+    return JSON.stringify({ count: places.length, query: query3, places });
   } catch (e) {
     return `Error: ${e instanceof Error ? e.message : "unknown"}`;
   }
@@ -10413,7 +10250,7 @@ async function executeGetEnvironmentData() {
     return `Error: ${e instanceof Error ? e.message : "unknown"}`;
   }
 }
-async function executeSearchNews(query2, period) {
+async function executeSearchNews(query3, period) {
   const apiKey = process.env.FIRECRAWL_API_KEY;
   if (!apiKey) return "Firecrawl API key not configured.";
   const tbsMap = { hour: "qdr:h", day: "qdr:d", week: "qdr:w", month: "qdr:m" };
@@ -10422,7 +10259,7 @@ async function executeSearchNews(query2, period) {
     const res = await fetch("https://api.firecrawl.dev/v1/search", {
       method: "POST",
       headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
-      body: JSON.stringify({ query: query2, limit: 8, tbs })
+      body: JSON.stringify({ query: query3, limit: 8, tbs })
     });
     const data = await res.json();
     if (!res.ok) return `News search failed: ${data.error || res.status}`;
@@ -10432,7 +10269,7 @@ async function executeSearchNews(query2, period) {
       source: r.url ? new URL(r.url).hostname.replace("www.", "") : "",
       description: r.description || ""
     }));
-    return JSON.stringify({ count: results.length, period: period || "day", query: query2, results });
+    return JSON.stringify({ count: results.length, period: period || "day", query: query3, results });
   } catch (e) {
     return `Error: ${e instanceof Error ? e.message : "unknown"}`;
   }
@@ -11015,10 +10852,10 @@ async function executeManageTrip(args, svc) {
 async function executeQueryTrips(args, svc) {
   try {
     const sb = svc || getServiceClient();
-    let query2 = sb.from("trips").select("*").is("deleted_at", null).order("departure_date", { ascending: true });
-    if (args.status) query2 = query2.eq("status", args.status);
-    if (args.upcoming_only) query2 = query2.gte("departure_date", (/* @__PURE__ */ new Date()).toISOString().split("T")[0]);
-    const { data, error } = await query2.limit(20);
+    let query3 = sb.from("trips").select("*").is("deleted_at", null).order("departure_date", { ascending: true });
+    if (args.status) query3 = query3.eq("status", args.status);
+    if (args.upcoming_only) query3 = query3.gte("departure_date", (/* @__PURE__ */ new Date()).toISOString().split("T")[0]);
+    const { data, error } = await query3.limit(20);
     if (error) return `TOOL_ERROR: ${error.message}`;
     if (!data?.length) return "No trips found matching your criteria.";
     return JSON.stringify(data.map((t) => ({ id: t.id, trip_name: t.trip_name, destination: t.destination, departure_date: t.departure_date, return_date: t.return_date, status: t.status, travelers: t.travelers, flights_count: (t.flights || []).length, hotels_count: (t.hotels || []).length, flights: t.flights, hotels: t.hotels, notes: t.notes })));
@@ -11029,13 +10866,13 @@ async function executeQueryTrips(args, svc) {
 async function executeQueryEntertainment(args, svc) {
   try {
     const sb = svc || getServiceClient();
-    let query2 = sb.from("entertainment_events").select("*").order("event_date", { ascending: true });
-    if (args.category) query2 = query2.eq("category", args.category);
+    let query3 = sb.from("entertainment_events").select("*").order("event_date", { ascending: true });
+    if (args.category) query3 = query3.eq("category", args.category);
     if (args.upcoming_only !== false) {
       const todayLA = (/* @__PURE__ */ new Date()).toLocaleDateString("en-CA", { timeZone: "America/Los_Angeles" });
-      query2 = query2.gte("event_date", todayLA);
+      query3 = query3.gte("event_date", todayLA);
     }
-    const { data, error } = await query2.limit(20);
+    const { data, error } = await query3.limit(20);
     if (error) return `TOOL_ERROR: ${error.message}`;
     if (!data?.length) return "No entertainment events found matching your criteria.";
     return JSON.stringify(data.map((e) => ({ id: e.id, title: e.title, category: e.category, event_date: e.event_date, venue: e.venue, location: e.location, ticket_url: e.ticket_url, metadata: e.metadata })));
@@ -11046,10 +10883,10 @@ async function executeQueryEntertainment(args, svc) {
 async function executeQueryMedia(args, svc) {
   try {
     const sb = svc || getServiceClient();
-    let query2 = sb.from("media_items").select("*").order("rank", { ascending: true });
-    if (args.category) query2 = query2.eq("category", args.category);
+    let query3 = sb.from("media_items").select("*").order("rank", { ascending: true });
+    if (args.category) query3 = query3.eq("category", args.category);
     const limit = args.limit || 10;
-    const { data, error } = await query2.limit(limit);
+    const { data, error } = await query3.limit(limit);
     if (error) return `TOOL_ERROR: ${error.message}`;
     if (!data?.length) return "No media items found matching your criteria.";
     return JSON.stringify(data.map((m) => ({ id: m.id, title: m.title, category: m.category, description: m.description, rating: m.rating, score: m.score, streaming_platform: m.streaming_platform, release_date: m.release_date, poster_url: m.poster_url, metadata: m.metadata })));
@@ -11057,13 +10894,13 @@ async function executeQueryMedia(args, svc) {
     return `TOOL_ERROR: ${e instanceof Error ? e.message : "unknown"}`;
   }
 }
-async function executeSuggestMovie(query2) {
+async function executeSuggestMovie(query3) {
   try {
     const baseUrl = `http://localhost:${process.env.PORT || 5e3}`;
     const res = await fetch(`${baseUrl}/api/movie/recommend`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ q: query2 })
+      body: JSON.stringify({ q: query3 })
     });
     if (!res.ok) return `TOOL_ERROR: Movie recommender returned ${res.status}`;
     const data = await res.json();
@@ -11136,9 +10973,9 @@ async function syncJanusSkills() {
   let synced = 0;
   for (const s3 of files) {
     try {
-      const existing = await query(`SELECT hash FROM janus_skills WHERE slug = $1`, [s3.slug]);
+      const existing = await query2(`SELECT hash FROM janus_skills WHERE slug = $1`, [s3.slug]);
       if (existing.rows[0]?.hash === s3.hash) continue;
-      await query(
+      await query2(
         `INSERT INTO janus_skills (slug, name, description, channels, roles, body, hash, updated_at)
          VALUES ($1, $2, $3, $4, $5, $6, $7, NOW())
          ON CONFLICT (slug) DO UPDATE SET
@@ -11158,7 +10995,7 @@ async function syncJanusSkills() {
   }
   if (files.length > 0) {
     try {
-      await query(`DELETE FROM janus_skills WHERE slug <> ALL($1::text[])`, [files.map((f) => f.slug)]);
+      await query2(`DELETE FROM janus_skills WHERE slug <> ALL($1::text[])`, [files.map((f) => f.slug)]);
     } catch (e) {
       console.error("[janus-skills] prune failed:", e);
     }
@@ -11175,7 +11012,7 @@ function invalidateSkillsCache() {
 async function getAllSkills() {
   if (skillsCache && Date.now() - skillsCache.fetchedAt < SKILLS_CACHE_TTL) return skillsCache.rows;
   try {
-    const { rows } = await query(
+    const { rows } = await query2(
       `SELECT slug, name, description, channels, roles, body FROM janus_skills ORDER BY slug`
     );
     skillsCache = { rows, fetchedAt: Date.now() };
@@ -11535,7 +11372,7 @@ async function recordLlmUsage(meta, usage) {
   if (!usage) return false;
   try {
     const correlationId = meta.correlationId ?? getCurrentCorrelationId() ?? null;
-    await query(
+    await query2(
       `INSERT INTO janus_llm_usage
          (user_id, channel, model, tier,
           prompt_tokens, completion_tokens, total_tokens, cost_usd,
@@ -11677,7 +11514,7 @@ async function fetchAppActivity(o) {
     const whereSql = where.join(" AND ");
     const filterDesc = describeActivityFilters(o);
     if (o.summary) {
-      const { rows: rows2 } = await query(
+      const { rows: rows2 } = await query2(
         `SELECT category,
                 count(*)::int AS n,
                 count(*) FILTER (WHERE severity IN ('warn', 'warning'))::int AS warns,
@@ -11702,7 +11539,7 @@ ${lines2.join("\n")}
 _Drill into an area with category=<name> (add severity=warn|error|critical to cut routine noise, actor=<name>, or search=<keyword>), or set summary=false to list individual events._`;
     }
     const limit = Math.min(Math.max(o.limit ?? 50, 1), 200);
-    const { rows } = await query(
+    const { rows } = await query2(
       `SELECT created_at, category, event_type, severity, summary, actor_name, status, edge_function
        FROM system_audit_log
        WHERE ${whereSql}
@@ -11781,7 +11618,7 @@ async function executeGetNetworkHistory(hours) {
   try {
     const h = Math.min(hours || 6, 48);
     const cutoff = new Date(Date.now() - h * 60 * 60 * 1e3).toISOString();
-    const { rows } = await query(
+    const { rows } = await query2(
       `SELECT captured_at, cpu_usage, memory_usage, active_sessions, wan_status, threat_count
        FROM network_health_snapshots
        WHERE captured_at >= $1
@@ -13179,9 +13016,9 @@ var ALL_TOOLS = [
   { type: "function", function: { name: "get_project_notes", description: "Get project notes.", parameters: { type: "object", properties: {}, additionalProperties: false } } },
   { type: "function", function: { name: "read_codebase", description: "Read one or more files from the Janus codebase on GitHub. Accepts file paths or directory paths. ADMIN ONLY.", parameters: { type: "object", properties: { paths: { type: "array", items: { type: "string" }, description: "List of file or directory paths to read (e.g. ['server/utils/tools/home-automation.ts', 'lib/github.ts'])" } }, required: ["paths"], additionalProperties: false } } },
   { type: "function", function: { name: "propose_code_fix", description: "Create a GitHub branch and pull request with a proposed code change. ADMIN ONLY. Never pushes to main directly.", parameters: { type: "object", properties: { file_path: { type: "string", description: "Repo-relative path to the file to create or update" }, new_content: { type: "string", description: "Full new content for the file" }, commit_message: { type: "string", description: "Commit message" }, pr_title: { type: "string", description: "Pull request title" }, pr_body: { type: "string", description: "Pull request description explaining the change and reasoning" } }, required: ["file_path", "new_content", "commit_message", "pr_title", "pr_body"], additionalProperties: false } } },
-  { type: "function", function: { name: "wifi_who_is_online", description: "Return the currently-online wireless clients grouped by person/role (Tony, Lana, family, staff, IoT, Unknown). Joins live Ruckus client data with the labeled network_devices inventory so the answer uses 'Tony's iPhone' instead of MAC addresses.", parameters: { type: "object", properties: { filter: { type: "string", enum: ["family", "staff", "guest", "iot", "unknown"], description: "Optional role filter \u2014 restrict output to one of family/staff/guest/iot/unknown" } }, additionalProperties: false } } },
-  { type: "function", function: { name: "wifi_label_device", description: "Label a device in the network_devices inventory by MAC. Use when Tony tells you which person owns a device or what to call it. ADMIN ONLY.", parameters: { type: "object", properties: { mac: { type: "string", description: "MAC address of the device to label" }, label: { type: "string", description: `Friendly label, e.g. "Tony's iPhone 16 Pro"` }, owner_person_id: { type: "string", description: "Owner person id: tony / lana / isla / emme / enzo / staff" }, owner_role: { type: "string", enum: ["family", "staff", "guest", "iot", "unknown"], description: "Role bucket" }, device_type: { type: "string", description: "phone / tablet / laptop / tv / speaker / camera / iot / unknown" }, expected_ssid: { type: "string", description: "Which SSID this device should normally be on (alert when it appears elsewhere)" }, trusted: { type: "boolean", description: "Explicit trust flag" }, notes: { type: "string", description: "Free-form notes" } }, required: ["mac"], additionalProperties: false } } },
-  { type: "function", function: { name: "wifi_unknown_devices", description: "Return the recently-seen devices that have not been labeled yet (no owner, no label, not trusted). Includes inferred vendor + hostname hints. Use this when Tony asks 'what new devices are on the network'. ADMIN ONLY.", parameters: { type: "object", properties: { window_hours: { type: "number", description: "How far back to look. Default 24 hours; max 720." } }, additionalProperties: false } } },
+  { type: "function", function: { name: "wifi_who_is_online", description: "Return the currently-online wireless clients grouped by person/role (Primary, family, staff, IoT, Unknown). Joins live client data with the labeled network_devices inventory so the answer uses friendly device names instead of MAC addresses.", parameters: { type: "object", properties: { filter: { type: "string", enum: ["family", "staff", "guest", "iot", "unknown"], description: "Optional role filter \u2014 restrict output to one of family/staff/guest/iot/unknown" } }, additionalProperties: false } } },
+  { type: "function", function: { name: "wifi_label_device", description: "Label a device in the network_devices inventory by MAC. Use when the user tells you which person owns a device or what to call it. ADMIN ONLY.", parameters: { type: "object", properties: { mac: { type: "string", description: "MAC address of the device to label" }, label: { type: "string", description: 'Friendly label, e.g. "Work iPhone 16 Pro"' }, owner_person_id: { type: "string", description: "Owner person id from household_members or role bucket" }, owner_role: { type: "string", enum: ["family", "staff", "guest", "iot", "unknown"], description: "Role bucket" }, device_type: { type: "string", description: "phone / tablet / laptop / tv / speaker / camera / iot / unknown" }, expected_ssid: { type: "string", description: "Which SSID this device should normally be on (alert when it appears elsewhere)" }, trusted: { type: "boolean", description: "Explicit trust flag" }, notes: { type: "string", description: "Free-form notes" } }, required: ["mac"], additionalProperties: false } } },
+  { type: "function", function: { name: "wifi_unknown_devices", description: "Return the recently-seen devices that have not been labeled yet (no owner, no label, not trusted). Includes inferred vendor + hostname hints. Use this when asked 'what new devices are on the network'. ADMIN ONLY.", parameters: { type: "object", properties: { window_hours: { type: "number", description: "How far back to look. Default 24 hours; max 720." } }, additionalProperties: false } } },
   { type: "function", function: { name: "search_system_events", description: "Search Janus's central app-activity log \u2014 almost EVERYTHING the app does is recorded here: home/IoT device actions, network & internet health, the Ball guest/RSVP system, security & access, scheduled automations, your own chat/email/WhatsApp actions, system health, config changes, logins, media generation, and vehicle events. Use for ANY question about what is happening or has happened in the app ('what's going on', 'anything new', 'catch me up', 'what happened with X', 'why did Y stop'). Set summary=true FIRST for a counts-by-area overview, then drill into one area with category. Always ground answers in the returned rows and timestamps \u2014 never fabricate.", parameters: { type: "object", properties: { summary: { type: "boolean", description: "Return a counts-by-area overview instead of individual rows. Use this FIRST for broad 'what's going on' questions." }, hours: { type: "number", description: "How many hours back to look. Default 24, max 720 (30 days)." }, category: { type: "string", description: "Area filter, e.g. home, network, ball, security, automation, automations, janus, system, config, auth, media, vehicle" }, severity: { type: "string", description: "info, warn, warning, error, or critical" }, status: { type: "string", description: "success, error, skipped, warning, or logged" }, actor: { type: "string", description: "Person or system that caused the event, e.g. 'Janus', 'Tony', or a monitor name (substring match)" }, source: { type: "string", description: "Originating job/function, e.g. 'cron-trigger', 'ball-rsvp' (substring match)" }, search: { type: "string", description: "Keyword to match in summary, event type, source, or actor" } }, additionalProperties: false } } },
   { type: "function", function: { name: "get_network_history", description: "Get network health history snapshots (FortiGate CPU, memory, sessions, WAN status, threat count) over the last N hours. Use to diagnose internet outages, slowdowns, or network performance issues.", parameters: { type: "object", properties: { hours: { type: "number", description: "How many hours of history to fetch. Default 6, max 48." } }, additionalProperties: false } } },
   LOAD_SKILL_TOOL
@@ -13233,9 +13070,9 @@ CRITICAL: The Notion database IDs are listed in your system prompt above. NEVER 
 }
 var URL_PATTERN = /https?:\/\/|www\.|\.com\/|\.org\/|\.net\/|find.*(?:website|link|url|site)|(?:link|url|site)\s+(?:to|for)/i;
 var KNOWLEDGE_PATTERN = /^(?:what|who|why|how|when|where|explain|compare|describe|summarize|is there|are there|does|do|can|could|should|will|would|tell me|define|list|name)\b/i;
-function classifySearchIntent(query2) {
-  if (URL_PATTERN.test(query2)) return "firecrawl";
-  if (KNOWLEDGE_PATTERN.test(query2)) return "perplexity";
+function classifySearchIntent(query3) {
+  if (URL_PATTERN.test(query3)) return "firecrawl";
+  if (KNOWLEDGE_PATTERN.test(query3)) return "perplexity";
   return "either";
 }
 async function executeTool(name, args, userId, ctx) {
@@ -15001,8 +14838,8 @@ ${userMessage}`;
 }
 async function logEmail2(subject, recipients, htmlBody, status, errorMessage) {
   try {
-    const { query: query2 } = await Promise.resolve().then(() => (init_db2(), db_exports));
-    await query2(
+    const { query: query3 } = await Promise.resolve().then(() => (init_db2(), db_exports));
+    await query3(
       `INSERT INTO email_logs (email_type, subject, recipients, html_body, text_body, status, error_message) VALUES ($1, $2, $3, $4, $5, $6, $7)`,
       ["janus_email_reply", subject, JSON.stringify(recipients), htmlBody, htmlBody, status, errorMessage || null]
     );
@@ -15859,9 +15696,9 @@ async function shareFileWA(fileId, email, token) {
 }
 var WA_URL_PATTERN = /https?:\/\/|www\.|\.com\/|\.org\/|\.net\/|find.*(?:website|link|url|site)|(?:link|url|site)\s+(?:to|for)/i;
 var WA_KNOWLEDGE_PATTERN = /^(?:what|who|why|how|when|where|explain|compare|describe|summarize|is there|are there|does|do|can|could|should|will|would|tell me|define|list|name)\b/i;
-function classifySearchIntent2(query2) {
-  if (WA_URL_PATTERN.test(query2)) return "firecrawl";
-  if (WA_KNOWLEDGE_PATTERN.test(query2)) return "perplexity";
+function classifySearchIntent2(query3) {
+  if (WA_URL_PATTERN.test(query3)) return "firecrawl";
+  if (WA_KNOWLEDGE_PATTERN.test(query3)) return "perplexity";
   return "either";
 }
 async function executeTool3(name, args, userId, role) {
@@ -17068,8 +16905,8 @@ var REPORT_URL_REGEX = /https?:\/\/[^\s)\]>"']+/g;
 var REPORT_MD_LINK_REGEX = /\[([^\]]+)\]\((https?:\/\/[^)]+)\)/g;
 async function logEmail3(emailType, subject, recipients, body, status, errorMessage) {
   try {
-    const { query: query2 } = await Promise.resolve().then(() => (init_db2(), db_exports));
-    await query2(
+    const { query: query3 } = await Promise.resolve().then(() => (init_db2(), db_exports));
+    await query3(
       `INSERT INTO email_logs (email_type, subject, recipients, html_body, text_body, status, error_message) VALUES ($1, $2, $3, $4, $5, $6, $7)`,
       [emailType, subject, JSON.stringify(recipients), body, body, status, errorMessage || null]
     );
@@ -17239,7 +17076,7 @@ function stripUnsourcedUrls(text2, sourceUrls) {
   });
   return { text: cleaned, strippedCount };
 }
-async function perplexitySubQuerySearch(query2) {
+async function perplexitySubQuerySearch(query3) {
   const apiKey = process.env.PERPLEXITY_API_KEY;
   if (!apiKey) return { answer: "", citations: [] };
   try {
@@ -17253,7 +17090,7 @@ async function perplexitySubQuerySearch(query2) {
         model: "sonar-pro",
         messages: [
           { role: "system", content: "You are a thorough research assistant. Provide comprehensive, factual answers with specific data, statistics, and examples. Always cite your sources." },
-          { role: "user", content: query2 }
+          { role: "user", content: query3 }
         ]
       })
     });
@@ -17270,7 +17107,7 @@ async function perplexitySubQuerySearch(query2) {
     return { answer: "", citations: [] };
   }
 }
-async function firecrawlSearch(query2) {
+async function firecrawlSearch(query3) {
   const apiKey = process.env.FIRECRAWL_API_KEY;
   if (!apiKey) return [];
   try {
@@ -17280,7 +17117,7 @@ async function firecrawlSearch(query2) {
         Authorization: `Bearer ${apiKey}`,
         "Content-Type": "application/json"
       },
-      body: JSON.stringify({ query: query2, limit: 5 })
+      body: JSON.stringify({ query: query3, limit: 5 })
     });
     const data = await res.json();
     if (!res.ok) {
@@ -17329,12 +17166,12 @@ async function callAI2(systemPrompt, userContent, maxTokens = 8e3) {
   return data.choices?.[0]?.message?.content || "No response generated.";
 }
 async function resolveProjectTeamEmails(projectId) {
-  const { query: query2 } = await Promise.resolve().then(() => (init_db2(), db_exports));
+  const { query: query3 } = await Promise.resolve().then(() => (init_db2(), db_exports));
   const emails = [];
   try {
-    const { rows: projects } = await query2(`SELECT user_id FROM janus_projects WHERE id = $1`, [projectId]);
+    const { rows: projects } = await query3(`SELECT user_id FROM janus_projects WHERE id = $1`, [projectId]);
     const ownerUserId = projects?.[0]?.user_id;
-    const { rows: shares } = await query2(
+    const { rows: shares } = await query3(
       `SELECT shared_with_user_id FROM janus_project_shares WHERE project_id = $1`,
       [projectId]
     );
@@ -17343,7 +17180,7 @@ async function resolveProjectTeamEmails(projectId) {
       ...(shares || []).map((share) => share.shared_with_user_id)
     ].filter(Boolean);
     for (const uid of userIds) {
-      const { rows: hm } = await query2(`SELECT email FROM household_members WHERE supabase_uuid = $1`, [uid]);
+      const { rows: hm } = await query3(`SELECT email FROM household_members WHERE supabase_uuid = $1`, [uid]);
       if (hm?.[0]?.email) emails.push(hm[0].email);
     }
   } catch (e) {
@@ -17352,11 +17189,11 @@ async function resolveProjectTeamEmails(projectId) {
   return [...new Set(emails)];
 }
 async function saveProjectArtifact(projectId, topic, docUrl, summary, userId) {
-  const { query: query2 } = await Promise.resolve().then(() => (init_db2(), db_exports));
+  const { query: query3 } = await Promise.resolve().then(() => (init_db2(), db_exports));
   let displayName = null;
   if (userId) {
     try {
-      const { rows } = await query2(`SELECT display_name FROM profiles WHERE user_id = $1`, [userId]);
+      const { rows } = await query3(`SELECT display_name FROM profiles WHERE user_id = $1`, [userId]);
       displayName = rows?.[0]?.display_name || null;
     } catch {
     }
@@ -17365,7 +17202,7 @@ async function saveProjectArtifact(projectId, topic, docUrl, summary, userId) {
 
 ${summary.slice(0, 500)}`;
   try {
-    await query2(
+    await query3(
       `INSERT INTO janus_project_artifacts (project_id, artifact_type, title, content, sort_order, saved_by_user_id, saved_by_display_name) VALUES ($1, $2, $3, $4, $5, $6, $7)`,
       [projectId, "text", `Research: ${topic}`, content, 0, userId || null, displayName || "Janus Research"]
     );
@@ -18188,8 +18025,8 @@ init_janus_tools();
 var JANUS_EMAIL5 = "assistant@example.com";
 async function logEmail4(emailType, subject, recipients, body, status, errorMessage) {
   try {
-    const { query: query2 } = await Promise.resolve().then(() => (init_db2(), db_exports));
-    await query2(
+    const { query: query3 } = await Promise.resolve().then(() => (init_db2(), db_exports));
+    await query3(
       `INSERT INTO email_logs (email_type, subject, recipients, html_body, text_body, status, error_message) VALUES ($1, $2, $3, $4, $5, $6, $7)`,
       [emailType, subject, recipients, body, body, status, errorMessage || null]
     );
@@ -18619,7 +18456,7 @@ async function checkNotion(signal) {
 }
 async function checkMemoryDB(_signal) {
   try {
-    await query("SELECT id FROM janus_memory LIMIT 1");
+    await query2("SELECT id FROM janus_memory LIMIT 1");
     return null;
   } catch (e) {
     return `Memory DB error: ${e instanceof Error ? e.message : String(e)}`;
@@ -18664,7 +18501,7 @@ async function handleHealthCheck(req, res) {
       const failedServices = results.filter((r) => r.status === "error").map((r) => r.name).join(", ");
       await sendAutomationFailureAlert("janus-health-check", `Services down: ${failedServices}`);
     }
-    await query(
+    await query2(
       "INSERT INTO janus_health_logs (results, overall_status, total_ms) VALUES ($1, $2, $3)",
       [JSON.stringify(results), overall, total_ms]
     );
@@ -18912,7 +18749,7 @@ async function handleFunctionalTest(req, res) {
     const failed = results.filter((r) => r.status === "fail").length;
     const overall_status = failed === 0 ? "ok" : failed <= 2 ? "partial" : "fail";
     try {
-      await query(
+      await query2(
         "INSERT INTO janus_functional_test_logs (overall_status, total_ms, passed, failed, results) VALUES ($1, $2, $3, $4, $5)",
         [overall_status, total_ms, passed, failed, JSON.stringify(results)]
       );
@@ -18937,7 +18774,7 @@ var DEDUP_WINDOW_HOURS = 24;
 var LOOKAHEAD_HOURS = 24;
 var APP_URL = process.env.APP_DOMAIN ? `https://${process.env.APP_DOMAIN}` : "https://example.com";
 async function selectExpiringTokens() {
-  const { rows } = await query(
+  const { rows } = await query2(
     `SELECT user_id, 'tesla'::text AS kind, token_expires_at, NULL::text AS google_email
        FROM tesla_tokens
       WHERE token_expires_at IS NOT NULL
@@ -18959,7 +18796,7 @@ async function selectExpiringTokens() {
   }));
 }
 async function isDeduped(userId, kind) {
-  const { rows } = await query(
+  const { rows } = await query2(
     `SELECT id FROM token_expiry_alert_dedup
       WHERE user_id = $1 AND kind = $2
         AND alerted_at > now() - ($3 || ' hours')::interval
@@ -18969,7 +18806,7 @@ async function isDeduped(userId, kind) {
   return rows.length > 0;
 }
 async function recordAlert(userId, kind, expiresAt) {
-  await query(
+  await query2(
     `INSERT INTO token_expiry_alert_dedup (user_id, kind, expires_at) VALUES ($1, $2, $3)`,
     [userId, kind, expiresAt]
   );
@@ -20286,12 +20123,47 @@ function prettifyEntityId(id) {
   return parts.map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(" ");
 }
 var JANUS_LOGO_URL = process.env.APP_LOGO_URL || "/icon.svg";
-var DISPLAY_DEVICES = [
-  "media_player.family_room_display",
-  "media_player.kitchen_display_1",
-  "media_player.gym_tv",
-  "media_player.kitchen_tv"
-];
+function resolveTargetSpeakers(target) {
+  const cached = getEntityCache();
+  const allMediaPlayers = cached.map((e) => e.entity_id).filter((id) => id.startsWith("media_player."));
+  if (allMediaPlayers.length === 0) {
+    if (target === "bedrooms") {
+      return { speakers: ["media_player.bedroom_speaker"], tvs: [], displays: [] };
+    }
+    return {
+      speakers: ["media_player.living_room_speaker", "media_player.bedroom_speaker"],
+      tvs: ["media_player.living_room_tv"],
+      displays: ["media_player.kitchen_display"]
+    };
+  }
+  const tvs = allMediaPlayers.filter((id) => id.includes("_tv") || id.includes("television"));
+  const displays = allMediaPlayers.filter((id) => id.includes("display") || id.includes("hub"));
+  if (target === "bedrooms") {
+    const bedroomSpeakers = allMediaPlayers.filter(
+      (id) => (id.includes("bedroom") || id.includes("room") || id.includes("closet")) && !tvs.includes(id)
+    );
+    return {
+      speakers: bedroomSpeakers.length > 0 ? bedroomSpeakers : allMediaPlayers.filter((id) => !tvs.includes(id)),
+      tvs: [],
+      displays: []
+    };
+  }
+  if (target === "google-home") {
+    const ghSpeakers = allMediaPlayers.filter(
+      (id) => !tvs.includes(id) && (id.includes("speaker") || id.includes("display") || id.includes("google"))
+    );
+    return {
+      speakers: ghSpeakers.length > 0 ? ghSpeakers : allMediaPlayers.filter((id) => !tvs.includes(id)),
+      tvs: [],
+      displays
+    };
+  }
+  return {
+    speakers: allMediaPlayers,
+    tvs,
+    displays
+  };
+}
 router5.post("/", requireAuth2, async (req, res) => {
   const authUser = getAuthUser(req);
   const userId = authUser?.userId || req.userId || "UNKNOWN";
@@ -20763,24 +20635,7 @@ router5.post("/", requireAuth2, async (req, res) => {
       return;
     }
     if (action === "broadcast-all") {
-      const speakers = [
-        "media_player.bathroom_speaker",
-        "media_player.emme_s_room_speaker",
-        "media_player.family_room_display",
-        "media_player.glam_room_speaker",
-        "media_player.gym_speaker",
-        "media_player.isla_s_room_speaker",
-        "media_player.kitchen_display_1",
-        "media_player.lanas_closet_speaker",
-        "media_player.main_rack_speaker",
-        "media_player.master_bedroom_speaker",
-        "media_player.playroom_speaker",
-        "media_player.theater_reciever",
-        "media_player.tonys_office_speaker",
-        "media_player.gym_tv",
-        "media_player.kitchen_tv"
-      ];
-      const tvs = ["media_player.gym_tv", "media_player.kitchen_tv"];
+      const { speakers, tvs, displays } = resolveTargetSpeakers("all");
       const requestedVolumeAll = Number.isFinite(body.volume) ? body.volume : 0.75;
       const volumeLevelAll = Math.min(1, Math.max(0, requestedVolumeAll));
       await callHA(HA_URL2, HA_TOKEN2, "POST", "/api/services/media_player/turn_on", { entity_id: speakers });
@@ -20790,11 +20645,13 @@ router5.post("/", requireAuth2, async (req, res) => {
           entity_id: speakers,
           volume_level: volumeLevelAll
         }),
-        callHA(HA_URL2, HA_TOKEN2, "POST", "/api/services/media_player/play_media", {
-          entity_id: DISPLAY_DEVICES,
-          media_content_id: JANUS_LOGO_URL,
-          media_content_type: "image/png"
-        })
+        ...displays.length > 0 ? [
+          callHA(HA_URL2, HA_TOKEN2, "POST", "/api/services/media_player/play_media", {
+            entity_id: displays,
+            media_content_id: JANUS_LOGO_URL,
+            media_content_type: "image/png"
+          })
+        ] : []
       ]);
       await new Promise((r) => setTimeout(r, 1500));
       const t0 = Date.now();
@@ -20804,12 +20661,14 @@ router5.post("/", requireAuth2, async (req, res) => {
         message: body.message,
         options: { voice: "iLVmqjzCGGvqtMCk6vVQ" }
       });
-      setTimeout(async () => {
-        try {
-          await callHA(HA_URL2, HA_TOKEN2, "POST", "/api/services/media_player/turn_off", { entity_id: tvs });
-        } catch {
-        }
-      }, 6e4);
+      if (tvs.length > 0) {
+        setTimeout(async () => {
+          try {
+            await callHA(HA_URL2, HA_TOKEN2, "POST", "/api/services/media_player/turn_off", { entity_id: tvs });
+          } catch {
+          }
+        }, 6e4);
+      }
       logAudit("home-assistant-proxy", {
         category: "home",
         event_type: "broadcast_all",
@@ -20825,19 +20684,15 @@ router5.post("/", requireAuth2, async (req, res) => {
       res.json({ success: true, devices: speakers.length });
       return;
     }
-    if (action === "broadcast-girls") {
-      const speakers = [
-        "media_player.emme_s_room_speaker",
-        "media_player.isla_s_room_speaker",
-        "media_player.lanas_closet_speaker"
-      ];
-      const requestedVolumeGirls = Number.isFinite(body.volume) ? body.volume : 0.9;
-      const volumeLevelGirls = Math.min(1, Math.max(0, requestedVolumeGirls));
+    if (action === "broadcast-bedrooms" || action === "broadcast-girls") {
+      const { speakers } = resolveTargetSpeakers("bedrooms");
+      const requestedVolumeBedrooms = Number.isFinite(body.volume) ? body.volume : 0.85;
+      const volumeLevelBedrooms = Math.min(1, Math.max(0, requestedVolumeBedrooms));
       await callHA(HA_URL2, HA_TOKEN2, "POST", "/api/services/media_player/turn_on", { entity_id: speakers });
       await new Promise((r) => setTimeout(r, 3e3));
       await callHA(HA_URL2, HA_TOKEN2, "POST", "/api/services/media_player/volume_set", {
         entity_id: speakers,
-        volume_level: volumeLevelGirls
+        volume_level: volumeLevelBedrooms
       });
       await new Promise((r) => setTimeout(r, 1500));
       const t0 = Date.now();
@@ -20849,12 +20704,12 @@ router5.post("/", requireAuth2, async (req, res) => {
       });
       logAudit("home-assistant-proxy", {
         category: "home",
-        event_type: "broadcast_girls",
+        event_type: "broadcast_bedrooms",
         severity: "info",
         actor_id: userId,
         actor_name: actorName,
         channel: "web",
-        summary: `Broadcast to girls' rooms (${speakers.length} speakers)`,
+        summary: `Broadcast to bedrooms (${speakers.length} speakers)`,
         detail: { message: body.message?.slice(0, 100) },
         duration_ms: Date.now() - t0,
         status: "success"
@@ -20863,24 +20718,7 @@ router5.post("/", requireAuth2, async (req, res) => {
       return;
     }
     if (action === "broadcast-google-home") {
-      const speakers = [
-        "media_player.bathroom_speaker",
-        "media_player.emme_s_room_speaker",
-        "media_player.family_room_display",
-        "media_player.glam_room_speaker",
-        "media_player.gym_speaker",
-        "media_player.isla_s_room_speaker",
-        "media_player.kitchen_display_1",
-        "media_player.lanas_closet_speaker",
-        "media_player.main_rack_speaker",
-        "media_player.master_bedroom_speaker",
-        "media_player.playroom_speaker",
-        "media_player.tonys_office_speaker"
-      ];
-      const displayDevices = [
-        "media_player.family_room_display",
-        "media_player.kitchen_display_1"
-      ];
+      const { speakers, displays } = resolveTargetSpeakers("google-home");
       const requestedVolumeGH = Number.isFinite(body.volume) ? body.volume : 0.75;
       const volumeLevelGH = Math.min(1, Math.max(0, requestedVolumeGH));
       await callHA(HA_URL2, HA_TOKEN2, "POST", "/api/services/media_player/turn_on", { entity_id: speakers });
@@ -21499,7 +21337,7 @@ router7.post("/poi-sync", requireAuth2, async (req, res) => {
 async function upsertPoiProfile(verkadaPersonId, label, thumbnailUrl, lastSeenAt) {
   const trimmedLabel = label ? label.trim() : null;
   if (trimmedLabel) {
-    const { rows: existing } = await query(
+    const { rows: existing } = await query2(
       `SELECT verkada_person_id FROM poi_profiles WHERE LOWER(TRIM(label)) = LOWER($1) ORDER BY last_seen_at DESC NULLS LAST LIMIT 1`,
       [trimmedLabel]
     );
@@ -21539,7 +21377,7 @@ async function upsertPoiProfile(verkadaPersonId, label, thumbnailUrl, lastSeenAt
       return;
     }
   }
-  await query(
+  await query2(
     `INSERT INTO poi_profiles (verkada_person_id, label, thumbnail_url, last_seen_at)
      VALUES ($1, $2, $3, $4)
      ON CONFLICT (verkada_person_id) DO UPDATE
@@ -21551,7 +21389,7 @@ async function upsertPoiProfile(verkadaPersonId, label, thumbnailUrl, lastSeenAt
 }
 async function deduplicatePoiProfiles() {
   try {
-    const { rows: duplicateGroups } = await query(
+    const { rows: duplicateGroups } = await query2(
       `SELECT LOWER(TRIM(label)) as norm_label, array_agg(verkada_person_id ORDER BY last_seen_at DESC NULLS LAST) as ids
        FROM poi_profiles
        WHERE label IS NOT NULL AND label != ''
@@ -21659,7 +21497,7 @@ router7.post("/poi-webhook", async (req, res) => {
       const dedupKey2 = `poi_${pid}_${cameraId || "unknown"}_${ts2}`;
       let eventInserted = false;
       try {
-        const evRes = await query(
+        const evRes = await query2(
           `INSERT INTO verkada_events (event_type, person_id, person_label, camera_id, camera_name, occurred_at, dedup_key, raw_data) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) ON CONFLICT (dedup_key) DO NOTHING`,
           ["person_of_interest", pid, label, cameraId, cameraName, occurredAt2, dedupKey2, JSON.stringify(data)]
         );
@@ -21671,7 +21509,7 @@ router7.post("/poi-webhook", async (req, res) => {
       let sightingInserted = false;
       let sightingDropReason = null;
       try {
-        const sightRes = await query(
+        const sightRes = await query2(
           `INSERT INTO poi_sightings (verkada_person_id, label, seen_at, camera_name, thumbnail_url) VALUES ($1, $2, $3, $4, $5) ON CONFLICT (verkada_person_id, seen_at, camera_name) DO NOTHING`,
           [pid, label, occurredAt2, cameraName, thumbnailUrl]
         );
@@ -21759,7 +21597,7 @@ router7.post("/poi-webhook", async (req, res) => {
         }
       }
       try {
-        await query(
+        await query2(
           `INSERT INTO verkada_events (event_type, vehicle_plate, camera_id, camera_name, occurred_at, dedup_key, raw_data) VALUES ($1, $2, $3, $4, $5, $6, $7) ON CONFLICT (dedup_key) DO NOTHING`,
           ["license_plate", vehicleKey, cameraId, cameraName, occurredAt2, dedupKey2, JSON.stringify({ ...data, _image_url: imageUrl })]
         );
@@ -21768,7 +21606,7 @@ router7.post("/poi-webhook", async (req, res) => {
       }
       if (plate) {
         try {
-          await query(
+          await query2(
             `UPDATE vehicle_profiles SET last_seen_at = $1, last_seen_camera = $2, updated_at = now() WHERE UPPER(plate) = UPPER($3) AND (last_seen_at IS NULL OR last_seen_at < $1)`,
             [occurredAt2, cameraName || null, plate]
           );
@@ -21785,7 +21623,7 @@ router7.post("/poi-webhook", async (req, res) => {
       const occurredAt2 = toISO(ts2);
       const dedupKey2 = `motion_${cameraId || "unknown"}_${ts2}`;
       try {
-        await query(
+        await query2(
           `INSERT INTO verkada_events (event_type, camera_id, camera_name, occurred_at, dedup_key, raw_data) VALUES ($1, $2, $3, $4, $5, $6) ON CONFLICT (dedup_key) DO NOTHING`,
           ["motion", cameraId, cameraName, occurredAt2, dedupKey2, JSON.stringify(data)]
         );
@@ -21801,7 +21639,7 @@ router7.post("/poi-webhook", async (req, res) => {
       const occurredAt2 = toISO(ts2);
       const dedupKey2 = `status_${notificationType}_${cameraId || "unknown"}_${ts2}`;
       try {
-        await query(
+        await query2(
           `INSERT INTO verkada_events (event_type, camera_id, camera_name, occurred_at, dedup_key, raw_data) VALUES ($1, $2, $3, $4, $5, $6) ON CONFLICT (dedup_key) DO NOTHING`,
           [notificationType, cameraId, cameraName, occurredAt2, dedupKey2, JSON.stringify(data)]
         );
@@ -21820,14 +21658,14 @@ router7.post("/poi-webhook", async (req, res) => {
       const occurredAt2 = toISO(ts2);
       const dedupKey2 = `alert_${alertId}`;
       try {
-        await query(
+        await query2(
           `INSERT INTO verkada_events (event_type, camera_id, camera_name, occurred_at, dedup_key, raw_data) VALUES ($1, $2, $3, $4, $5, $6) ON CONFLICT (dedup_key) DO NOTHING`,
           [alertType, cameraId, cameraName, occurredAt2, dedupKey2, JSON.stringify(data)]
         );
       } catch (dbErr) {
         console.error("[verkada] Failed to insert alert event:", dbErr);
       }
-      await query(
+      await query2(
         `INSERT INTO verkada_alert_log (verkada_alert_id, alert_type, camera_name, sent_at) VALUES ($1, $2, $3, $4) ON CONFLICT DO NOTHING`,
         [String(alertId), alertType, cameraName, (/* @__PURE__ */ new Date()).toISOString()]
       ).catch(() => {
@@ -21853,7 +21691,7 @@ router7.post("/poi-webhook", async (req, res) => {
       `[verkada] UNRECOGNIZED webhook \u2014 webhook_type=${JSON.stringify(webhookType)} notification_type=${JSON.stringify(notificationType)} data_keys=${JSON.stringify(Object.keys(data))}`
     );
     try {
-      await query(
+      await query2(
         `INSERT INTO verkada_events (event_type, camera_id, camera_name, occurred_at, dedup_key, raw_data) VALUES ($1, $2, $3, $4, $5, $6) ON CONFLICT (dedup_key) DO NOTHING`,
         [webhookType || "unknown", cameraId, cameraName, occurredAt, dedupKey, JSON.stringify(data)]
       );
@@ -21877,7 +21715,7 @@ router7.get("/activity-summary", requireAuth2, async (_req, res) => {
     const midnightLA = /* @__PURE__ */ new Date(`${laDateStr}T00:00:00Z`);
     midnightLA.setTime(midnightLA.getTime() - offsetMs);
     const todayStart = midnightLA.toISOString();
-    const { rows: uniquePeopleRows } = await query(
+    const { rows: uniquePeopleRows } = await query2(
       `SELECT COUNT(DISTINCT
          CASE
            WHEN person_label IS NOT NULL AND person_label != '' THEN person_label
@@ -21887,19 +21725,19 @@ router7.get("/activity-summary", requireAuth2, async (_req, res) => {
        ) as count FROM verkada_events WHERE event_type = 'person_of_interest' AND occurred_at >= $1 AND person_id IS NOT NULL`,
       [todayStart]
     );
-    const { rows: uniqueVehicleRows } = await query(
+    const { rows: uniqueVehicleRows } = await query2(
       `SELECT COUNT(DISTINCT vehicle_plate) as count FROM verkada_events WHERE event_type = 'license_plate' AND occurred_at >= $1 AND vehicle_plate IS NOT NULL`,
       [todayStart]
     );
-    const { rows: sightingsRows } = await query(
+    const { rows: sightingsRows } = await query2(
       `SELECT COUNT(*) as count FROM verkada_events WHERE event_type = 'person_of_interest' AND occurred_at >= $1`,
       [todayStart]
     );
-    const { rows: totalEventsRows } = await query(
+    const { rows: totalEventsRows } = await query2(
       `SELECT COUNT(*) as count FROM verkada_events WHERE occurred_at >= $1`,
       [todayStart]
     );
-    const { rows: hourlyRows } = await query(
+    const { rows: hourlyRows } = await query2(
       `SELECT
         EXTRACT(HOUR FROM occurred_at AT TIME ZONE 'America/Los_Angeles') as hour,
         COUNT(DISTINCT CASE WHEN event_type = 'person_of_interest' AND person_id IS NOT NULL THEN
@@ -21916,7 +21754,7 @@ router7.get("/activity-summary", requireAuth2, async (_req, res) => {
       ORDER BY hour`,
       [todayStart]
     );
-    const { rows: perCameraRows } = await query(
+    const { rows: perCameraRows } = await query2(
       `SELECT
         camera_name,
         COUNT(DISTINCT CASE WHEN person_id IS NOT NULL THEN
@@ -21934,7 +21772,7 @@ router7.get("/activity-summary", requireAuth2, async (_req, res) => {
       ORDER BY total_events DESC`,
       [todayStart]
     );
-    const { rows: recentSightings } = await query(
+    const { rows: recentSightings } = await query2(
       `SELECT person_id, person_label, camera_name, occurred_at FROM verkada_events WHERE event_type = 'person_of_interest' AND occurred_at >= $1 ORDER BY occurred_at DESC LIMIT 20`,
       [todayStart]
     );
@@ -21990,7 +21828,7 @@ router7.get("/activity-summary", requireAuth2, async (_req, res) => {
 });
 router7.get("/webhook-health", requireAuth2, async (_req, res) => {
   try {
-    const { rows } = await query(
+    const { rows } = await query2(
       `SELECT occurred_at FROM verkada_events ORDER BY occurred_at DESC LIMIT 1`
     );
     const lastEventAt = rows.length > 0 ? new Date(rows[0].occurred_at).getTime() : null;
@@ -22021,12 +21859,12 @@ router7.get("/connection-status", requireAuth2, async (_req, res) => {
     const orgIdConfigured = !!process.env.VERKADA_ORG_ID;
     const devDomain = process.env.APP_DOMAIN || process.env.PUBLIC_DOMAIN || null;
     const webhookUrl = devDomain ? `https://${devDomain}/api/verkada/poi-webhook` : null;
-    const { rows: eventRows } = await query(
+    const { rows: eventRows } = await query2(
       `SELECT COUNT(*) as count, MAX(occurred_at) as last_event FROM verkada_events WHERE event_type = 'license_plate'`
     );
     const totalLprEvents = Number(eventRows[0]?.count || 0);
     const lastLprEvent = eventRows[0]?.last_event || null;
-    const { rows: anyWebhookRows } = await query(
+    const { rows: anyWebhookRows } = await query2(
       `SELECT COUNT(*) as count, MAX(occurred_at) as last_event FROM verkada_events`
     );
     const totalWebhookEvents = Number(anyWebhookRows[0]?.count || 0);
@@ -22058,7 +21896,7 @@ router7.get("/sighting-health", requireAuth2, async (_req, res) => {
     const midnightLA = /* @__PURE__ */ new Date(`${laDateStr}T00:00:00Z`);
     midnightLA.setTime(midnightLA.getTime() - offsetMs);
     const todayStart = midnightLA.toISOString();
-    const { rows: byCameraRows } = await query(
+    const { rows: byCameraRows } = await query2(
       `SELECT camera_name,
               COUNT(*) as sighting_count,
               COUNT(DISTINCT CASE WHEN person_id IS NOT NULL THEN
@@ -22074,7 +21912,7 @@ router7.get("/sighting-health", requireAuth2, async (_req, res) => {
        ORDER BY sighting_count DESC`,
       [todayStart]
     );
-    const { rows: byPersonRows } = await query(
+    const { rows: byPersonRows } = await query2(
       `SELECT
               COALESCE(NULLIF(LOWER(TRIM(person_label)), ''), NULLIF(person_id, 'unknown'), 'unknown') as person_key,
               MIN(person_id) as verkada_person_id,
@@ -22089,11 +21927,11 @@ router7.get("/sighting-health", requireAuth2, async (_req, res) => {
        ORDER BY sighting_count DESC`,
       [todayStart]
     );
-    const { rows: totalRows } = await query(
+    const { rows: totalRows } = await query2(
       `SELECT COUNT(*) as total FROM verkada_events WHERE event_type = 'person_of_interest' AND occurred_at >= $1`,
       [todayStart]
     );
-    const { rows: uniquePeopleRows } = await query(
+    const { rows: uniquePeopleRows } = await query2(
       `SELECT COUNT(DISTINCT
          COALESCE(NULLIF(LOWER(TRIM(person_label)), ''), NULLIF(person_id, 'unknown'), 'unknown')
        ) as count
@@ -22101,14 +21939,14 @@ router7.get("/sighting-health", requireAuth2, async (_req, res) => {
        WHERE event_type = 'person_of_interest' AND occurred_at >= $1 AND person_id IS NOT NULL`,
       [todayStart]
     );
-    const { rows: recentRows } = await query(
+    const { rows: recentRows } = await query2(
       `SELECT person_id as verkada_person_id, person_label as label, occurred_at as seen_at, camera_name
        FROM verkada_events
        WHERE event_type = 'person_of_interest' AND occurred_at >= $1
        ORDER BY occurred_at DESC LIMIT 50`,
       [todayStart]
     );
-    const { rows: allTimeRows } = await query(
+    const { rows: allTimeRows } = await query2(
       `SELECT
               COALESCE(NULLIF(LOWER(TRIM(person_label)), ''), NULLIF(person_id, 'unknown'), 'unknown') as person_key,
               MIN(NULLIF(TRIM(person_label), '')) as label,
@@ -22160,7 +21998,7 @@ router7.get("/sighting-health", requireAuth2, async (_req, res) => {
 });
 router7.get("/vehicle-profiles", requireAuth2, async (_req, res) => {
   try {
-    const { rows } = await query(
+    const { rows } = await query2(
       `SELECT id, plate, label, last_seen_at, last_seen_camera, created_at, updated_at FROM vehicle_profiles ORDER BY last_seen_at DESC NULLS LAST, created_at DESC`
     );
     res.json({ success: true, profiles: rows });
@@ -22176,7 +22014,7 @@ router7.post("/vehicle-profiles", requireAuth2, async (req, res) => {
       return res.status(400).json({ success: false, error: "plate is required" });
     }
     const normalizedPlate = plate.trim().toUpperCase();
-    const { rows } = await query(
+    const { rows } = await query2(
       `INSERT INTO vehicle_profiles (plate, label) VALUES ($1, $2)
        ON CONFLICT (plate) DO UPDATE SET label = EXCLUDED.label, updated_at = now()
        RETURNING id, plate, label, last_seen_at, last_seen_camera, created_at, updated_at`,
@@ -22192,7 +22030,7 @@ router7.patch("/vehicle-profiles/:id", requireAuth2, async (req, res) => {
   try {
     const { id } = req.params;
     const { label } = req.body;
-    const { rows } = await query(
+    const { rows } = await query2(
       `UPDATE vehicle_profiles SET label = $1, updated_at = now() WHERE id = $2
        RETURNING id, plate, label, last_seen_at, last_seen_camera, created_at, updated_at`,
       [label?.trim() || null, id]
@@ -22207,7 +22045,7 @@ router7.patch("/vehicle-profiles/:id", requireAuth2, async (req, res) => {
 router7.delete("/vehicle-profiles/:id", requireAuth2, async (req, res) => {
   try {
     const { id } = req.params;
-    const { rowCount } = await query(`DELETE FROM vehicle_profiles WHERE id = $1`, [id]);
+    const { rowCount } = await query2(`DELETE FROM vehicle_profiles WHERE id = $1`, [id]);
     if (!rowCount) return res.status(404).json({ success: false, error: "Not found" });
     res.json({ success: true });
   } catch (error) {
@@ -22229,19 +22067,19 @@ router7.get("/vehicle-sightings", requireAuth2, async (req, res) => {
     const filterPlate = typeof req.query.plate === "string" && req.query.plate.trim() ? req.query.plate.trim().toUpperCase() : null;
     const plateFilter = filterPlate ? ` AND UPPER(vehicle_plate) = $2` : "";
     const plateParams = (base) => filterPlate ? [...base, filterPlate] : base;
-    const { rows: uniquePlateRows } = await query(
+    const { rows: uniquePlateRows } = await query2(
       `SELECT COUNT(DISTINCT vehicle_plate) as count FROM verkada_events WHERE event_type = 'license_plate' AND occurred_at >= $1 AND vehicle_plate IS NOT NULL${plateFilter}`,
       plateParams([todayStart])
     );
-    const { rows: totalSightingRows } = await query(
+    const { rows: totalSightingRows } = await query2(
       `SELECT COUNT(*) as count FROM verkada_events WHERE event_type = 'license_plate' AND occurred_at >= $1${plateFilter}`,
       plateParams([todayStart])
     );
-    const { rows: camerasWithLprRows } = await query(
+    const { rows: camerasWithLprRows } = await query2(
       `SELECT COUNT(DISTINCT camera_name) as count FROM verkada_events WHERE event_type = 'license_plate' AND occurred_at >= $1 AND camera_name IS NOT NULL${plateFilter}`,
       plateParams([todayStart])
     );
-    const { rows: byPlateRows } = await query(
+    const { rows: byPlateRows } = await query2(
       `SELECT vehicle_plate as plate,
               COUNT(*) as sightings_today,
               MAX(occurred_at) as last_seen_at,
@@ -22253,7 +22091,7 @@ router7.get("/vehicle-sightings", requireAuth2, async (req, res) => {
        ORDER BY last_seen_at DESC`,
       plateParams([todayStart])
     );
-    const { rows: recentRows } = await query(
+    const { rows: recentRows } = await query2(
       `SELECT vehicle_plate as plate, camera_name, occurred_at, raw_data->>'_image_url' as image_url
        FROM verkada_events
        WHERE event_type = 'license_plate' AND occurred_at >= $1 AND vehicle_plate IS NOT NULL${plateFilter}
@@ -22323,7 +22161,7 @@ router7.post("/poi-backfill", async (req, res) => {
     let deduped = 0;
     for (const s3 of result.sightings) {
       try {
-        const evRes = await query(
+        const evRes = await query2(
           `INSERT INTO verkada_events (event_type, person_id, person_label, camera_id, camera_name, occurred_at, dedup_key, raw_data) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) ON CONFLICT (dedup_key) DO NOTHING`,
           ["person_of_interest", s3.personId, s3.label, s3.cameraId, s3.cameraName, s3.occurredAt, s3.dedupKey, JSON.stringify(s3.raw)]
         );
@@ -22333,7 +22171,7 @@ router7.post("/poi-backfill", async (req, res) => {
         console.error("[verkada] poi-backfill insert error:", dbErr);
       }
       try {
-        await query(
+        await query2(
           `INSERT INTO poi_sightings (verkada_person_id, label, seen_at, camera_name, thumbnail_url) VALUES ($1, $2, $3, $4, $5) ON CONFLICT (verkada_person_id, seen_at, camera_name) DO NOTHING`,
           [s3.personId, s3.label, s3.occurredAt, s3.cameraName, s3.thumbnailUrl]
         );
@@ -22364,7 +22202,7 @@ router7.post("/poi-backfill", async (req, res) => {
 async function getPoiLabelIdMap() {
   const map = /* @__PURE__ */ new Map();
   try {
-    const { rows } = await query(
+    const { rows } = await query2(
       `SELECT verkada_person_id, label FROM poi_profiles
        WHERE label IS NOT NULL AND TRIM(label) != ''
        ORDER BY last_seen_at DESC NULLS LAST`
@@ -22479,7 +22317,7 @@ async function runStartupCatchup() {
     console.log(`[verkada] Webhook signature enforcement: ${process.env.VERKADA_WEBHOOK_SECRET ? "enabled" : "DISABLED (no secret set)"}`);
     await runPoiRosterSync();
     try {
-      const { rows: dupCount } = await query(
+      const { rows: dupCount } = await query2(
         `SELECT COUNT(*) as cnt FROM (
            SELECT LOWER(TRIM(label)) FROM poi_profiles
            WHERE label IS NOT NULL AND label != ''
@@ -22509,7 +22347,7 @@ async function runStartupCatchup() {
       let synced = 0;
       for (const s3 of result.sightings) {
         try {
-          await query(
+          await query2(
             `INSERT INTO verkada_events (event_type, person_id, person_label, camera_id, camera_name, occurred_at, dedup_key, raw_data) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) ON CONFLICT (dedup_key) DO NOTHING`,
             ["person_of_interest", s3.personId, s3.label, s3.cameraId, s3.cameraName, s3.occurredAt, s3.dedupKey, JSON.stringify(s3.raw)]
           );
@@ -22521,7 +22359,7 @@ async function runStartupCatchup() {
         });
         let sightingInserted = false;
         try {
-          const sr = await query(
+          const sr = await query2(
             `INSERT INTO poi_sightings (verkada_person_id, label, seen_at, camera_name, thumbnail_url) VALUES ($1, $2, $3, $4, $5) ON CONFLICT (verkada_person_id, seen_at, camera_name) DO NOTHING`,
             [s3.personId, s3.label, s3.occurredAt, s3.cameraName, s3.thumbnailUrl]
           );
@@ -22570,7 +22408,7 @@ async function refreshTokenIfNeeded(userId, tokenRow) {
   });
   if (!res.ok) throw new Error("Failed to refresh Tesla token");
   const data = await res.json();
-  await query(
+  await query2(
     `UPDATE tesla_tokens SET access_token = $1, refresh_token = $2, token_expires_at = $3 WHERE user_id = $4`,
     [data.access_token, data.refresh_token || tokenRow.refresh_token, new Date(Date.now() + data.expires_in * 1e3).toISOString(), userId]
   );
@@ -22594,7 +22432,7 @@ async function reverseGeocode(lat, lng) {
 }
 async function logEvent(vehicleId, vehicleName, eventType, details) {
   try {
-    await query(
+    await query2(
       `INSERT INTO tesla_activity_logs (vehicle_id, vehicle_name, event_type, details, occurred_at) VALUES ($1, $2, $3, $4, $5)`,
       [vehicleId, vehicleName, eventType, JSON.stringify(details), (/* @__PURE__ */ new Date()).toISOString()]
     );
@@ -22605,7 +22443,7 @@ async function logEvent(vehicleId, vehicleName, eventType, details) {
 }
 async function runTeslaBatteryMonitor() {
   try {
-    const { rows: tokenRows } = await query(`SELECT * FROM tesla_tokens`);
+    const { rows: tokenRows } = await query2(`SELECT * FROM tesla_tokens`);
     if (tokenRows.length === 0) {
       console.log("Tesla battery monitor: No Tesla accounts connected");
       return;
@@ -22627,7 +22465,7 @@ async function runTeslaBatteryMonitor() {
           totalChecked++;
           const vehicleId = String(vehicle.id);
           const vehicleName = vehicle.display_name || `Vehicle ${vehicleId}`;
-          const { rows: alertRows } = await query(`SELECT * FROM tesla_battery_alerts WHERE vehicle_id = $1 LIMIT 1`, [vehicleId]);
+          const { rows: alertRows } = await query2(`SELECT * FROM tesla_battery_alerts WHERE vehicle_id = $1 LIMIT 1`, [vehicleId]);
           const alertRow = alertRows.length > 0 ? alertRows[0] : null;
           try {
             const dataRes = await fetchT2(
@@ -22644,7 +22482,7 @@ async function runTeslaBatteryMonitor() {
                   previous_state: prevSleepVehicleState
                 });
               }
-              await query(
+              await query2(
                 `INSERT INTO tesla_battery_alerts (vehicle_id, vehicle_name, details) VALUES ($1, $2, $3) ON CONFLICT (vehicle_id) DO UPDATE SET vehicle_name = EXCLUDED.vehicle_name, details = EXCLUDED.details`,
                 [vehicleId, vehicleName, JSON.stringify({ ...prevSleepDetails || {}, vehicle_state: currentSleepState })]
               );
@@ -22676,7 +22514,7 @@ Please plug in the vehicle when possible.
                       console.error(`Failed to email ${to}:`, e);
                     }
                   }
-                  await query(
+                  await query2(
                     `UPDATE tesla_battery_alerts SET last_alerted_at = $1, alert_active = true WHERE vehicle_id = $2`,
                     [(/* @__PURE__ */ new Date()).toISOString(), vehicleId]
                   );
@@ -22809,7 +22647,7 @@ Please plug in the vehicle when possible.
                 battery_level: batteryLevel
               });
             }
-            await query(
+            await query2(
               `INSERT INTO tesla_battery_alerts (vehicle_id, vehicle_name, last_range_miles, details) VALUES ($1, $2, $3, $4) ON CONFLICT (vehicle_id) DO UPDATE SET vehicle_name = EXCLUDED.vehicle_name, last_range_miles = EXCLUDED.last_range_miles, details = EXCLUDED.details`,
               [vehicleId, vehicleName, rangeMiles, JSON.stringify({
                 vehicle_state: currentVehicleState,
@@ -22848,7 +22686,7 @@ Please plug in the vehicle when possible.
                     console.error(`Failed to email ${to}:`, e);
                   }
                 }
-                await query(
+                await query2(
                   `UPDATE tesla_battery_alerts SET last_alerted_at = $1, alert_active = true WHERE vehicle_id = $2`,
                   [(/* @__PURE__ */ new Date()).toISOString(), vehicleId]
                 );
@@ -22860,7 +22698,7 @@ Please plug in the vehicle when possible.
                 totalAlerts++;
               }
             } else if (alertRow?.alert_active) {
-              await query(`UPDATE tesla_battery_alerts SET alert_active = false WHERE vehicle_id = $1`, [vehicleId]);
+              await query2(`UPDATE tesla_battery_alerts SET alert_active = false WHERE vehicle_id = $1`, [vehicleId]);
               await logEvent(vehicleId, vehicleName, "battery_recovered", {
                 battery_level: batteryLevel,
                 range_miles: Math.round(rangeMiles),
@@ -22966,14 +22804,14 @@ async function refreshTokenIfNeeded2(userId, tokenRow) {
     throw new Error("Failed to refresh Tesla token");
   }
   const data = await res.json();
-  await query(
+  await query2(
     `UPDATE tesla_tokens SET access_token = $1, refresh_token = $2, token_expires_at = $3 WHERE user_id = $4`,
     [data.access_token, data.refresh_token || tokenRow.refresh_token, new Date(Date.now() + data.expires_in * 1e3).toISOString(), userId]
   );
   return data.access_token;
 }
 async function getTokenRow() {
-  const { rows } = await query(`SELECT * FROM tesla_tokens ORDER BY token_expires_at DESC LIMIT 1`);
+  const { rows } = await query2(`SELECT * FROM tesla_tokens ORDER BY token_expires_at DESC LIMIT 1`);
   return rows.length > 0 ? rows[0] : null;
 }
 async function teslaProxyHandler(req, res) {
@@ -23149,11 +22987,11 @@ router8.all("/setup", requireAuth2, async (req, res) => {
       });
       const privatePem = privateKey;
       const publicPem = publicKey;
-      const { rows: existing } = await query(`SELECT id FROM tesla_config LIMIT 1`);
+      const { rows: existing } = await query2(`SELECT id FROM tesla_config LIMIT 1`);
       if (existing.length > 0) {
-        await query(`UPDATE tesla_config SET private_key_pem = $1, public_key_pem = $2, partner_registered = false WHERE id = $3`, [privatePem, publicPem, existing[0].id]);
+        await query2(`UPDATE tesla_config SET private_key_pem = $1, public_key_pem = $2, partner_registered = false WHERE id = $3`, [privatePem, publicPem, existing[0].id]);
       } else {
-        await query(`INSERT INTO tesla_config (private_key_pem, public_key_pem, partner_registered, region) VALUES ($1, $2, false, 'na')`, [privatePem, publicPem]);
+        await query2(`INSERT INTO tesla_config (private_key_pem, public_key_pem, partner_registered, region) VALUES ($1, $2, false, 'na')`, [privatePem, publicPem]);
       }
       res.json({
         public_key_pem: publicPem,
@@ -23162,7 +23000,7 @@ router8.all("/setup", requireAuth2, async (req, res) => {
       return;
     }
     if (action === "public-key") {
-      const { rows } = await query(`SELECT public_key_pem FROM tesla_config LIMIT 1`);
+      const { rows } = await query2(`SELECT public_key_pem FROM tesla_config LIMIT 1`);
       if (rows.length === 0) {
         res.status(404).json({ error: "No keypair generated yet" });
         return;
@@ -23205,9 +23043,9 @@ router8.all("/setup", requireAuth2, async (req, res) => {
       const regData = await regRes.json();
       const alreadyRegistered = !regRes.ok && (JSON.stringify(regData).includes("already") || JSON.stringify(regData).includes("taken"));
       if (regRes.ok || alreadyRegistered) {
-        const { rows: configs2 } = await query(`SELECT id FROM tesla_config LIMIT 1`);
+        const { rows: configs2 } = await query2(`SELECT id FROM tesla_config LIMIT 1`);
         if (configs2.length > 0) {
-          await query(`UPDATE tesla_config SET partner_registered = true WHERE id = $1`, [configs2[0].id]);
+          await query2(`UPDATE tesla_config SET partner_registered = true WHERE id = $1`, [configs2[0].id]);
         }
       }
       res.status(regRes.ok || alreadyRegistered ? 200 : regRes.status).json(regData);
@@ -23252,7 +23090,7 @@ router8.all("/setup", requireAuth2, async (req, res) => {
         res.status(400).json({ error: "Token exchange failed", details: tokenData });
         return;
       }
-      await query(
+      await query2(
         `INSERT INTO tesla_tokens (user_id, access_token, refresh_token, token_expires_at) VALUES ($1, $2, $3, $4) ON CONFLICT (user_id) DO UPDATE SET access_token = EXCLUDED.access_token, refresh_token = EXCLUDED.refresh_token, token_expires_at = EXCLUDED.token_expires_at, updated_at = NOW()`,
         [userId, tokenData.access_token, tokenData.refresh_token, new Date(Date.now() + tokenData.expires_in * 1e3).toISOString()]
       );
@@ -23260,9 +23098,9 @@ router8.all("/setup", requireAuth2, async (req, res) => {
       return;
     }
     if (action === "status") {
-      const { rows: configs2 } = await query(`SELECT partner_registered, region, public_key_pem FROM tesla_config LIMIT 1`);
+      const { rows: configs2 } = await query2(`SELECT partner_registered, region, public_key_pem FROM tesla_config LIMIT 1`);
       const config = configs2.length > 0 ? configs2[0] : null;
-      const { rows: tokens } = await query(`SELECT * FROM tesla_tokens ORDER BY token_expires_at DESC LIMIT 1`);
+      const { rows: tokens } = await query2(`SELECT * FROM tesla_tokens ORDER BY token_expires_at DESC LIMIT 1`);
       const token = tokens.length > 0 ? tokens[0] : null;
       const hasClientId = !!process.env.TESLA_CLIENT_ID;
       const hasClientSecret = !!process.env.TESLA_CLIENT_SECRET;
@@ -23674,7 +23512,7 @@ async function fetchForecast() {
 router9.post("/rain-guard", requireAuth2, async (req, res) => {
   try {
     let automationId = null;
-    const { rows: automations } = await query(`SELECT id, is_active FROM family_automations WHERE name = $1 LIMIT 1`, ["Pool Heater Rain Guard"]);
+    const { rows: automations } = await query2(`SELECT id, is_active FROM family_automations WHERE name = $1 LIMIT 1`, ["Pool Heater Rain Guard"]);
     if (automations.length > 0) {
       if (!automations[0].is_active) {
         res.json({ skipped: true, reason: "Automation is disabled" });
@@ -23714,11 +23552,11 @@ router9.post("/rain-guard", requireAuth2, async (req, res) => {
     console.log("pool-heater-rain-guard result:", JSON.stringify(output));
     if (automationId) {
       const now = (/* @__PURE__ */ new Date()).toISOString();
-      await query(
+      await query2(
         `INSERT INTO family_automation_logs (automation_id, status, output, started_at, completed_at) VALUES ($1, $2, $3, $4, $5)`,
         [automationId, "success", JSON.stringify(output), now, now]
       );
-      await query(`UPDATE family_automations SET last_run_at = $1 WHERE id = $2`, [now, automationId]);
+      await query2(`UPDATE family_automations SET last_run_at = $1 WHERE id = $2`, [now, automationId]);
     }
     logAudit("pool-heater-rain-guard", {
       category: "automation",
@@ -23821,7 +23659,7 @@ async function fetchCurrentPoolTemp() {
 router9.post("/temp-monitor", requireAuth2, async (req, res) => {
   try {
     let automationId = null;
-    const { rows: automations } = await query(
+    const { rows: automations } = await query2(
       `SELECT id, is_active FROM family_automations WHERE name = $1 LIMIT 1`,
       ["Pool Temp Monitor"]
     );
@@ -23874,11 +23712,11 @@ Please check the pool heater.
     console.log("pool-temp-monitor result:", JSON.stringify(output));
     if (automationId) {
       const now = (/* @__PURE__ */ new Date()).toISOString();
-      await query(
+      await query2(
         `INSERT INTO family_automation_logs (automation_id, status, output, started_at, completed_at) VALUES ($1, $2, $3, $4, $5)`,
         [automationId, "success", JSON.stringify(output), now, now]
       );
-      await query(`UPDATE family_automations SET last_run_at = $1 WHERE id = $2`, [now, automationId]);
+      await query2(`UPDATE family_automations SET last_run_at = $1 WHERE id = $2`, [now, automationId]);
     }
     logAudit("pool-temp-monitor", {
       category: "automation",
@@ -23927,7 +23765,7 @@ async function fetchSpaPumpState() {
 router9.post("/spa-mode-monitor", requireAuth2, async (req, res) => {
   try {
     let automationId = null;
-    const { rows: automations } = await query(
+    const { rows: automations } = await query2(
       `SELECT id, is_active FROM family_automations WHERE name = $1 LIMIT 1`,
       ["Spa Mode 12 Hour Alert"]
     );
@@ -23987,11 +23825,11 @@ Please verify if this is intentional and turn it off if not needed.
     console.log("spa-mode-monitor result:", JSON.stringify(output));
     if (automationId) {
       const now = (/* @__PURE__ */ new Date()).toISOString();
-      await query(
+      await query2(
         `INSERT INTO family_automation_logs (automation_id, status, output, started_at, completed_at) VALUES ($1, $2, $3, $4, $5)`,
         [automationId, "success", JSON.stringify(output), now, now]
       );
-      await query(`UPDATE family_automations SET last_run_at = $1 WHERE id = $2`, [now, automationId]);
+      await query2(`UPDATE family_automations SET last_run_at = $1 WHERE id = $2`, [now, automationId]);
     }
     logAudit("spa-mode-monitor", {
       category: "automation",
@@ -24294,18 +24132,18 @@ async function saunaPowerOff(maxAttempts = 3) {
   }, `saunaPowerOff(${SAUNA_POWER_ENTITY})`, maxAttempts);
 }
 async function getAutomation(name) {
-  const { rows } = await query(`SELECT id, is_active FROM family_automations WHERE name = $1 LIMIT 1`, [name]);
+  const { rows } = await query2(`SELECT id, is_active FROM family_automations WHERE name = $1 LIMIT 1`, [name]);
   return rows.length > 0 ? rows[0] : null;
 }
 async function logAutomationRun(automationId, status, output, errorMessage) {
   const now = (/* @__PURE__ */ new Date()).toISOString();
-  await query(
+  await query2(
     `INSERT INTO family_automation_logs (automation_id, status, output, error_message, started_at, completed_at) VALUES ($1, $2, $3, $4, $5, $6)`,
     [automationId, status, JSON.stringify(output), errorMessage || null, now, now]
   );
 }
 async function updateAutomationLastRun(automationId) {
-  await query(`UPDATE family_automations SET last_run_at = $1 WHERE id = $2`, [(/* @__PURE__ */ new Date()).toISOString(), automationId]);
+  await query2(`UPDATE family_automations SET last_run_at = $1 WHERE id = $2`, [(/* @__PURE__ */ new Date()).toISOString(), automationId]);
 }
 router11.post("/morning-sauna", requireAuth2, async (req, res) => {
   let automationId = null;
@@ -24527,7 +24365,7 @@ router11.post("/morning-sauna/control", requireAuth2, async (req, res) => {
     let actorName = "UNKNOWN";
     if (req.userId && req.userId !== "system") {
       try {
-        const { rows } = await query(`SELECT display_name FROM profiles WHERE user_id = $1 LIMIT 1`, [req.userId]);
+        const { rows } = await query2(`SELECT display_name FROM profiles WHERE user_id = $1 LIMIT 1`, [req.userId]);
         if (rows[0]?.display_name) actorName = rows[0].display_name;
       } catch {
       }
@@ -24586,7 +24424,7 @@ router11.post("/morning-sauna/log-manual", requireAuth2, async (req, res) => {
     let actorName = "UNKNOWN";
     if (req.userId && req.userId !== "system") {
       try {
-        const { rows } = await query(`SELECT display_name FROM profiles WHERE user_id = $1 LIMIT 1`, [req.userId]);
+        const { rows } = await query2(`SELECT display_name FROM profiles WHERE user_id = $1 LIMIT 1`, [req.userId]);
         if (rows[0]?.display_name) actorName = rows[0].display_name;
       } catch {
       }
@@ -24754,7 +24592,7 @@ async function turnOff(entityId, maxAttempts = 3) {
 }
 async function getAutomation2(name) {
   try {
-    const { rows } = await query(
+    const { rows } = await query2(
       `SELECT id, is_active, config FROM family_automations WHERE name = $1 LIMIT 1`,
       [name]
     );
@@ -24768,11 +24606,11 @@ async function logRun(automationId, status, output, errorMessage) {
   if (!automationId) return;
   const now = (/* @__PURE__ */ new Date()).toISOString();
   try {
-    await query(
+    await query2(
       `INSERT INTO family_automation_logs (automation_id, status, output, error_message, started_at, completed_at) VALUES ($1,$2,$3,$4,$5,$6)`,
       [automationId, status, JSON.stringify(output), errorMessage || null, now, now]
     );
-    await query(`UPDATE family_automations SET last_run_at = $1 WHERE id = $2`, [now, automationId]);
+    await query2(`UPDATE family_automations SET last_run_at = $1 WHERE id = $2`, [now, automationId]);
   } catch (err) {
     console.warn("[energy] failed to write automation log:", err instanceof Error ? err.message : err);
   }
@@ -24780,7 +24618,7 @@ async function logRun(automationId, status, output, errorMessage) {
 async function touchLastRun(automationId) {
   if (!automationId) return;
   try {
-    await query(`UPDATE family_automations SET last_run_at = $1 WHERE id = $2`, [(/* @__PURE__ */ new Date()).toISOString(), automationId]);
+    await query2(`UPDATE family_automations SET last_run_at = $1 WHERE id = $2`, [(/* @__PURE__ */ new Date()).toISOString(), automationId]);
   } catch {
   }
 }
@@ -24985,7 +24823,7 @@ router12.put("/api/energy/exclusions", requireRole("admin"), async (req, res) =>
     return res.status(400).json({ error: `Each term must be at most ${MAX_TERM_LENGTH} characters` });
   }
   try {
-    const { rows } = await query(
+    const { rows } = await query2(
       `UPDATE family_automations
        SET config = jsonb_set(COALESCE(config, '{}'::jsonb), '{excluded_terms}', $1::jsonb, true),
            updated_at = NOW()
@@ -25537,7 +25375,7 @@ router13.post("/hw-sync", async (req, res) => {
       await supabase.from("hw_calendar_config").update({ synced_at: (/* @__PURE__ */ new Date()).toISOString() }).eq("email", child.email).eq("school_year", schoolYear);
       results[child.child_name] = { created, skipped, errors };
     }
-    const { data: automation } = await supabase.from("family_automations").select("id").eq("name", "Getting Girls to School on Time").single();
+    const { data: automation } = await supabase.from("family_automations").select("id").in("name", ["Morning School & Family Wake-Up", "Getting Girls to School on Time"]).maybeSingle();
     if (automation) {
       await supabase.from("family_automation_logs").insert({
         automation_id: automation.id,
@@ -25610,7 +25448,7 @@ router14.post("/proxy", async (req, res) => {
       database_id,
       page_id,
       page_ids,
-      query: query2,
+      query: query3,
       properties,
       content
     } = req.body;
@@ -25625,7 +25463,7 @@ router14.post("/proxy", async (req, res) => {
         headers: notionHeaders,
         body: JSON.stringify({
           filter: { value: "database", property: "object" },
-          query: query2 || ""
+          query: query3 || ""
         })
       });
       const data = await response.json();
@@ -25669,7 +25507,7 @@ router14.post("/proxy", async (req, res) => {
         {
           method: "POST",
           headers: notionHeaders,
-          body: JSON.stringify(query2 || {})
+          body: JSON.stringify(query3 || {})
         }
       );
       const data = await response.json();
@@ -25943,7 +25781,7 @@ router14.post("/proxy", async (req, res) => {
       return res.json({ success: true, result: data });
     }
     if (action === "search-pages" || action === "search-projects") {
-      const searchQuery = query2 || "";
+      const searchQuery = query3 || "";
       const JANUS_DB = "2b8e96d8-93fa-80bb-9428-cd132f827553";
       const TIGERDEN_DB = "2b8e96d8-93fa-80cc-b1fa-fa4eef48c6fe";
       const fetchDb = async (dbId, source) => {
@@ -26345,12 +26183,30 @@ init_fetchWithTimeout();
 init_circuit_breaker();
 init_error_sanitizer();
 init_schoolMorningBriefing();
+init_haWebSocket();
 var router15 = Router16();
-var GIRLS_SPEAKERS = [
-  "media_player.emme_s_room_speaker",
-  "media_player.isla_s_room_speaker",
-  "media_player.tonys_office_speaker"
-];
+function getMorningSpeakers() {
+  if (process.env.JANUS_BROADCAST_SPEAKERS) {
+    return process.env.JANUS_BROADCAST_SPEAKERS.split(",").map((s3) => s3.trim()).filter(Boolean);
+  }
+  try {
+    const cache3 = getEntityCache();
+    if (cache3.length > 0) {
+      const speakers = cache3.map((e) => e.entity_id).filter(
+        (id) => id.startsWith("media_player.") && (id.includes("speaker") || id.includes("bedroom") || id.includes("room"))
+      );
+      if (speakers.length > 0) return speakers;
+      const allMp = cache3.map((e) => e.entity_id).filter((id) => id.startsWith("media_player."));
+      if (allMp.length > 0) return allMp;
+    }
+  } catch {
+  }
+  return [
+    "media_player.bedroom_speaker",
+    "media_player.living_room_speaker"
+  ];
+}
+var GIRLS_SPEAKERS = getMorningSpeakers();
 var VOLUME = 0.9;
 var JANUS_VOICE_ID2 = "iLVmqjzCGGvqtMCk6vVQ";
 var DEFAULT_VOICE_ID = "iLVmqjzCGGvqtMCk6vVQ";
@@ -26358,8 +26214,8 @@ var SILENT_DROP_STREAK_THRESHOLD = 3;
 var SILENT_DROP_ALERT_COOLDOWN_HOURS = 72;
 async function maybeAlertSilentDropStreak(dateStr) {
   try {
-    const { query: query2 } = await Promise.resolve().then(() => (init_db2(), db_exports));
-    const { rows } = await query2(
+    const { query: query3 } = await Promise.resolve().then(() => (init_db2(), db_exports));
+    const { rows } = await query3(
       `SELECT detail->>'silent_drop_risk' AS silent_drop_risk
          FROM system_audit_log
         WHERE event_type = 'school_broadcast'
@@ -26378,7 +26234,7 @@ async function maybeAlertSilentDropStreak(dateStr) {
     if (streak < SILENT_DROP_STREAK_THRESHOLD) {
       return { alerted: false, streak };
     }
-    const { rows: recentAlerts } = await query2(
+    const { rows: recentAlerts } = await query3(
       `SELECT 1
          FROM system_audit_log
         WHERE event_type = 'school_broadcast_silent_drop_alert'
@@ -26393,7 +26249,7 @@ async function maybeAlertSilentDropStreak(dateStr) {
       return { alerted: false, streak };
     }
     const alertPhone = await getAlertPhoneNumber();
-    const alertMsg = `\u{1F507} Heads-up from Janus: the girls' school wake-up broadcast has shown a silent-drop risk on the last ${streak} mornings in a row (latest ${dateStr}). All speakers loaded the audio but stayed idle at ~8s, so Cast may be silently dropping the sound even though the broadcast reports "success". A speaker might be broken \u2014 worth checking Emme's room, Isla's room, and the office speakers.`;
+    const alertMsg = `\u{1F507} Heads-up from Janus: the morning school wake-up broadcast has shown a silent-drop risk on the last ${streak} mornings in a row (latest ${dateStr}). All speakers loaded the audio but stayed idle at ~8s, so Cast may be silently dropping the sound even though the broadcast reports "success". A speaker might be broken \u2014 worth checking bedroom and office speakers.`;
     const sent = await sendWhatsAppTo(alertPhone, alertMsg);
     if (sent) {
       console.log(
@@ -26837,7 +26693,7 @@ router15.post("/school-morning", async (req, res) => {
   try {
     const la = getLADate();
     console.log(`[Broadcast] School morning check: ${la.dateStr} ${la.hour}:${String(la.minute).padStart(2, "0")} (day=${la.dayOfWeek})`);
-    const { data: schoolAutoRows, error: schoolAutoErr } = await supabase.from("family_automations").select("is_active").eq("name", "Getting Girls to School on Time");
+    const { data: schoolAutoRows, error: schoolAutoErr } = await supabase.from("family_automations").select("is_active").in("name", ["Morning School & Family Wake-Up", "Getting Girls to School on Time"]);
     if (schoolAutoErr) {
       logAudit2("school-morning-broadcast", {
         category: "automation",
@@ -26928,7 +26784,7 @@ router15.post("/school-morning", async (req, res) => {
     const forceSlot = rawForceSlot === "7am" ? "650am" : rawForceSlot === "735am" ? "730am" : rawForceSlot;
     if (forceSlot === "650am" || forceSlot === "730am") {
       console.log(`[broadcast] TEST OVERRIDE: forcing slot=${forceSlot}`);
-      const testMsg = "Girls, this is Janus running a broadcast system test. All good.";
+      const testMsg = "Family, this is Janus running a broadcast system test. All good.";
       const { success: testOk, errors: testErrors, ttsMethod: testMethod } = await broadcastToGirlsRooms(testMsg);
       return res.json({
         test: true,
@@ -27009,7 +26865,7 @@ router15.post("/school-morning", async (req, res) => {
         console.warn(`[broadcast] WhatsApp alert failed for slot ${slot}`);
       }
     }
-    const { data: automation } = await supabase.from("family_automations").select("id").eq("name", "Getting Girls to School on Time").single();
+    const { data: automation } = await supabase.from("family_automations").select("id").in("name", ["Morning School & Family Wake-Up", "Getting Girls to School on Time"]).maybeSingle();
     if (automation) {
       await supabase.from("family_automation_logs").insert({
         automation_id: automation.id,
@@ -27099,7 +26955,7 @@ router15.post("/test-morning", requireAuth2, async (req, res) => {
     return res.status(403).json({ error: "Admin access required" });
   }
   const actorId = req.userId ?? "unknown";
-  const testMessage = typeof req.body?.message === "string" && req.body.message.trim().length > 0 ? req.body.message.trim() : "Girls, this is Janus running a broadcast system test. All systems are go.";
+  const testMessage = typeof req.body?.message === "string" && req.body.message.trim().length > 0 ? req.body.message.trim() : "Family, this is Janus running a broadcast system test. All systems are go.";
   console.log(`[broadcast] Manual test broadcast triggered by ${actorId}: "${testMessage.slice(0, 80)}"`);
   const t0 = Date.now();
   try {
@@ -28228,7 +28084,7 @@ async function fetchTomorrowsCalendar(saKey) {
     const token = await getServiceToken(
       saKey,
       "https://www.googleapis.com/auth/calendar.readonly",
-      TONY_EMAIL
+      ADMIN_EMAIL
     );
     const now = /* @__PURE__ */ new Date();
     const tomorrow = new Date(now.getTime() + 24 * 60 * 60 * 1e3);
@@ -28238,7 +28094,7 @@ async function fetchTomorrowsCalendar(saKey) {
     const offset = getLAOffset(tomorrow);
     const timeMin = `${laDate}T00:00:00${offset}`;
     const timeMax = `${laDate}T23:59:59${offset}`;
-    const url = `https://www.googleapis.com/calendar/v3/calendars/${TONY_EMAIL}/events?timeMin=${encodeURIComponent(timeMin)}&timeMax=${encodeURIComponent(timeMax)}&singleEvents=true&orderBy=startTime&maxResults=25`;
+    const url = `https://www.googleapis.com/calendar/v3/calendars/${ADMIN_EMAIL}/events?timeMin=${encodeURIComponent(timeMin)}&timeMax=${encodeURIComponent(timeMax)}&singleEvents=true&orderBy=startTime&maxResults=25`;
     const r = await fetchT(url, {
       headers: { Authorization: `Bearer ${token}` }
     });
@@ -28293,7 +28149,7 @@ router17.post("/eod-summary", requireAuth2, async (_req, res) => {
       timeZone: "America/Los_Angeles"
     });
     const [todayCal, tomorrowCal] = await Promise.all([
-      fetchTodaysCalendar(saKey, TONY_EMAIL, "Tony"),
+      fetchTodaysCalendar(saKey, ADMIN_EMAIL, "Primary"),
       fetchTomorrowsCalendar(saKey)
     ]);
     const { data: auditActions } = await svc.from("system_audit_log").select("summary, edge_function, created_at").gte("created_at", `${laDate}T00:00:00`).not("channel", "eq", "cron").order("created_at", { ascending: false }).limit(15);
@@ -28338,7 +28194,7 @@ router17.post("/eod-summary", requireAuth2, async (_req, res) => {
     const subject = `End of Day \u2014 ${dateStr}`;
     const sent = await sendGmailRaw(
       saKey,
-      TONY_EMAIL,
+      ADMIN_EMAIL,
       subject,
       summary,
       rawContext
@@ -28436,10 +28292,10 @@ router17.post("/weekly-planning", requireAuth2, async (_req, res) => {
     const calToken = await getServiceToken(
       saKey,
       "https://www.googleapis.com/auth/calendar.readonly",
-      TONY_EMAIL
+      ADMIN_EMAIL
     );
     const weekOffset = getLAOffset();
-    const calUrl = `https://www.googleapis.com/calendar/v3/calendars/${TONY_EMAIL}/events?timeMin=${monday}T00:00:00${weekOffset}&timeMax=${friday}T23:59:59${weekOffset}&singleEvents=true&orderBy=startTime&maxResults=50`;
+    const calUrl = `https://www.googleapis.com/calendar/v3/calendars/${ADMIN_EMAIL}/events?timeMin=${monday}T00:00:00${weekOffset}&timeMax=${friday}T23:59:59${weekOffset}&singleEvents=true&orderBy=startTime&maxResults=50`;
     const calRes = await fetchT(calUrl, {
       headers: { Authorization: `Bearer ${calToken}` }
     });
@@ -28496,7 +28352,7 @@ router17.post("/weekly-planning", requireAuth2, async (_req, res) => {
     const subject = `Weekly Plan \u2014 ${nextWeekLabel}`;
     const sent = await sendGmailRaw(
       saKey,
-      TONY_EMAIL,
+      ADMIN_EMAIL,
       subject,
       summary,
       rawContext
@@ -28726,8 +28582,8 @@ router17.post("/executive-status", requireAuth2, async (_req, res) => {
     }),
     runCheck2("google_calendar", "Google Calendar", "Google Workspace", async () => {
       try {
-        const token = await getServiceToken(saKey, "https://www.googleapis.com/auth/calendar.readonly", TONY_EMAIL);
-        const r = await fetchT(`https://www.googleapis.com/calendar/v3/calendars/${TONY_EMAIL}/events?maxResults=1`, {
+        const token = await getServiceToken(saKey, "https://www.googleapis.com/auth/calendar.readonly", ADMIN_EMAIL);
+        const r = await fetchT(`https://www.googleapis.com/calendar/v3/calendars/${ADMIN_EMAIL}/events?maxResults=1`, {
           headers: { Authorization: `Bearer ${token}` }
         }, 1e4);
         if (!r.ok) return `Calendar HTTP ${r.status}`;
@@ -28738,7 +28594,7 @@ router17.post("/executive-status", requireAuth2, async (_req, res) => {
     }),
     runCheck2("google_drive", "Google Drive", "Google Workspace", async () => {
       try {
-        const token = await getServiceToken(saKey, "https://www.googleapis.com/auth/drive.readonly", TONY_EMAIL);
+        const token = await getServiceToken(saKey, "https://www.googleapis.com/auth/drive.readonly", ADMIN_EMAIL);
         const r = await fetchT("https://www.googleapis.com/drive/v3/files?pageSize=1", {
           headers: { Authorization: `Bearer ${token}` }
         }, 1e4);
@@ -28780,11 +28636,11 @@ router17.post("/executive-status", requireAuth2, async (_req, res) => {
   const text2 = `JANUS EXECUTIVE REPORT \u2014 ${runTime}
 
 ${textLines.join("\n")}`;
-  const sent = await sendGmailRaw(saKey, TONY_EMAIL, subject, html, text2);
+  const sent = await sendGmailRaw(saKey, ADMIN_EMAIL, subject, html, text2);
   await logEmail(
     "executive_status",
     subject,
-    [TONY_EMAIL],
+    [ADMIN_EMAIL],
     html,
     sent ? "sent" : "error",
     sent ? void 0 : "sendStatusEmail returned false",
@@ -29224,14 +29080,14 @@ router17.post("/morning-weather", requireAuth2, async (_req, res) => {
     });
     const CHILDREN = [
       {
-        name: "Emme",
+        name: "Student 1",
         recipients: ["member3@example.com", "member2@example.com"],
-        calendarEmail: EMME_EMAIL
+        calendarEmail: MEMBER2_EMAIL
       },
       {
-        name: "Isla",
+        name: "Student 2",
         recipients: ["member2@example.com", "member3@example.com"],
-        calendarEmail: ISLA_EMAIL
+        calendarEmail: MEMBER3_EMAIL
       }
     ];
     const CC_RECIPIENTS = ["admin@example.com"];
@@ -29326,8 +29182,8 @@ router17.post("/morning-weather", requireAuth2, async (_req, res) => {
       fetchNewsRSS("world"),
       fetchCalendarEvents("admin@example.com", "Dad"),
       fetchCalendarEvents("member@example.com", "Mom"),
-      fetchCalendarEvents("member3@example.com", "Emme"),
-      fetchCalendarEvents("member2@example.com", "Isla")
+      fetchCalendarEvents(MEMBER2_EMAIL, "Student 1"),
+      fetchCalendarEvents(MEMBER3_EMAIL, "Student 2")
     ]);
     const news = { us: usNews, world: worldNews };
     const googleWeather = buildWeatherSourceData(googleHourlyRaw, googleCurrentRaw);
@@ -29341,10 +29197,10 @@ router17.post("/morning-weather", requireAuth2, async (_req, res) => {
     };
     const weatherSummary = weatherData ? formatWeatherForAI(weatherData) : "";
     const childCalendars = {
-      Emme: emmeEvents,
-      Isla: islaEvents
+      "Student 1": emmeEvents,
+      "Student 2": islaEvents
     };
-    console.log(`[Morning Email] Data fetched: weather ${weatherData ? "\u2713" : "\u2717"}, ${usNews.length} US / ${worldNews.length} world news, financial ${marketSnapshot ? "\u2713" : "\u2717"}, calendars (Dad:${dadEvents.length}, Mom:${momEvents.length}, Emme:${emmeEvents.length}, Isla:${islaEvents.length})`);
+    console.log(`[Morning Email] Data fetched: weather ${weatherData ? "\u2713" : "\u2717"}, ${usNews.length} US / ${worldNews.length} world news, financial ${marketSnapshot ? "\u2713" : "\u2717"}, calendars (Admin:${dadEvents.length}, Member:${momEvents.length}, Student1:${emmeEvents.length}, Student2:${islaEvents.length})`);
     const dataPromises = CHILDREN.map(
       (child) => generateEmailData(
         child.name,
@@ -30070,12 +29926,12 @@ async function syncShows(db2) {
       `"coming to Los Angeles" ${nowYear} broadway musical touring show tickets`,
       `Los Angeles theater show comedy ${nowYear} tickets family entertainment live`
     ];
-    await Promise.all(searchQueries.map(async (query2) => {
+    await Promise.all(searchQueries.map(async (query3) => {
       try {
         const searchRes = await fetchT2("https://api.firecrawl.dev/v1/search", {
           method: "POST",
           headers: { "Authorization": `Bearer ${firecrawlKey}`, "Content-Type": "application/json" },
-          body: JSON.stringify({ query: query2, limit: 10, lang: "en", country: "us", scrapeOptions: { formats: ["markdown"] } })
+          body: JSON.stringify({ query: query3, limit: 10, lang: "en", country: "us", scrapeOptions: { formats: ["markdown"] } })
         });
         const searchData = await searchRes.json();
         const results = searchData?.data || [];
@@ -30114,7 +29970,7 @@ async function syncShows(db2) {
           });
         }
       } catch (e) {
-        console.error(`Show search error for "${query2}":`, e);
+        console.error(`Show search error for "${query3}":`, e);
       }
     }));
   }
@@ -33392,7 +33248,7 @@ The Notion activity poller (the webhook safety net) has not run in the last ${NO
 router20.get("/api/ha-workflow-status", async (_req, res) => {
   try {
     const { fetchAutomationMap: fetchAutomationMap2 } = await Promise.resolve().then(() => (init_workflowReconciler(), workflowReconciler_exports));
-    const { query: query2 } = await Promise.resolve().then(() => (init_db2(), db_exports));
+    const { query: query3 } = await Promise.resolve().then(() => (init_db2(), db_exports));
     const haConfigured = !!process.env.HA_URL && !!process.env.HA_TOKEN;
     let automations = null;
     let haError = null;
@@ -33405,7 +33261,7 @@ router20.get("/api/ha-workflow-status", async (_req, res) => {
     }
     const healMap = /* @__PURE__ */ new Map();
     try {
-      const { rows } = await query2(
+      const { rows } = await query3(
         `SELECT DISTINCT ON (detail->>'rule_id')
                 detail->>'rule_id' AS rule_id,
                 created_at
@@ -33423,7 +33279,7 @@ router20.get("/api/ha-workflow-status", async (_req, res) => {
     }
     let lastReconcileRunAt = null;
     try {
-      const { rows } = await query2(
+      const { rows } = await query3(
         `SELECT created_at FROM system_audit_log
          WHERE event_type = 'workflow_reconcile_run'
          ORDER BY created_at DESC LIMIT 1`
@@ -33814,16 +33670,16 @@ router21.post("/api/firecrawl-scrape", async (req, res) => {
 });
 router21.post("/api/firecrawl-search", async (req, res) => {
   try {
-    const { query: query2, options } = req.body;
-    if (!query2) return res.status(400).json({ success: false, error: "Query is required" });
+    const { query: query3, options } = req.body;
+    if (!query3) return res.status(400).json({ success: false, error: "Query is required" });
     const apiKey = process.env.FIRECRAWL_API_KEY;
     if (!apiKey) return res.status(500).json({ success: false, error: "Firecrawl not configured" });
-    console.log("Searching:", query2);
+    console.log("Searching:", query3);
     const response = await fetchT7("https://api.firecrawl.dev/v1/search", {
       method: "POST",
       headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
       body: JSON.stringify({
-        query: query2,
+        query: query3,
         limit: options?.limit || 10,
         lang: options?.lang,
         country: options?.country,
@@ -33937,75 +33793,6 @@ router22.post("/api/amazon-order", requireAuth, async (req, res) => {
     res.status(500).json({ success: false, error: error.message });
   }
 });
-router22.post("/api/grocery-order", requireAuth, async (req, res) => {
-  try {
-    const bbKey = process.env.BROWSERBASE_API_KEY;
-    if (!bbKey) return res.status(500).json({ success: false, error: "BROWSERBASE_API_KEY not configured" });
-    const { action, searchQuery, items } = req.body;
-    if (action === "search") {
-      if (!searchQuery) return res.status(400).json({ success: false, error: "searchQuery is required" });
-      const modelApiKey = process.env.GOOGLE_GENERATIVE_AI_API_KEY || process.env.GEMINI_API_KEY;
-      if (!modelApiKey) throw new Error("GOOGLE_GENERATIVE_AI_API_KEY not configured");
-      const session = await stagehandPost2("/sessions/start", { model_name: "google/gemini-2.5-flash", model_api_key: modelApiKey });
-      const sessionId = session.data?.session_id || session.session_id || session.id;
-      if (!sessionId) throw new Error("Failed to start browser session");
-      try {
-        const searchUrl = `https://www.amazon.com/s?k=${encodeURIComponent(searchQuery)}&i=amazonfresh`;
-        await stagehandPost2(`/sessions/${sessionId}/navigate`, { url: searchUrl });
-        await new Promise((resolve2) => setTimeout(resolve2, 3e3));
-        const extractResult = await stagehandPost2(`/sessions/${sessionId}/extract`, {
-          instruction: `Extract the first 10 grocery product results from this Amazon Fresh search page. For each product, extract: product name, price (with dollar sign), unit/size/weight info, and whether it appears to be in stock/available. Return as a JSON array of objects with keys: name, price, unit, store (set to "Amazon Fresh"), available (boolean).`
-        });
-        await closeSession2(sessionId);
-        let products = [];
-        const rawData = extractResult.data || extractResult;
-        if (typeof rawData === "string") {
-          try {
-            const parsed = JSON.parse(rawData);
-            products = Array.isArray(parsed) ? parsed : parsed.products || [];
-          } catch {
-            products = [];
-          }
-        } else if (Array.isArray(rawData)) products = rawData;
-        else if (rawData && typeof rawData === "object") {
-          products = rawData.products || rawData.items || rawData.results || [];
-          if (!Array.isArray(products)) products = [];
-        }
-        return res.json({ success: true, products, store: "amazon-fresh", query: searchQuery, sessionReplay: `https://browserbase.com/sessions/${sessionId}` });
-      } catch (e) {
-        await closeSession2(sessionId);
-        throw e;
-      }
-    }
-    if (action === "add_to_cart") {
-      if (!items || !Array.isArray(items)) return res.status(400).json({ success: false, error: "items array is required" });
-      const db2 = storage;
-      for (const item of items) {
-        await db2.query(
-          `INSERT INTO shopping_cart_items (user_id, product_name, price, quantity, platform, added_by, status, notes, product_url, image_url) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)`,
-          [req.user.userId, item.name, item.price, item.quantity || 1, "amazon-fresh", "grocery-order", "pending", item.unit || null, item.url || null, item.image_url || null]
-        );
-      }
-      logAudit("grocery-order", {
-        category: "home",
-        event_type: "cart_items_added",
-        severity: "info",
-        actor_id: req.user?.userId || "UNKNOWN",
-        actor_name: req.user?.displayName || req.user?.email || "UNKNOWN",
-        actor_role: "user",
-        channel: "web",
-        summary: `${items.length} grocery item${items.length !== 1 ? "s" : ""} added to cart from Amazon Fresh search`,
-        detail: { items_count: items.length, platform: "amazon-fresh", query: searchQuery },
-        status: "success"
-      });
-      return res.json({ success: true, itemsAdded: items.length });
-    }
-    res.status(400).json({ success: false, error: 'Invalid action. Use "search" or "add_to_cart".' });
-  } catch (error) {
-    console.error("Grocery order function error:", error);
-    res.status(500).json({ success: false, error: error.message });
-  }
-});
 router22.get("/api/shopping-cart", requireAuth, async (req, res) => {
   try {
     const userId = req.user.userId;
@@ -34116,8 +33903,8 @@ async function getGmailAccessToken(impersonateEmail) {
   if (!r.ok) throw new Error(`Gmail auth failed: ${r.status} ${await r.text()}`);
   return (await r.json()).access_token;
 }
-async function searchGmail(token, query2) {
-  const r = await fetchT8(`${GMAIL_API}/messages?q=${encodeURIComponent(query2)}&maxResults=10`, { headers: { Authorization: `Bearer ${token}` } });
+async function searchGmail(token, query3) {
+  const r = await fetchT8(`${GMAIL_API}/messages?q=${encodeURIComponent(query3)}&maxResults=10`, { headers: { Authorization: `Bearer ${token}` } });
   if (!r.ok) return [];
   const data = await r.json();
   return (data.messages || []).map((m) => m.id);
@@ -34141,8 +33928,8 @@ router22.post("/api/package-arrival-monitor", requireAuth, async (req, res) => {
     const token = await getGmailAccessToken(TONY_EMAIL3);
     const db2 = storage;
     const allMessageIds = /* @__PURE__ */ new Set();
-    for (const query2 of PACKAGE_SEARCH_QUERIES) {
-      const ids = await searchGmail(token, query2);
+    for (const query3 of PACKAGE_SEARCH_QUERIES) {
+      const ids = await searchGmail(token, query3);
       ids.forEach((id) => allMessageIds.add(id));
     }
     if (allMessageIds.size === 0) return res.json({ processed: 0, message: "No package emails found" });
@@ -34200,1902 +33987,9 @@ ${details.snippet}
 });
 var shopping_default = router22;
 
-// server/routes/grocery.ts
-init_db();
-init_storage();
-init_auth();
-init_notifications();
-init_auditLog();
-init_socket();
-init_helpers();
-import { Router as Router24 } from "express";
-
-// server/lib/groceryEmail.ts
-init_helpers();
-var BASE = process.env.PUBLIC_BASE_URL || "https://example.com";
-var CART_URL = `${BASE}/common-tasks/grocery`;
-var PRIORITY_CATS = ["produce", "dairy", "bakery"];
-var VARIANT_COPY = {
-  "last-call": {
-    ctaLabel: (empty) => empty ? "Open the catalog" : "Edit this week's cart",
-    ctaUrl: CART_URL
-  },
-  "lock-confirmation": {
-    ctaLabel: (_empty, lockStatus) => lockStatus === "submitted" ? "View this week's order" : lockStatus === "failed" ? "View order detail" : "Open the catalog",
-    ctaUrl: CART_URL
-  },
-  "rina-monday": {
-    ctaLabel: () => "View order",
-    ctaUrl: CART_URL
-  },
-  "manual-submit-needed": {
-    ctaLabel: () => "Open cart on Amazon Fresh",
-    ctaUrl: "https://www.amazon.com/alm/storefront?almBrandId=QW1hem9uIEZyZXNo"
-  },
-  "open-reminder": {
-    ctaLabel: (empty) => empty ? "Start adding items" : "Add or edit items",
-    ctaUrl: CART_URL
-  }
-};
-function escHtml(s3) {
-  if (!s3) return "";
-  return s3.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;");
-}
-function fmtPrice(cents) {
-  if (cents == null) return "";
-  const dollars = cents / 100;
-  return `$${dollars.toFixed(2)}`;
-}
-function fmtLineTotal(unitCents, qty) {
-  if (unitCents == null) return "";
-  const total = unitCents / 100 * qty;
-  return `$${total.toFixed(2)}`;
-}
-function fmtLockTime(isoString) {
-  if (!isoString) return "Friday 4 PM PT";
-  try {
-    return new Date(isoString).toLocaleString("en-US", {
-      timeZone: "America/Los_Angeles",
-      weekday: "long",
-      month: "short",
-      day: "numeric",
-      hour: "numeric",
-      minute: "2-digit",
-      hour12: true
-    });
-  } catch {
-    return isoString;
-  }
-}
-function fmtDeliveryDate(dateStr) {
-  if (!dateStr) return "Monday";
-  try {
-    return (/* @__PURE__ */ new Date(`${dateStr}T12:00:00Z`)).toLocaleDateString("en-US", {
-      timeZone: "America/Los_Angeles",
-      weekday: "long",
-      month: "long",
-      day: "numeric"
-    });
-  } catch {
-    return dateStr;
-  }
-}
-function groupByCategory(items) {
-  const map = /* @__PURE__ */ new Map();
-  for (const item of items) {
-    const cat = (item.category || "other").toLowerCase();
-    if (!map.has(cat)) map.set(cat, []);
-    map.get(cat).push(item);
-  }
-  const all = [...map.keys()];
-  const priority = PRIORITY_CATS.filter((c) => all.includes(c));
-  const others = all.filter((c) => !PRIORITY_CATS.includes(c)).sort();
-  return [...priority, ...others].map((cat) => [cat, map.get(cat)]);
-}
-var VARIANT_HERO = {
-  "last-call": "Last call.",
-  "rina-monday": "Monday morning.",
-  "manual-submit-needed": "Action needed.",
-  "open-reminder": "Grocery Helper is open."
-};
-function heroText(variant, lockStatus) {
-  if (variant === "lock-confirmation") {
-    if (lockStatus === "submitted") return "Order locked.";
-    if (lockStatus === "skipped") return "No order this week.";
-    return "Submission failed.";
-  }
-  return VARIANT_HERO[variant];
-}
-function subHeadline(variant, itemCount, lockStatus, estimatedTotal) {
-  if (variant === "last-call") {
-    return itemCount > 0 ? `${itemCount} item${itemCount !== 1 ? "s" : ""} in the cart so far. Order locks Friday at 4 PM&nbsp;PT.` : "Nothing in the cart yet. Add something before Friday or the week will be skipped.";
-  }
-  if (variant === "lock-confirmation") {
-    if (lockStatus === "submitted") {
-      const totalStr = estimatedTotal != null ? ` \xB7 ~${fmtLineTotal(estimatedTotal, 1).replace("$", "$")}` : "";
-      return `${itemCount} item${itemCount !== 1 ? "s" : ""} sent to Amazon Fresh${totalStr}. You'll get a delivery confirmation when it ships.`;
-    }
-    if (lockStatus === "skipped") return "The cart was empty at lock time, so no order was placed this week.";
-    return "The Amazon Fresh submission encountered an error. The order is locked \u2014 please submit manually or contact Tony.";
-  }
-  if (variant === "rina-monday") {
-    return `${itemCount} item${itemCount !== 1 ? "s" : ""} should be arriving today. See the standing routine below.`;
-  }
-  if (variant === "manual-submit-needed") {
-    const totalStr = estimatedTotal != null ? ` (~${fmtLineTotal(estimatedTotal, 1)})` : "";
-    return `The Monday cart is locked with ${itemCount} item${itemCount !== 1 ? "s" : ""}${totalStr}, but auto-submit isn't wired up yet \u2014 please place this order on Amazon Fresh manually before tonight.`;
-  }
-  if (variant === "open-reminder") {
-    return itemCount > 0 ? `${itemCount} item${itemCount !== 1 ? "s" : ""} in the cart so far. Add anything else by Friday&nbsp;4&nbsp;PM&nbsp;PT \u2014 the cart locks then.` : "Nothing picked yet. Add items by Friday&nbsp;4&nbsp;PM&nbsp;PT and we'll order them Monday morning.";
-  }
-  return "";
-}
-function buildSubject(variant, items, lockStatus) {
-  if (variant === "last-call") {
-    return items.length > 0 ? `Grocery Helper \u2014 Last call \xB7 ${items.length} item${items.length !== 1 ? "s" : ""} so far` : "Grocery Helper \u2014 Last call \xB7 Nothing picked yet";
-  }
-  if (variant === "lock-confirmation") {
-    if (lockStatus === "submitted") return "Grocery Helper \u2014 Order locked \xB7 Delivering Monday";
-    if (lockStatus === "skipped") return "Grocery Helper \u2014 No order this week";
-    return "\u26A0 Grocery Helper \u2014 Submit failed";
-  }
-  if (variant === "rina-monday") return "Monday \u2014 Grocery delivery & fridge clear-out";
-  if (variant === "manual-submit-needed") {
-    return `[ACTION NEEDED] Place Monday Grocery Order \u2014 ${items.length} item${items.length !== 1 ? "s" : ""}`;
-  }
-  if (variant === "open-reminder") {
-    return items.length > 0 ? `Grocery Helper \u2014 ${items.length} item${items.length !== 1 ? "s" : ""} in next week's cart` : "Grocery Helper \u2014 Cart is open for next week";
-  }
-  return "Grocery Helper";
-}
-function renderItemsTable(items, memberNames = {}) {
-  if (items.length === 0) return "";
-  const groups = groupByCategory(items);
-  let html = "";
-  for (const [cat, catItems] of groups) {
-    const catLabel = escHtml(cat.charAt(0).toUpperCase() + cat.slice(1));
-    html += `
-      <tr>
-        <td style="padding: 20px 0 8px; font-family: 'Barlow Semi Condensed', Barlow, Arial, sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #92400E;">
-          ${catLabel}
-        </td>
-      </tr>`;
-    for (const item of catItems) {
-      const imgSrc = item.image_url ? escHtml(item.image_url) : null;
-      const thumb = imgSrc ? `<img src="${imgSrc}" width="44" height="44" alt="${escHtml(item.name)}" style="border-radius:6px;object-fit:cover;display:block;">` : `<div style="width:44px;height:44px;background:#f3ede2;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:20px;">\u{1F6D2}</div>`;
-      const editorName = item.added_by_user_id ? memberNames[item.added_by_user_id] : null;
-      const editorLine = editorName ? `<div style="font-size:11px;color:#9CA3AF;margin-top:2px;">Added by ${escHtml(editorName)}</div>` : "";
-      const unitPriceStr = fmtPrice(item.unit_price);
-      const lineTotalStr = item.unit_price ? fmtLineTotal(item.unit_price, item.quantity) : "";
-      const priceCell = unitPriceStr ? `<td style="padding:10px 0 10px 8px;vertical-align:middle;white-space:nowrap;font-family:monospace;font-size:13px;color:#374151;text-align:right;">${escHtml(unitPriceStr)}${lineTotalStr ? `<br><span style="color:#6B7280;font-size:11px;">${escHtml(lineTotalStr)}</span>` : ""}</td>` : "";
-      html += `
-        <tr>
-          <td style="padding: 6px 0; border-bottom: 1px solid #F3EDE2;">
-            <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
-              <tr>
-                <td style="width:44px;vertical-align:middle;">${thumb}</td>
-                <td style="padding-left:12px;vertical-align:middle;">
-                  <div style="font-family:Barlow,Arial,sans-serif;font-size:14px;font-weight:500;color:#1F2937;">${escHtml(item.name)}</div>
-                  ${item.brand ? `<div style="font-size:12px;color:#D97706;font-weight:600;">${escHtml(item.brand)}</div>` : ""}
-                  ${item.size ? `<div style="font-size:11px;color:#9CA3AF;">${escHtml(item.size)}</div>` : ""}
-                  ${editorLine}
-                </td>
-                <td style="padding-left:8px;vertical-align:middle;white-space:nowrap;text-align:right;">
-                  <span style="font-family:Barlow,Arial,sans-serif;font-size:13px;color:#374151;">\xD7&nbsp;${item.quantity}</span>
-                </td>
-                ${priceCell}
-              </tr>
-            </table>
-          </td>
-        </tr>`;
-    }
-  }
-  return html;
-}
-function renderAuditBlock(auditRows, memberNames = {}) {
-  if (!auditRows.length) return "";
-  const lines = auditRows.map((row) => {
-    const actor = row.actor_user_id ? memberNames[row.actor_user_id] || "Someone" : "Someone";
-    const detail = row.detail;
-    const itemName = detail?.name || "an item";
-    const actionMap = { added: "added", removed: "removed", qty_changed: "updated qty of" };
-    const verb = actionMap[row.action] || row.action;
-    const when = row.created_at ? new Date(row.created_at).toLocaleTimeString("en-US", { timeZone: "America/Los_Angeles", hour: "numeric", minute: "2-digit", hour12: true }) : "";
-    return `<tr><td style="padding:4px 0;font-family:Barlow,Arial,sans-serif;font-size:12px;color:#6B7280;">${escHtml(actor)} ${escHtml(verb)} <strong style="color:#374151;">${escHtml(itemName)}</strong>${when ? ` <span style="color:#9CA3AF;">at ${escHtml(when)}</span>` : ""}</td></tr>`;
-  }).join("");
-  return `
-    <tr>
-      <td style="padding: 20px 0 0;">
-        <div style="background:#FEF9F0;border-left:3px solid #D97706;border-radius:4px;padding:14px 16px;">
-          <div style="font-family:'Barlow Semi Condensed',Barlow,Arial,sans-serif;font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#92400E;margin-bottom:8px;">Recent activity</div>
-          <table role="presentation" width="100%" cellpadding="0" cellspacing="0">${lines}</table>
-        </div>
-      </td>
-    </tr>`;
-}
-function renderStandingRoutine() {
-  const tasks = [
-    "Put away all groceries \u2014 refrigerated items first.",
-    "Check expiry dates and discard anything past due.",
-    "Wipe down refrigerator shelves and crisper drawers.",
-    "Note any staples that are running low for next week."
-  ];
-  const taskHtml = tasks.map((t) => `<tr><td style="padding:3px 0 3px 0;font-family:Barlow,Arial,sans-serif;font-size:13px;color:#374151;">&#10003;&nbsp; ${escHtml(t)}</td></tr>`).join("");
-  return `
-    <tr>
-      <td style="padding: 20px 0 0;">
-        <div style="background:#FEF9F0;border-left:3px solid #D97706;border-radius:4px;padding:14px 16px;">
-          <div style="font-family:'Barlow Semi Condensed',Barlow,Arial,sans-serif;font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#92400E;margin-bottom:10px;">Standing routine</div>
-          <table role="presentation" width="100%" cellpadding="0" cellspacing="0">${taskHtml}</table>
-        </div>
-      </td>
-    </tr>`;
-}
-function renderCartHtml(variant, items, opts = {}) {
-  const { run, auditRows = [], memberNames = {}, lockStatus, estimatedTotal } = opts;
-  const isEmpty = items.length === 0;
-  const ctaConfig = VARIANT_COPY[variant];
-  const hero = heroText(variant, lockStatus);
-  const sub = subHeadline(variant, items.length, lockStatus, estimatedTotal);
-  const ctaLabel = ctaConfig.ctaLabel(isEmpty, lockStatus);
-  const ctaUrl = escHtml(ctaConfig.ctaUrl);
-  const lockTime = fmtLockTime(run?.cycle_lock_at);
-  const deliveryDate = fmtDeliveryDate(run?.delivery_date);
-  const itemsHtml = renderItemsTable(items, memberNames);
-  const activityHtml = variant === "last-call" ? renderAuditBlock(auditRows, memberNames) : "";
-  const routineHtml = variant === "rina-monday" ? renderStandingRoutine() : "";
-  const emptyCartHtml = isEmpty && variant !== "rina-monday" ? `
-    <tr>
-      <td style="padding: 24px 0; text-align:center;">
-        <div style="font-family:Barlow,Arial,sans-serif;font-size:15px;color:#9CA3AF;">No items in the cart yet.</div>
-      </td>
-    </tr>` : "";
-  return `<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Grocery Helper \u2014 Janus</title>
-<style>
-@import url('https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:wght@600;700&family=Barlow:wght@400;500;600&display=swap');
-body { margin:0; padding:0; background:#f6f3ec; }
-@media (prefers-color-scheme: dark) {
-  body, .page-bg { background:#1a1814 !important; }
-  .card { background:#2a2620 !important; }
-  .item-name { color:#F9FAFB !important; }
-  .item-sub { color:#9CA3AF !important; }
-  .price-text { color:#D1D5DB !important; }
-  .footer-text { color:#6B7280 !important; }
-  .separator { border-bottom-color:#3a3530 !important; }
-  .cat-label { color:#D97706 !important; }
-}
-</style>
-</head>
-<body style="margin:0;padding:0;background:#f6f3ec;">
-<table role="presentation" class="page-bg" width="100%" cellpadding="0" cellspacing="0" style="background:#f6f3ec;">
-  <tr>
-    <td align="center" style="padding:40px 20px 60px;">
-
-      <!-- Card -->
-      <table role="presentation" class="card" width="600" cellpadding="0" cellspacing="0" style="background:#ffffff;border-radius:12px;overflow:hidden;box-shadow:0 2px 16px rgba(0,0,0,0.07);">
-
-        <!-- Header band with "34" badge -->
-        <tr>
-          <td style="background:#92400E;background:linear-gradient(135deg,#B45309 0%,#92400E 100%);padding:24px 32px 20px;">
-            <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
-              <tr>
-                <td>
-                  <div style="display:inline-block;background:#D97706;background:linear-gradient(135deg,#FBBF24,#D97706);color:#fff;font-family:'Barlow Semi Condensed',Barlow,Arial,sans-serif;font-size:22px;font-weight:700;letter-spacing:0.05em;padding:4px 12px;border-radius:6px;">34</div>
-                  <div style="margin-top:6px;font-family:'Barlow Semi Condensed',Barlow,Arial,sans-serif;font-size:11px;letter-spacing:0.15em;text-transform:uppercase;color:#FDE68A;">Grocery Helper</div>
-                </td>
-                <td style="text-align:right;vertical-align:top;">
-                  <div style="font-family:Barlow,Arial,sans-serif;font-size:11px;color:#FDE68A;opacity:0.7;">Delivery: ${escHtml(deliveryDate)}</div>
-                </td>
-              </tr>
-            </table>
-          </td>
-        </tr>
-
-        <!-- Hero -->
-        <tr>
-          <td style="padding:28px 32px 8px;">
-            <div style="font-family:'Barlow Semi Condensed',Barlow,Arial,sans-serif;font-size:36px;font-weight:700;color:#1F2937;line-height:1.1;">${escHtml(hero)}</div>
-            ${sub ? `<div style="margin-top:8px;font-family:Barlow,Arial,sans-serif;font-size:14px;color:#6B7280;line-height:1.5;">${sub}</div>` : ""}
-          </td>
-        </tr>
-
-        <!-- Items -->
-        <tr>
-          <td style="padding:16px 32px 0;">
-            <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
-              ${emptyCartHtml}
-              ${itemsHtml}
-              ${activityHtml}
-              ${routineHtml}
-            </table>
-          </td>
-        </tr>
-
-        <!-- CTA -->
-        <tr>
-          <td style="padding:28px 32px 0;text-align:center;">
-            <table role="presentation" cellpadding="0" cellspacing="0" style="margin:0 auto;">
-              <tr>
-                <td style="background:#B45309;background:linear-gradient(135deg,#D97706,#92400E);border-radius:8px;">
-                  <a href="${ctaUrl}" style="display:inline-block;padding:13px 32px;font-family:'Barlow Semi Condensed',Barlow,Arial,sans-serif;font-size:15px;font-weight:600;letter-spacing:0.03em;color:#ffffff;text-decoration:none;">${escHtml(ctaLabel)}</a>
-                </td>
-              </tr>
-            </table>
-          </td>
-        </tr>
-
-        <!-- Footer -->
-        <tr>
-          <td style="padding:28px 32px 32px;">
-            <div style="border-top:1px solid #F3EDE2;padding-top:20px;">
-              <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
-                <tr>
-                  <td style="font-family:Barlow,Arial,sans-serif;font-size:11px;color:#9CA3AF;line-height:1.7;">
-                    <strong style="color:#6B7280;">Janus</strong> \xB7 Grocery Helper<br>
-                    Cart locks: ${escHtml(lockTime)}<br>
-                    Delivery: ${escHtml(deliveryDate)}<br>
-                    <a href="${ctaUrl}" style="color:#D97706;text-decoration:none;">Edit cart</a>
-                  </td>
-                  <td style="text-align:right;vertical-align:bottom;">
-                    <div style="font-family:'Barlow Semi Condensed',Barlow,Arial,sans-serif;font-size:20px;font-weight:700;color:#F3EDE2;">34</div>
-                  </td>
-                </tr>
-              </table>
-            </div>
-          </td>
-        </tr>
-
-      </table>
-    </td>
-  </tr>
-</table>
-</body>
-</html>`;
-}
-function renderCartText(variant, items, opts = {}) {
-  const { run, lockStatus, estimatedTotal } = opts;
-  const hero = heroText(variant, lockStatus);
-  const sub = subHeadline(variant, items.length, lockStatus, estimatedTotal);
-  const lockTime = fmtLockTime(run?.cycle_lock_at);
-  const deliveryDate = fmtDeliveryDate(run?.delivery_date);
-  const lines = [];
-  lines.push(`GROCERY HELPER \u2014 Janus`);
-  lines.push(`========================================`);
-  lines.push(``);
-  lines.push(hero.toUpperCase());
-  if (sub) lines.push(sub.replace(/&nbsp;/g, " "));
-  lines.push(``);
-  if (items.length > 0) {
-    const groups = groupByCategory(items);
-    for (const [cat, catItems] of groups) {
-      lines.push(`[ ${cat.toUpperCase()} ]`);
-      for (const item of catItems) {
-        const brand = item.brand ? ` (${item.brand})` : "";
-        const size = item.size ? ` \u2014 ${item.size}` : "";
-        const price = item.unit_price ? ` @ ${fmtPrice(item.unit_price)}` : "";
-        lines.push(`  \xD7 ${item.quantity}  ${item.name}${brand}${size}${price}`);
-      }
-      lines.push(``);
-    }
-  } else {
-    lines.push(`No items in the cart.`);
-    lines.push(``);
-  }
-  if (variant === "rina-monday") {
-    lines.push(`STANDING ROUTINE`);
-    lines.push(`  \u2713 Put away all groceries \u2014 refrigerated items first.`);
-    lines.push(`  \u2713 Check expiry dates and discard anything past due.`);
-    lines.push(`  \u2713 Wipe down refrigerator shelves and crisper drawers.`);
-    lines.push(`  \u2713 Note any staples that are running low for next week.`);
-    lines.push(``);
-  }
-  lines.push(`Cart locks: ${lockTime}`);
-  lines.push(`Delivery: ${deliveryDate}`);
-  lines.push(`${CART_URL}`);
-  lines.push(``);
-  lines.push(`Janus \u2014 Grocery Helper`);
-  return lines.join("\n");
-}
-async function sendGroceryEmail(params) {
-  const { variant, toAddresses, items, run, auditRows, memberNames, lockStatus, estimatedTotal } = params;
-  const results = [];
-  let gmailToken;
-  try {
-    const saKey = getSaKey();
-    gmailToken = await getServiceToken(saKey, "https://www.googleapis.com/auth/gmail.send", JANUS_EMAIL);
-  } catch (tokenErr) {
-    const msg = tokenErr instanceof Error ? tokenErr.message : String(tokenErr);
-    console.error("[groceryEmail] Failed to obtain Gmail token:", msg);
-    return { ok: false, results: toAddresses.map((to) => ({ to, success: false, error: `token_error: ${msg}` })) };
-  }
-  const htmlBody = renderCartHtml(variant, items, { run, auditRows, memberNames, lockStatus, estimatedTotal });
-  const textBody = renderCartText(variant, items, { run, lockStatus, estimatedTotal });
-  const subject = buildSubject(variant, items, lockStatus);
-  const enc = new TextEncoder();
-  for (const to of toAddresses) {
-    try {
-      const boundary = "boundary_" + crypto.randomUUID().replace(/-/g, "");
-      const subjectB64 = Buffer.from(subject).toString("base64");
-      const mime = [
-        `From: Janus <${JANUS_EMAIL}>`,
-        `To: ${to}`,
-        `Subject: =?UTF-8?B?${subjectB64}?=`,
-        "MIME-Version: 1.0",
-        `Content-Type: multipart/alternative; boundary="${boundary}"`,
-        "",
-        `--${boundary}`,
-        "Content-Type: text/plain; charset=UTF-8",
-        "Content-Transfer-Encoding: 8bit",
-        "",
-        textBody,
-        "",
-        `--${boundary}`,
-        "Content-Type: text/html; charset=UTF-8",
-        "Content-Transfer-Encoding: 8bit",
-        "",
-        htmlBody,
-        "",
-        `--${boundary}--`
-      ].join("\r\n");
-      const raw = base64url(enc.encode(mime));
-      const sendRes = await fetch("https://gmail.googleapis.com/gmail/v1/users/me/messages/send", {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${gmailToken}`,
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ raw })
-      });
-      if (!sendRes.ok) {
-        const errText = await sendRes.text().catch(() => `HTTP ${sendRes.status}`);
-        console.error(`[groceryEmail] Send failed \u2192 ${to}: ${errText}`);
-        results.push({ to, success: false, error: errText });
-      } else {
-        results.push({ to, success: true });
-      }
-    } catch (sendErr) {
-      const msg = sendErr instanceof Error ? sendErr.message : String(sendErr);
-      console.error(`[groceryEmail] Send exception \u2192 ${to}: ${msg}`);
-      results.push({ to, success: false, error: msg });
-    }
-  }
-  const ok2 = results.length > 0 && results.every((r) => r.success);
-  await logEmail(
-    `grocery_${variant.replace(/-/g, "_")}`,
-    subject,
-    toAddresses,
-    htmlBody,
-    ok2 ? "sent" : results.some((r) => r.success) ? "partial_failure" : "error",
-    ok2 ? void 0 : results.filter((r) => !r.success).map((r) => r.error).filter(Boolean).join("; "),
-    textBody
-  ).catch(() => {
-  });
-  return { ok: ok2, results };
-}
-
-// server/routes/grocery.ts
-var router23 = Router24();
-var TONY_PHONE = process.env.ADMIN_PHONE || "15550100";
-var TONY_USER_ID = "7a85b652-b5d8-44c4-9409-384562448883";
-var ALLOWED_IMAGE_HOSTS = /* @__PURE__ */ new Set([
-  "m.media-amazon.com",
-  "images-na.ssl-images-amazon.com",
-  "images-eu.ssl-images-amazon.com",
-  "images-fe.ssl-images-amazon.com",
-  "ecx.images-amazon.com",
-  "g-ec2.images-amazon.com"
-]);
-var imageCache = /* @__PURE__ */ new Map();
-var IMAGE_CACHE_TTL = 24 * 60 * 60 * 1e3;
-var IMAGE_CACHE_MAX = 300;
-router23.get("/api/grocery/image", async (req, res) => {
-  try {
-    const { url } = req.query;
-    if (!url || typeof url !== "string") return res.status(400).json({ error: "url is required" });
-    let parsed;
-    try {
-      parsed = new URL(url);
-    } catch {
-      return res.status(400).json({ error: "Invalid URL" });
-    }
-    if (!ALLOWED_IMAGE_HOSTS.has(parsed.hostname)) return res.status(403).json({ error: "Host not allowed" });
-    const cached = imageCache.get(url);
-    if (cached && Date.now() - cached.cachedAt < IMAGE_CACHE_TTL) {
-      res.setHeader("Content-Type", cached.contentType);
-      res.setHeader("Cache-Control", "public, max-age=86400, immutable");
-      return res.end(cached.data);
-    }
-    const controller = new AbortController();
-    const fetchTimeout = setTimeout(() => controller.abort(), 1e4);
-    let upstream;
-    try {
-      upstream = await fetch(url, {
-        signal: controller.signal,
-        headers: {
-          "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
-          "Referer": "https://www.amazon.com/",
-          "Accept": "image/webp,image/apng,image/*,*/*;q=0.8"
-        }
-      });
-    } finally {
-      clearTimeout(fetchTimeout);
-    }
-    if (!upstream.ok) return res.status(502).end();
-    const contentType = upstream.headers.get("content-type") || "image/jpeg";
-    if (!contentType.startsWith("image/")) return res.status(415).end();
-    const contentLength = parseInt(upstream.headers.get("content-length") || "0", 10);
-    if (contentLength > 5 * 1024 * 1024) return res.status(413).end();
-    const data = Buffer.from(await upstream.arrayBuffer());
-    if (data.length > 5 * 1024 * 1024) return res.status(413).end();
-    if (imageCache.size >= IMAGE_CACHE_MAX) {
-      const oldest = [...imageCache.entries()].sort((a, b2) => a[1].cachedAt - b2[1].cachedAt)[0];
-      if (oldest) imageCache.delete(oldest[0]);
-    }
-    imageCache.set(url, { data, contentType, cachedAt: Date.now() });
-    res.setHeader("Content-Type", contentType);
-    res.setHeader("Cache-Control", "public, max-age=86400, immutable");
-    res.end(data);
-  } catch (error) {
-    console.error("GET /api/grocery/image error:", error);
-    res.status(502).end();
-  }
-});
-function ptTimestamp(ptDateStr, ptHour, ptMinute = 0) {
-  const isoBase = `${ptDateStr}T${String(ptHour).padStart(2, "0")}:${String(ptMinute).padStart(2, "0")}:00`;
-  for (const offsetHours of [8, 7]) {
-    const utcMs = Date.parse(isoBase + "Z") + offsetHours * 36e5;
-    const candidate = new Date(utcMs);
-    const rawPtHour = parseInt(
-      new Intl.DateTimeFormat("en-US", {
-        timeZone: "America/Los_Angeles",
-        hour: "numeric",
-        hour12: false
-      }).format(candidate),
-      10
-    );
-    const actualPtHour = rawPtHour % 24;
-    const targetHour = ptHour % 24;
-    if (actualPtHour === targetHour) return candidate;
-  }
-  return new Date(Date.parse(isoBase + "Z") + 8 * 36e5);
-}
-function getCurrentCycleWindow(now = /* @__PURE__ */ new Date()) {
-  const ptWeekdayName = new Intl.DateTimeFormat("en-US", {
-    timeZone: "America/Los_Angeles",
-    weekday: "short"
-  }).format(now);
-  const ptWeekday = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].indexOf(ptWeekdayName);
-  const daysSinceSat = ptWeekday === 6 ? 0 : ptWeekday + 1;
-  const nowUtcMs = now.getTime();
-  const satDayMs = nowUtcMs - daysSinceSat * 864e5;
-  const satDateStr = new Intl.DateTimeFormat("en-CA", {
-    timeZone: "America/Los_Angeles",
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit"
-  }).format(new Date(satDayMs));
-  const friDateStr = new Intl.DateTimeFormat("en-CA", {
-    timeZone: "America/Los_Angeles",
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit"
-  }).format(new Date(satDayMs + 6 * 864e5));
-  const monDate = new Date(satDayMs + 9 * 864e5);
-  const monDateStr = monDate.toISOString().slice(0, 10);
-  return {
-    cycleStartAt: ptTimestamp(satDateStr, 0),
-    cycleLockAt: ptTimestamp(friDateStr, 16),
-    deliveryDate: monDateStr
-  };
-}
-async function withTransaction(fn) {
-  const client = await pool.connect();
-  try {
-    await client.query("BEGIN");
-    const result = await fn(client);
-    await client.query("COMMIT");
-    return result;
-  } catch (err) {
-    await client.query("ROLLBACK").catch(() => {
-    });
-    throw err;
-  } finally {
-    client.release();
-  }
-}
-async function openCycleIfMissing(createdByUserId) {
-  const { cycleStartAt, cycleLockAt, deliveryDate } = getCurrentCycleWindow();
-  return withTransaction(async (client) => {
-    const existing = await client.query(
-      `SELECT * FROM grocery_order_runs
-       WHERE cycle_start_at = $1 AND status <> 'cancelled'
-       FOR UPDATE SKIP LOCKED
-       LIMIT 1`,
-      [cycleStartAt.toISOString()]
-    );
-    if (existing.rows.length > 0) return { run: existing.rows[0], isNew: false };
-    const { rows } = await client.query(
-      `INSERT INTO grocery_order_runs
-         (status, cycle_start_at, cycle_lock_at, delivery_date, created_by_user_id, item_count)
-       VALUES ('open', $1, $2, $3, $4, 0)
-       ON CONFLICT DO NOTHING
-       RETURNING *`,
-      [cycleStartAt.toISOString(), cycleLockAt.toISOString(), deliveryDate, createdByUserId ?? null]
-    );
-    if (rows.length > 0) {
-      logAudit("grocery-cycle", {
-        category: "home",
-        event_type: "grocery_cycle_opened",
-        severity: "info",
-        actor_id: createdByUserId ?? "system",
-        actor_role: "system",
-        channel: "cron",
-        summary: `Grocery cycle opened for ${deliveryDate} delivery`,
-        detail: { cycle_start_at: cycleStartAt.toISOString(), run_id: rows[0].id },
-        status: "success"
-      }).catch((auditErr) => console.warn(`[audit] write failed: ${auditErr instanceof Error ? auditErr.message : auditErr}`));
-      return { run: rows[0], isNew: true };
-    }
-    const race = await client.query(
-      `SELECT * FROM grocery_order_runs
-       WHERE cycle_start_at = $1 AND status <> 'cancelled'
-       LIMIT 1`,
-      [cycleStartAt.toISOString()]
-    );
-    return { run: race.rows[0] ?? null, isNew: false };
-  });
-}
-async function writeItemAudit(opts) {
-  const { itemId, runId, action, actorUserId, oldQty, newQty, detail } = opts;
-  await storage.query(
-    `INSERT INTO grocery_order_item_audit
-       (item_id, run_id, action, actor_user_id, old_qty, new_qty, detail)
-     VALUES ($1, $2, $3, $4, $5, $6, $7)`,
-    [itemId, runId, action, actorUserId, oldQty ?? null, newQty ?? null, JSON.stringify(detail ?? {})]
-  );
-  logAudit("grocery-order", {
-    category: "home",
-    event_type: `grocery_item_${action}`,
-    severity: "info",
-    actor_id: actorUserId ?? "system",
-    actor_role: "user",
-    channel: "web",
-    summary: `Grocery item ${action} in run ${runId}`,
-    detail: { item_id: itemId, run_id: runId, old_qty: oldQty, new_qty: newQty, ...detail },
-    status: "success"
-  }).catch((auditErr) => console.warn(`[audit] write failed: ${auditErr instanceof Error ? auditErr.message : auditErr}`));
-}
-async function executeLockAndSubmit(submitFn, getFailureRecipients = getGroceryApproverPhones) {
-  const { cycleStartAt } = getCurrentCycleWindow();
-  const { run, itemCount } = await withTransaction(async (client) => {
-    const runResult = await client.query(
-      `SELECT * FROM grocery_order_runs
-       WHERE cycle_start_at = $1 AND status = 'open'
-       FOR UPDATE
-       LIMIT 1`,
-      [cycleStartAt.toISOString()]
-    );
-    if (!runResult.rows.length) return { run: null, itemCount: 0 };
-    const r = runResult.rows[0];
-    const countResult = await client.query(
-      `SELECT COUNT(*) AS cnt FROM grocery_order_items WHERE run_id = $1`,
-      [r.id]
-    );
-    const cnt = parseInt(countResult.rows[0].cnt, 10);
-    if (cnt === 0) {
-      await client.query(
-        `UPDATE grocery_order_runs
-         SET status = 'skipped', locked_at = NOW(), updated_at = NOW()
-         WHERE id = $1`,
-        [r.id]
-      );
-      logAudit("grocery-cycle", {
-        category: "home",
-        event_type: "grocery_cycle_skipped",
-        severity: "info",
-        actor_id: "system",
-        actor_role: "system",
-        channel: "cron",
-        summary: `Grocery cycle skipped \u2014 cart was empty`,
-        detail: { run_id: r.id },
-        status: "success"
-      }).catch((auditErr) => console.warn(`[audit] write failed: ${auditErr instanceof Error ? auditErr.message : auditErr}`));
-      return { run: { ...r, status: "skipped" }, itemCount: 0 };
-    }
-    await client.query(
-      `UPDATE grocery_order_runs
-       SET status = 'locked', locked_at = NOW(), updated_at = NOW()
-       WHERE id = $1`,
-      [r.id]
-    );
-    return { run: { ...r, status: "locked" }, itemCount: cnt };
-  });
-  if (!run) return { status: "no_open_run" };
-  if (run.status === "skipped") return { status: "skipped", run_id: run.id };
-  const { rows: items } = await storage.query(
-    `SELECT * FROM grocery_order_items WHERE run_id = $1 ORDER BY category, name`,
-    [run.id]
-  );
-  let submissionResult;
-  try {
-    submissionResult = await submitFn(run, items);
-  } catch (submitErr) {
-    submissionResult = { success: false, log: null, error: submitErr.message };
-  }
-  if (submissionResult.success) {
-    await storage.query(
-      `UPDATE grocery_order_runs
-       SET status = 'submitted', submitted_at = NOW(),
-           submission_log = $2, updated_at = NOW()
-       WHERE id = $1`,
-      [run.id, JSON.stringify(submissionResult.log)]
-    );
-    logAudit("grocery-cycle", {
-      category: "home",
-      event_type: "grocery_cycle_submitted",
-      severity: "info",
-      actor_id: "system",
-      actor_role: "system",
-      channel: "cron",
-      summary: `Grocery order submitted to Amazon (${itemCount} items)`,
-      detail: { run_id: run.id, item_count: itemCount },
-      status: "success"
-    }).catch((auditErr) => console.warn(`[audit] write failed: ${auditErr instanceof Error ? auditErr.message : auditErr}`));
-    return { status: "submitted", run_id: run.id, item_count: itemCount };
-  }
-  await storage.query(
-    `UPDATE grocery_order_runs
-     SET submission_log = $2, updated_at = NOW()
-     WHERE id = $1`,
-    [run.id, JSON.stringify({ error: submissionResult.error, attempted_at: (/* @__PURE__ */ new Date()).toISOString() })]
-  );
-  const submissionLog = submissionResult.log;
-  const itemsAdded = typeof submissionLog?.items_added === "number" ? submissionLog.items_added : 0;
-  if (itemsAdded === 0) {
-    const failurePhones = await getFailureRecipients();
-    sendMonitorAlert({
-      recipients: failurePhones.map((whatsapp) => ({ whatsapp })),
-      subject: "Grocery Order Submission Failed",
-      body: `\u26A0\uFE0F *Grocery Order Failed*
-
-The weekly grocery order (${itemCount} items) could not be submitted to Amazon.
-
-Error: ${submissionResult.error ?? "Unknown error"}
-
-Please submit manually or retry via the admin panel.`,
-      channels: ["whatsapp"],
-      cooldownKey: "grocery-submit-failure",
-      cooldownMs: 4 * 60 * 60 * 1e3
-    }).catch((err) => console.error("[grocery-cron] WhatsApp alert failed:", err));
-  }
-  logAudit("grocery-cycle", {
-    category: "home",
-    event_type: "grocery_cycle_submit_failed",
-    severity: "error",
-    actor_id: "system",
-    actor_role: "system",
-    channel: "cron",
-    summary: `Grocery order submission failed \u2014 run left locked for manual retry`,
-    detail: { run_id: run.id, error: submissionResult.error },
-    status: "error"
-  }).catch((auditErr) => console.warn(`[audit] write failed: ${auditErr instanceof Error ? auditErr.message : auditErr}`));
-  return { status: "submit_failed", run_id: run.id, error: submissionResult.error ?? "Unknown error" };
-}
-async function executeAddItem(opts) {
-  const { runId, stapleId, actorUserId } = opts;
-  const runResult = await storage.query(
-    `SELECT id, status FROM grocery_order_runs WHERE id = $1`,
-    [runId]
-  );
-  if (!runResult.rows.length) return { error: "Run not found", status: 404 };
-  if (runResult.rows[0].status !== "open") {
-    return { error: `Run is not open (status=${runResult.rows[0].status})`, status: 409 };
-  }
-  let itemData;
-  if (stapleId) {
-    const stapleResult = await storage.query(
-      `SELECT * FROM grocery_staples WHERE id = $1`,
-      [stapleId]
-    );
-    if (!stapleResult.rows.length) return { error: "Staple not found", status: 404 };
-    const staple = stapleResult.rows[0];
-    itemData = {
-      run_id: runId,
-      staple_id: stapleId,
-      amazon_asin: staple.amazon_asin,
-      name: staple.name,
-      category: staple.category,
-      brand: staple.brand,
-      size: staple.size,
-      image_url: staple.image_url,
-      unit_price: staple.unit_price,
-      quantity: opts.quantity ?? staple.default_quantity ?? 1,
-      added_by_user_id: actorUserId
-    };
-  } else {
-    if (!opts.amazonAsin) return { error: "amazonAsin is required for one-off items", status: 400 };
-    if (!opts.name) return { error: "name is required for one-off items", status: 400 };
-    if (!opts.category) return { error: "category is required for one-off items", status: 400 };
-    itemData = {
-      run_id: runId,
-      staple_id: null,
-      amazon_asin: opts.amazonAsin,
-      name: opts.name,
-      category: opts.category,
-      brand: opts.brand ?? null,
-      size: opts.size ?? null,
-      image_url: opts.imageUrl ?? null,
-      unit_price: opts.unitPrice ?? null,
-      quantity: opts.quantity ?? 1,
-      added_by_user_id: actorUserId
-    };
-  }
-  let exists = false;
-  if (stapleId) {
-    const checkResult = await storage.query(
-      `SELECT id FROM grocery_order_items WHERE run_id = $1 AND staple_id = $2 LIMIT 1`,
-      [runId, stapleId]
-    );
-    exists = checkResult.rows.length > 0;
-  } else {
-    const checkResult = await storage.query(
-      `SELECT id FROM grocery_order_items WHERE run_id = $1 AND amazon_asin = $2 AND staple_id IS NULL LIMIT 1`,
-      [runId, opts.amazonAsin]
-    );
-    exists = checkResult.rows.length > 0;
-  }
-  let upsertSql;
-  let upsertParams;
-  if (stapleId) {
-    upsertSql = `
-      INSERT INTO grocery_order_items
-        (run_id, staple_id, amazon_asin, name, category, brand, size, image_url, unit_price, quantity, added_by_user_id)
-      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
-      ON CONFLICT (run_id, staple_id) WHERE staple_id IS NOT NULL
-      DO UPDATE SET
-        quantity = EXCLUDED.quantity, name = EXCLUDED.name, category = EXCLUDED.category,
-        brand = EXCLUDED.brand, size = EXCLUDED.size, image_url = EXCLUDED.image_url,
-        unit_price = EXCLUDED.unit_price, updated_at = NOW()
-      RETURNING *
-    `;
-    upsertParams = [
-      itemData.run_id,
-      itemData.staple_id,
-      itemData.amazon_asin,
-      itemData.name,
-      itemData.category,
-      itemData.brand,
-      itemData.size,
-      itemData.image_url,
-      itemData.unit_price,
-      itemData.quantity,
-      itemData.added_by_user_id
-    ];
-  } else {
-    upsertSql = `
-      INSERT INTO grocery_order_items
-        (run_id, staple_id, amazon_asin, name, category, brand, size, image_url, unit_price, quantity, added_by_user_id)
-      VALUES ($1, NULL, $2, $3, $4, $5, $6, $7, $8, $9, $10)
-      ON CONFLICT (run_id, amazon_asin) WHERE staple_id IS NULL AND amazon_asin IS NOT NULL
-      DO UPDATE SET
-        quantity = EXCLUDED.quantity, name = EXCLUDED.name, category = EXCLUDED.category,
-        brand = EXCLUDED.brand, size = EXCLUDED.size, image_url = EXCLUDED.image_url,
-        unit_price = EXCLUDED.unit_price, updated_at = NOW()
-      RETURNING *
-    `;
-    upsertParams = [
-      itemData.run_id,
-      itemData.amazon_asin,
-      itemData.name,
-      itemData.category,
-      itemData.brand,
-      itemData.size,
-      itemData.image_url,
-      itemData.unit_price,
-      itemData.quantity,
-      itemData.added_by_user_id
-    ];
-  }
-  const { rows: itemRows } = await storage.query(
-    upsertSql,
-    upsertParams
-  );
-  const item = itemRows[0];
-  const wasInserted = !exists;
-  await writeItemAudit({
-    itemId: item.id,
-    runId,
-    action: wasInserted ? "added" : "qty_changed",
-    actorUserId,
-    oldQty: wasInserted ? null : void 0,
-    newQty: itemData.quantity,
-    detail: { name: item.name, amazon_asin: item.amazon_asin }
-  });
-  await storage.query(
-    `UPDATE grocery_order_runs
-     SET item_count = (SELECT COUNT(*) FROM grocery_order_items WHERE run_id = $1),
-         updated_at = NOW()
-     WHERE id = $1`,
-    [runId]
-  );
-  return { item, inserted: wasInserted };
-}
-async function executePatchItem(itemId, quantity, actorUserId) {
-  const itemResult = await storage.query(
-    `SELECT i.*, r.status AS run_status
-     FROM grocery_order_items i
-     JOIN grocery_order_runs r ON r.id = i.run_id
-     WHERE i.id = $1`,
-    [itemId]
-  );
-  if (!itemResult.rows.length) return { error: "Item not found", status: 404 };
-  const item = itemResult.rows[0];
-  if (item.run_status !== "open") {
-    return { error: `Run is not open (status=${item.run_status})`, status: 409 };
-  }
-  const oldQty = item.quantity;
-  if (quantity <= 0) {
-    await storage.query(`DELETE FROM grocery_order_items WHERE id = $1`, [itemId]);
-    await writeItemAudit({
-      itemId,
-      runId: item.run_id,
-      action: "removed",
-      actorUserId,
-      oldQty,
-      newQty: 0,
-      detail: { name: item.name, amazon_asin: item.amazon_asin }
-    });
-    await storage.query(
-      `UPDATE grocery_order_runs SET item_count=(SELECT COUNT(*) FROM grocery_order_items WHERE run_id=$1), updated_at=NOW() WHERE id=$1`,
-      [item.run_id]
-    );
-    return { deleted: true, removed: true };
-  }
-  const { rows: updatedRows } = await storage.query(
-    `UPDATE grocery_order_items SET quantity=$1, updated_at=NOW() WHERE id=$2 RETURNING *`,
-    [quantity, itemId]
-  );
-  await writeItemAudit({
-    itemId,
-    runId: item.run_id,
-    action: "qty_changed",
-    actorUserId,
-    oldQty,
-    newQty: quantity,
-    detail: { name: item.name, amazon_asin: item.amazon_asin }
-  });
-  return { item: updatedRows[0] };
-}
-function validateCronSecret(req) {
-  const secret = req.headers["x-cron-secret"];
-  return secret === process.env.CRON_SECRET || secret === process.env.JWT_SECRET;
-}
-async function getGroceryApproverPhones() {
-  try {
-    const { rows } = await storage.query(
-      `SELECT whatsapp_number
-       FROM household_members
-       WHERE is_active = true
-         AND lower(email) = ANY($1)
-         AND whatsapp_number IS NOT NULL
-         AND whatsapp_number <> ''`,
-      [[TONY_EMAIL.toLowerCase(), MOM_EMAIL.toLowerCase()]]
-    );
-    const phones = rows.map((r) => (r.whatsapp_number || "").replace(/[^\d]/g, "")).filter(Boolean);
-    if (phones.length > 0) return Array.from(new Set(phones));
-  } catch (err) {
-    console.error("[grocery] getGroceryApproverPhones lookup failed:", err);
-  }
-  return [TONY_PHONE];
-}
-async function submitToAmazonGrocery(_run, items) {
-  const { buildItemList: buildItemList2, submitGroceryOrder: submitGroceryOrder2 } = await Promise.resolve().then(() => (init_grocery_submit(), grocery_submit_exports));
-  const itemList = buildItemList2(items);
-  const notifyPhones = await getGroceryApproverPhones();
-  return submitGroceryOrder2(itemList, notifyPhones);
-}
-router23.get("/api/grocery-staples", requireAuth, async (req, res) => {
-  try {
-    const { rows } = await storage.query(
-      `SELECT id, name, default_quantity, category, platform, is_active,
-              added_by_user_id, brand, size, amazon_asin, amazon_url, image_url, unit_price,
-              created_at, updated_at
-       FROM grocery_staples ORDER BY category ASC, name ASC`
-    );
-    res.json({ staples: rows });
-  } catch (error) {
-    console.error("GET /api/grocery-staples error:", error);
-    res.status(500).json({ error: error.message });
-  }
-});
-router23.post("/api/grocery-staples", requireAuth, async (req, res) => {
-  try {
-    const { name, defaultQuantity, category, platform, brand, size, amazonAsin, amazonUrl, imageUrl, unitPrice } = req.body;
-    if (!name || typeof name !== "string" || !name.trim()) {
-      return res.status(400).json({ error: "name is required" });
-    }
-    const { rows } = await storage.query(
-      `INSERT INTO grocery_staples
-         (name, default_quantity, category, platform, added_by_user_id, brand, size, amazon_asin, amazon_url, image_url, unit_price)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) RETURNING *`,
-      [
-        name.trim(),
-        defaultQuantity || 1,
-        category || "general",
-        platform || "amazon-fresh",
-        req.user.userId,
-        brand ?? null,
-        size ?? null,
-        amazonAsin ?? null,
-        amazonUrl ?? null,
-        imageUrl ?? null,
-        unitPrice ?? null
-      ]
-    );
-    res.json({ staple: rows[0] });
-  } catch (error) {
-    console.error("POST /api/grocery-staples error:", error);
-    res.status(500).json({ error: error.message });
-  }
-});
-router23.patch("/api/grocery-staples/:id", requireAuth, async (req, res) => {
-  try {
-    const { id } = req.params;
-    const { name, defaultQuantity, category, platform, isActive: isActive2, brand, size, amazonAsin, amazonUrl, imageUrl, unitPrice } = req.body;
-    const sets = [];
-    const vals = [];
-    let idx = 1;
-    if (name !== void 0) {
-      sets.push(`name = $${idx++}`);
-      vals.push(name.trim());
-    }
-    if (defaultQuantity !== void 0) {
-      sets.push(`default_quantity = $${idx++}`);
-      vals.push(defaultQuantity);
-    }
-    if (category !== void 0) {
-      sets.push(`category = $${idx++}`);
-      vals.push(category);
-    }
-    if (platform !== void 0) {
-      sets.push(`platform = $${idx++}`);
-      vals.push(platform);
-    }
-    if (isActive2 !== void 0) {
-      sets.push(`is_active = $${idx++}`);
-      vals.push(isActive2);
-    }
-    if (brand !== void 0) {
-      sets.push(`brand = $${idx++}`);
-      vals.push(brand);
-    }
-    if (size !== void 0) {
-      sets.push(`size = $${idx++}`);
-      vals.push(size);
-    }
-    if (amazonAsin !== void 0) {
-      sets.push(`amazon_asin = $${idx++}`);
-      vals.push(amazonAsin);
-    }
-    if (amazonUrl !== void 0) {
-      sets.push(`amazon_url = $${idx++}`);
-      vals.push(amazonUrl);
-    }
-    if (imageUrl !== void 0) {
-      sets.push(`image_url = $${idx++}`);
-      vals.push(imageUrl);
-    }
-    if (unitPrice !== void 0) {
-      sets.push(`unit_price = $${idx++}`);
-      vals.push(unitPrice);
-    }
-    if (sets.length === 0) return res.status(400).json({ error: "No fields to update" });
-    sets.push(`updated_at = NOW()`);
-    vals.push(id);
-    const { rowCount, rows } = await storage.query(
-      `UPDATE grocery_staples SET ${sets.join(", ")} WHERE id = $${idx} RETURNING *`,
-      vals
-    );
-    if (!rowCount) return res.status(404).json({ error: "Staple not found" });
-    res.json({ staple: rows[0] });
-  } catch (error) {
-    console.error("PATCH /api/grocery-staples error:", error);
-    res.status(500).json({ error: error.message });
-  }
-});
-router23.delete("/api/grocery-staples/:id", requireAuth, async (req, res) => {
-  try {
-    const { id } = req.params;
-    const { rowCount } = await storage.query(`DELETE FROM grocery_staples WHERE id = $1`, [id]);
-    if (!rowCount) return res.status(404).json({ error: "Staple not found" });
-    res.json({ success: true });
-  } catch (error) {
-    console.error("DELETE /api/grocery-staples error:", error);
-    res.status(500).json({ error: error.message });
-  }
-});
-router23.get("/api/grocery-order/current", requireAuth, async (req, res) => {
-  try {
-    const { run, isNew } = await openCycleIfMissing(req.user.userId);
-    if (!run) return res.status(500).json({ error: "Failed to open or retrieve current cycle" });
-    const [itemsResult, auditResult] = await Promise.all([
-      storage.query(`SELECT * FROM grocery_order_items WHERE run_id = $1 ORDER BY created_at ASC`, [run.id]),
-      storage.query(`SELECT * FROM grocery_order_item_audit WHERE run_id = $1 ORDER BY created_at DESC LIMIT 10`, [run.id])
-    ]);
-    res.json({ run, items: itemsResult.rows, audit: auditResult.rows, isNew });
-  } catch (error) {
-    console.error("GET /api/grocery-order/current error:", error);
-    res.status(500).json({ error: error.message });
-  }
-});
-router23.post("/api/grocery-order/items", requireAuth, async (req, res) => {
-  try {
-    let runId = req.body.runId;
-    if (!runId) {
-      const { run } = await openCycleIfMissing(req.user.userId);
-      if (!run) return res.status(500).json({ error: "Failed to open or retrieve current cycle" });
-      runId = run.id;
-    }
-    const result = await executeAddItem({
-      runId,
-      stapleId: req.body.stapleId,
-      amazonAsin: req.body.amazonAsin,
-      name: req.body.name,
-      category: req.body.category,
-      quantity: req.body.quantity,
-      brand: req.body.brand,
-      size: req.body.size,
-      imageUrl: req.body.imageUrl,
-      unitPrice: req.body.unitPrice,
-      actorUserId: req.user.userId
-    });
-    if ("error" in result) return res.status(result.status).json({ error: result.error });
-    emitToAll("grocery:item-changed", { runId, action: "upsert" });
-    res.json(result);
-  } catch (error) {
-    console.error("POST /api/grocery-order/items error:", error);
-    res.status(500).json({ error: error.message });
-  }
-});
-router23.patch("/api/grocery-order/items/:itemId", requireAuth, async (req, res) => {
-  try {
-    const { itemId } = req.params;
-    const { quantity } = req.body;
-    if (quantity === void 0 || typeof quantity !== "number") {
-      return res.status(400).json({ error: "quantity (number) is required" });
-    }
-    const result = await executePatchItem(itemId, quantity, req.user.userId);
-    if ("error" in result) return res.status(result.status).json({ error: result.error });
-    emitToAll("grocery:item-changed", { itemId, action: "patch" });
-    res.json(result);
-  } catch (error) {
-    console.error("PATCH /api/grocery-order/items/:itemId error:", error);
-    res.status(500).json({ error: error.message });
-  }
-});
-router23.delete("/api/grocery-order/items/:itemId", requireAuth, async (req, res) => {
-  try {
-    const { itemId } = req.params;
-    const result = await executePatchItem(itemId, 0, req.user.userId);
-    if ("error" in result) return res.status(result.status).json({ error: result.error });
-    emitToAll("grocery:item-changed", { itemId, action: "delete" });
-    res.json(result);
-  } catch (error) {
-    console.error("DELETE /api/grocery-order/items/:itemId error:", error);
-    res.status(500).json({ error: error.message });
-  }
-});
-router23.get("/api/grocery-order/runs", requireAuth, async (req, res) => {
-  try {
-    const { rows } = await storage.query(
-      `SELECT id, status, item_count, auto_ordered, approved_by,
-              cycle_start_at, cycle_lock_at, delivery_date,
-              locked_at, submitted_at, created_by_user_id,
-              created_at, approved_at, ordered_at
-       FROM grocery_order_runs ORDER BY created_at DESC LIMIT 20`
-    );
-    res.json({ runs: rows });
-  } catch (error) {
-    console.error("GET /api/grocery-order/runs error:", error);
-    res.status(500).json({ error: error.message });
-  }
-});
-router23.get("/api/grocery-order/runs/:id", requireAuth, async (req, res) => {
-  try {
-    const { id } = req.params;
-    const runResult = await storage.query(`SELECT * FROM grocery_order_runs WHERE id = $1`, [id]);
-    if (!runResult.rows.length) return res.status(404).json({ error: "Run not found" });
-    const [itemsResult, auditResult] = await Promise.all([
-      storage.query(`SELECT * FROM grocery_order_items WHERE run_id = $1 ORDER BY created_at ASC`, [id]),
-      storage.query(`SELECT * FROM grocery_order_item_audit WHERE run_id = $1 ORDER BY created_at DESC`, [id])
-    ]);
-    res.json({ run: runResult.rows[0], items: itemsResult.rows, audit: auditResult.rows });
-  } catch (error) {
-    console.error("GET /api/grocery-order/runs/:id error:", error);
-    res.status(500).json({ error: error.message });
-  }
-});
-router23.post("/cron/open-cycle", async (req, res) => {
-  if (!validateCronSecret(req)) return res.status(401).json({ error: "Unauthorized" });
-  try {
-    const { run } = await openCycleIfMissing(TONY_USER_ID);
-    res.json({ success: true, run_id: run?.id ?? null });
-  } catch (error) {
-    console.error("[grocery-cron] open-cycle error:", error);
-    res.status(500).json({ error: error.message });
-  }
-});
-router23.post("/cron/open-reminder", async (req, res) => {
-  if (!validateCronSecret(req)) return res.status(401).json({ error: "Unauthorized" });
-  try {
-    const { run } = await openCycleIfMissing(TONY_USER_ID);
-    if (!run || run.status !== "open") {
-      return res.json({ success: true, skipped: true, reason: "no open run" });
-    }
-    const cycleStartDate = new Date(run.cycle_start_at).toISOString().slice(0, 10);
-    const { query: dbQuery } = await Promise.resolve().then(() => (init_db2(), db_exports));
-    try {
-      await dbQuery(
-        `INSERT INTO report_email_dedup (report_type, period_key) VALUES ($1, $2)`,
-        ["grocery-open-reminder", cycleStartDate]
-      );
-    } catch (dedupErr) {
-      if (typeof dedupErr === "object" && dedupErr !== null && dedupErr.code === "23505") {
-        console.log(`[grocery-cron] open-reminder: already sent for cycle ${cycleStartDate} \u2014 skipping`);
-        return res.json({ success: true, skipped: true, reason: "already_sent_this_cycle" });
-      }
-      throw dedupErr;
-    }
-    const [itemsResult, recipientsResult] = await Promise.all([
-      storage.query(
-        `SELECT * FROM grocery_order_items WHERE run_id = $1 ORDER BY category, name`,
-        [run.id]
-      ),
-      storage.query(
-        `SELECT id, display_name, email FROM household_members WHERE is_active = true AND email IS NOT NULL`
-      )
-    ]);
-    const items = itemsResult.rows;
-    const recipients = recipientsResult.rows;
-    const toAddresses = recipients.map((r) => r.email).filter(Boolean);
-    const memberNames = {};
-    for (const r of recipients) memberNames[r.id] = r.display_name;
-    if (toAddresses.length === 0) {
-      console.warn("[grocery-cron] open-reminder: no active recipients with email \u2014 nothing sent");
-      logAudit("grocery-cycle", {
-        category: "home",
-        event_type: "grocery_open_reminder",
-        severity: "warn",
-        actor_id: "system",
-        actor_role: "system",
-        channel: "cron",
-        summary: `Grocery open-reminder skipped \u2014 no email recipients`,
-        detail: { run_id: run.id },
-        status: "skipped"
-      }).catch((auditErr) => console.warn(`[audit] write failed: ${auditErr instanceof Error ? auditErr.message : auditErr}`));
-      return res.json({ success: true, run_id: run.id, item_count: items.length, sent: 0 });
-    }
-    const emailResult = await sendGroceryEmail({
-      variant: "open-reminder",
-      toAddresses,
-      items,
-      run,
-      memberNames
-    });
-    logAudit("grocery-cycle", {
-      category: "home",
-      event_type: "grocery_open_reminder",
-      severity: "info",
-      actor_id: "system",
-      actor_role: "system",
-      channel: "cron",
-      summary: `Grocery open-reminder email sent (${items.length} items) to ${toAddresses.length} recipients`,
-      detail: { run_id: run.id, item_count: items.length, ok: emailResult.ok, results: emailResult.results },
-      status: emailResult.ok ? "success" : "partial"
-    }).catch((auditErr) => console.warn(`[audit] write failed: ${auditErr instanceof Error ? auditErr.message : auditErr}`));
-    if (!emailResult.ok) {
-      await enqueueFailedJob("grocery-open-reminder-email", new Error(
-        emailResult.results.filter((r) => !r.success).map((r) => r.error).join("; ") || "Send failed"
-      ));
-    }
-    res.json({ success: true, run_id: run.id, item_count: items.length, sent: toAddresses.length, ok: emailResult.ok });
-  } catch (error) {
-    console.error("[grocery-cron] open-reminder error:", error);
-    await enqueueFailedJob("grocery-open-reminder-email", error);
-    res.status(500).json({ error: error.message });
-  }
-});
-router23.post("/cron/last-call", async (req, res) => {
-  if (!validateCronSecret(req)) return res.status(401).json({ error: "Unauthorized" });
-  try {
-    const { run } = await openCycleIfMissing(TONY_USER_ID);
-    if (!run || run.status !== "open") {
-      return res.json({ success: true, skipped: true, reason: "no open run" });
-    }
-    const cycleStartDate = new Date(run.cycle_start_at).toISOString().slice(0, 10);
-    const { query: dbQuery } = await Promise.resolve().then(() => (init_db2(), db_exports));
-    try {
-      await dbQuery(
-        `INSERT INTO report_email_dedup (report_type, period_key) VALUES ($1, $2)`,
-        ["grocery-last-call", cycleStartDate]
-      );
-    } catch (dedupErr) {
-      if (typeof dedupErr === "object" && dedupErr !== null && dedupErr.code === "23505") {
-        console.log(`[grocery-cron] last-call: already sent for cycle ${cycleStartDate} \u2014 skipping`);
-        return res.json({ success: true, skipped: true, reason: "already_sent_this_cycle" });
-      }
-      throw dedupErr;
-    }
-    const [itemsResult, auditResult, recipientsResult] = await Promise.all([
-      storage.query(
-        `SELECT * FROM grocery_order_items WHERE run_id = $1 ORDER BY category, name`,
-        [run.id]
-      ),
-      storage.query(
-        `SELECT * FROM grocery_order_item_audit WHERE run_id = $1 ORDER BY created_at DESC LIMIT 10`,
-        [run.id]
-      ),
-      storage.query(
-        `SELECT id, display_name, email FROM household_members WHERE is_active = true AND email IS NOT NULL`
-      )
-    ]);
-    const items = itemsResult.rows;
-    const auditRows = auditResult.rows;
-    const recipients = recipientsResult.rows;
-    const toAddresses = recipients.map((r) => r.email).filter(Boolean);
-    const memberNames = {};
-    for (const r of recipients) memberNames[r.id] = r.display_name;
-    if (toAddresses.length === 0) {
-      console.warn("[grocery-cron] last-call: no active recipients with email \u2014 nothing sent");
-      logAudit("grocery-cycle", {
-        category: "home",
-        event_type: "grocery_last_call",
-        severity: "warn",
-        actor_id: "system",
-        actor_role: "system",
-        channel: "cron",
-        summary: `Grocery last-call skipped \u2014 no email recipients`,
-        detail: { run_id: run.id },
-        status: "skipped"
-      }).catch((auditErr) => console.warn(`[audit] write failed: ${auditErr instanceof Error ? auditErr.message : auditErr}`));
-      return res.json({ success: true, run_id: run.id, item_count: items.length, sent: 0 });
-    }
-    const emailResult = await sendGroceryEmail({
-      variant: "last-call",
-      toAddresses,
-      items,
-      run,
-      auditRows,
-      memberNames
-    });
-    logAudit("grocery-cycle", {
-      category: "home",
-      event_type: "grocery_last_call",
-      severity: "info",
-      actor_id: "system",
-      actor_role: "system",
-      channel: "cron",
-      summary: `Grocery last-call email sent (${items.length} items) to ${toAddresses.length} recipients`,
-      detail: { run_id: run.id, item_count: items.length, ok: emailResult.ok, results: emailResult.results },
-      status: emailResult.ok ? "success" : "partial"
-    }).catch((auditErr) => console.warn(`[audit] write failed: ${auditErr instanceof Error ? auditErr.message : auditErr}`));
-    if (!emailResult.ok) {
-      await enqueueFailedJob("grocery-last-call-email", new Error(
-        emailResult.results.filter((r) => !r.success).map((r) => r.error).join("; ") || "Send failed"
-      ));
-    }
-    res.json({ success: true, run_id: run.id, item_count: items.length, sent: toAddresses.length, ok: emailResult.ok });
-  } catch (error) {
-    console.error("[grocery-cron] last-call error:", error);
-    await enqueueFailedJob("grocery-last-call-email", error);
-    res.status(500).json({ error: error.message });
-  }
-});
-router23.post("/cron/lock-and-submit", async (req, res) => {
-  if (!validateCronSecret(req)) return res.status(401).json({ error: "Unauthorized" });
-  try {
-    const outcome = await executeLockAndSubmit(submitToAmazonGrocery);
-    if (outcome.status === "no_open_run") {
-      return res.json({ success: true, skipped: true, reason: "no open run for current cycle" });
-    }
-    if (outcome.status === "already_locked_or_submitted") {
-      return res.json({ success: true, skipped: true, reason: `run already ${outcome.current_status}` });
-    }
-    try {
-      const { query: dbQuery } = await Promise.resolve().then(() => (init_db2(), db_exports));
-      const { cycleStartAt, cycleLockAt, deliveryDate: cycleDeliveryDate } = getCurrentCycleWindow();
-      const cycleStartDate = cycleStartAt.toISOString().slice(0, 10);
-      let emailSent = false;
-      try {
-        await dbQuery(
-          `INSERT INTO report_email_dedup (report_type, period_key) VALUES ($1, $2)`,
-          ["grocery-lock-confirmation", cycleStartDate]
-        );
-        emailSent = true;
-      } catch (dedupErr) {
-        if (typeof dedupErr === "object" && dedupErr !== null && dedupErr.code === "23505") {
-          console.log(`[grocery-cron] lock-confirmation: already sent for cycle ${cycleStartDate} \u2014 skipping email`);
-        } else {
-          throw dedupErr;
-        }
-      }
-      if (emailSent) {
-        let toAddresses = [];
-        let items = [];
-        let lockStatus;
-        if (outcome.status === "submitted") {
-          lockStatus = "submitted";
-          const [itemsResult, recipientsResult] = await Promise.all([
-            storage.query(
-              `SELECT * FROM grocery_order_items WHERE run_id = $1 ORDER BY category, name`,
-              [outcome.run_id]
-            ),
-            storage.query(
-              `SELECT email FROM household_members WHERE is_active = true AND email IS NOT NULL`
-            )
-          ]);
-          items = itemsResult.rows;
-          toAddresses = recipientsResult.rows.map((r) => r.email).filter(Boolean);
-        } else if (outcome.status === "skipped") {
-          lockStatus = "skipped";
-          const recipientsResult = await storage.query(
-            `SELECT email FROM household_members WHERE is_active = true AND email IS NOT NULL`
-          );
-          toAddresses = recipientsResult.rows.map((r) => r.email).filter(Boolean);
-        } else {
-          lockStatus = "failed";
-          toAddresses = ["admin@example.com"];
-        }
-        const runData = {
-          cycle_lock_at: cycleLockAt.toISOString(),
-          delivery_date: cycleDeliveryDate,
-          cycle_start_at: cycleStartAt.toISOString()
-        };
-        const emailResult = await sendGroceryEmail({
-          variant: "lock-confirmation",
-          toAddresses,
-          items,
-          run: runData,
-          lockStatus
-        });
-        logAudit("grocery-cycle", {
-          category: "home",
-          event_type: "grocery_lock_confirmation_email",
-          severity: "info",
-          actor_id: "system",
-          actor_role: "system",
-          channel: "cron",
-          summary: `Grocery lock-confirmation email sent (${lockStatus}) to ${toAddresses.length} recipients`,
-          detail: { run_id: outcome.run_id, lock_status: lockStatus, ok: emailResult.ok },
-          status: emailResult.ok ? "success" : "partial"
-        }).catch((auditErr) => console.warn(`[audit] write failed: ${auditErr instanceof Error ? auditErr.message : auditErr}`));
-      }
-    } catch (emailErr) {
-      console.error("[grocery-cron] lock-confirmation email error:", emailErr);
-      await enqueueFailedJob("grocery-lock-confirmation-email", emailErr);
-    }
-    switch (outcome.status) {
-      case "skipped":
-        return res.json({ ok: true, success: true, status: "skipped", run_id: outcome.run_id });
-      case "submitted":
-        return res.json({ ok: true, success: true, status: "submitted", run_id: outcome.run_id, item_count: outcome.item_count });
-      case "submit_failed":
-        return res.json({ ok: false, success: false, status: "locked", run_id: outcome.run_id, error: outcome.error });
-    }
-  } catch (error) {
-    console.error("[grocery-cron] lock-and-submit error:", error);
-    res.status(500).json({ error: error.message });
-  }
-});
-router23.post("/cron/rina-monday", async (req, res) => {
-  if (!validateCronSecret(req)) return res.status(401).json({ error: "Unauthorized" });
-  try {
-    const todayPT = new Intl.DateTimeFormat("en-CA", {
-      timeZone: "America/Los_Angeles",
-      year: "numeric",
-      month: "2-digit",
-      day: "2-digit"
-    }).format(/* @__PURE__ */ new Date());
-    const { rows: runRows } = await storage.query(
-      `SELECT * FROM grocery_order_runs
-       WHERE delivery_date = $1 AND status = 'submitted'
-       LIMIT 1`,
-      [todayPT]
-    );
-    if (!runRows.length) {
-      return res.json({ success: true, skipped: true, reason: "no submitted run for today" });
-    }
-    const run = runRows[0];
-    const { query: dbQuery } = await Promise.resolve().then(() => (init_db2(), db_exports));
-    try {
-      await dbQuery(
-        `INSERT INTO report_email_dedup (report_type, period_key) VALUES ($1, $2)`,
-        ["grocery-rina-monday", todayPT]
-      );
-    } catch (dedupErr) {
-      if (typeof dedupErr === "object" && dedupErr !== null && dedupErr.code === "23505") {
-        console.log(`[grocery-cron] rina-monday: already sent for ${todayPT} \u2014 skipping`);
-        return res.json({ success: true, skipped: true, reason: "already_sent_today" });
-      }
-      throw dedupErr;
-    }
-    const { rows: rinaRows } = await storage.query(
-      `SELECT display_name, email, whatsapp_number
-       FROM household_members
-       WHERE is_active = true AND 'Rina' = ANY(aliases)
-       LIMIT 1`
-    );
-    if (!rinaRows.length) {
-      console.warn('[grocery-cron] rina-monday: no household member with alias "Rina" found \u2014 skipping');
-      logAudit("grocery-cycle", {
-        category: "home",
-        event_type: "grocery_delivery_day",
-        severity: "warn",
-        actor_id: "system",
-        actor_role: "system",
-        channel: "cron",
-        summary: `Grocery rina-monday skipped \u2014 no member with alias "Rina"`,
-        detail: { run_id: run.id, delivery_date: todayPT },
-        status: "skipped"
-      }).catch((auditErr) => console.warn(`[audit] write failed: ${auditErr instanceof Error ? auditErr.message : auditErr}`));
-      return res.json({ success: true, skipped: true, reason: "rina_not_found" });
-    }
-    const rina = rinaRows[0];
-    const { rows: items } = await storage.query(
-      `SELECT * FROM grocery_order_items WHERE run_id = $1 ORDER BY category, name`,
-      [run.id]
-    );
-    let emailOk = false;
-    if (rina.email) {
-      const emailResult = await sendGroceryEmail({
-        variant: "rina-monday",
-        toAddresses: [rina.email],
-        items,
-        run
-      });
-      emailOk = emailResult.ok;
-      logEmail(
-        "grocery_rina_monday",
-        buildSubject("rina-monday", items),
-        [rina.email],
-        "",
-        emailOk ? "sent" : "error",
-        emailOk ? void 0 : emailResult.results[0]?.error
-      ).catch(() => {
-      });
-    }
-    let whatsappSent = false;
-    if (rina.whatsapp_number) {
-      const whatsappResult = await sendMonitorAlert({
-        recipients: [{ whatsapp: rina.whatsapp_number }],
-        subject: "Grocery delivery today",
-        body: `Hi Rina! \u{1F6D2} The grocery order (${items.length} item${items.length !== 1 ? "s" : ""}) should be arriving today. Please put away refrigerated items first. Full checklist sent to your email.`,
-        channels: ["whatsapp"],
-        cooldownKey: "grocery-rina-monday",
-        cooldownMs: 12 * 60 * 60 * 1e3
-      });
-      whatsappSent = whatsappResult.sent;
-    }
-    logAudit("grocery-cycle", {
-      category: "home",
-      event_type: "grocery_delivery_day",
-      severity: "info",
-      actor_id: "system",
-      actor_role: "system",
-      channel: "cron",
-      summary: `Grocery delivery day: Rina Monday email sent for ${todayPT}`,
-      detail: { run_id: run.id, item_count: items.length, email_ok: emailOk, whatsapp_sent: whatsappSent },
-      status: emailOk ? "success" : "partial"
-    }).catch((auditErr) => console.warn(`[audit] write failed: ${auditErr instanceof Error ? auditErr.message : auditErr}`));
-    res.json({ success: true, run_id: run.id, item_count: items.length, delivery_date: todayPT, email_ok: emailOk, whatsapp_sent: whatsappSent });
-  } catch (error) {
-    console.error("[grocery-cron] rina-monday error:", error);
-    await enqueueFailedJob("grocery-rina-monday-email", error);
-    res.status(500).json({ error: error.message });
-  }
-});
-router23.post("/api/grocery-order/runs/:id/skip", requireAuth, async (req, res) => {
-  try {
-    const isAdmin2 = (await storage.query(
-      `SELECT 1 FROM user_roles WHERE user_id = $1 AND role = 'admin' LIMIT 1`,
-      [req.user.userId]
-    )).rows.length > 0;
-    if (!isAdmin2) return res.status(403).json({ error: "Admin only" });
-    const { id } = req.params;
-    const runResult = await storage.query(`SELECT * FROM grocery_order_runs WHERE id = $1`, [id]);
-    if (!runResult.rows.length) return res.status(404).json({ error: "Run not found" });
-    const run = runResult.rows[0];
-    if (run.status !== "open") {
-      return res.status(409).json({ error: `Run is not open (status=${run.status})` });
-    }
-    const { rows: updated } = await storage.query(
-      `UPDATE grocery_order_runs
-       SET status='skipped', submitted_at=NOW(), updated_at=NOW()
-       WHERE id=$1 RETURNING *`,
-      [id]
-    );
-    logAudit("grocery-cycle", {
-      category: "home",
-      event_type: "grocery_cycle_skipped_manually",
-      severity: "info",
-      actor_id: req.user.userId,
-      actor_role: "admin",
-      channel: "web",
-      summary: `Grocery cycle skipped manually by admin ${req.user.userId}`,
-      detail: { run_id: id },
-      status: "success"
-    }).catch((auditErr) => console.warn(`[audit] write failed: ${auditErr instanceof Error ? auditErr.message : auditErr}`));
-    emitToAll("grocery:run-skipped", { runId: id });
-    res.json({ success: true, run: updated[0] });
-  } catch (error) {
-    console.error("POST /api/grocery-order/runs/:id/skip error:", error);
-    res.status(500).json({ error: error.message });
-  }
-});
-router23.post("/api/grocery-order/items/adhoc", requireAuth, async (req, res) => {
-  try {
-    const isAdmin2 = (await storage.query(
-      `SELECT 1 FROM user_roles WHERE user_id = $1 AND role = 'admin' LIMIT 1`,
-      [req.user.userId]
-    )).rows.length > 0;
-    if (!isAdmin2) return res.status(403).json({ error: "Admin only" });
-    const { runId, name, brand, quantity, category } = req.body;
-    if (!runId) return res.status(400).json({ error: "runId is required" });
-    if (!name || typeof name !== "string" || !name.trim()) {
-      return res.status(400).json({ error: "name is required" });
-    }
-    const runResult = await storage.query(
-      `SELECT id, status FROM grocery_order_runs WHERE id = $1`,
-      [runId]
-    );
-    if (!runResult.rows.length) return res.status(404).json({ error: "Run not found" });
-    if (runResult.rows[0].status !== "open") {
-      return res.status(409).json({ error: `Run is not open (status=${runResult.rows[0].status})` });
-    }
-    const { rows } = await storage.query(
-      `INSERT INTO grocery_order_items
-         (run_id, staple_id, name, brand, category, quantity, added_by_user_id)
-       VALUES ($1, NULL, $2, $3, $4, $5, $6)
-       RETURNING *`,
-      [runId, name.trim(), brand ?? null, category || "general", quantity ?? 1, req.user.userId]
-    );
-    const item = rows[0];
-    await writeItemAudit({
-      itemId: item.id,
-      runId,
-      action: "added",
-      actorUserId: req.user.userId,
-      oldQty: null,
-      newQty: item.quantity,
-      detail: { name: item.name, adhoc: true }
-    });
-    await storage.query(
-      `UPDATE grocery_order_runs
-       SET item_count = (SELECT COUNT(*) FROM grocery_order_items WHERE run_id = $1),
-           updated_at = NOW()
-       WHERE id = $1`,
-      [runId]
-    );
-    emitToAll("grocery:item-changed", { runId, action: "adhoc-add" });
-    res.json({ item });
-  } catch (error) {
-    console.error("POST /api/grocery-order/items/adhoc error:", error);
-    res.status(500).json({ error: error.message });
-  }
-});
-router23.post("/api/grocery-order/runs/:id/copy-to-current", requireAuth, async (req, res) => {
-  try {
-    const isAdmin2 = (await storage.query(
-      `SELECT 1 FROM user_roles WHERE user_id = $1 AND role = 'admin' LIMIT 1`,
-      [req.user.userId]
-    )).rows.length > 0;
-    if (!isAdmin2) return res.status(403).json({ error: "Admin only" });
-    const { id: sourceRunId } = req.params;
-    const sourceResult = await storage.query(`SELECT id FROM grocery_order_runs WHERE id = $1`, [sourceRunId]);
-    if (!sourceResult.rows.length) return res.status(404).json({ error: "Source run not found" });
-    const { cycleStartAt } = getCurrentCycleWindow();
-    const targetResult = await storage.query(
-      `SELECT * FROM grocery_order_runs
-       WHERE cycle_start_at = $1 AND status <> 'cancelled'
-       LIMIT 1`,
-      [cycleStartAt.toISOString()]
-    );
-    if (!targetResult.rows.length) {
-      return res.status(409).json({ error: "No active cycle found to copy into" });
-    }
-    const target = targetResult.rows[0];
-    if (target.status !== "open") {
-      return res.status(400).json({ error: "Current cycle is locked" });
-    }
-    const { rows: sourceItems } = await storage.query(
-      `SELECT * FROM grocery_order_items WHERE run_id = $1`,
-      [sourceRunId]
-    );
-    if (sourceItems.length === 0) {
-      return res.json({ copied: 0, skipped: 0 });
-    }
-    const { rows: targetItems } = await storage.query(
-      `SELECT staple_id FROM grocery_order_items WHERE run_id = $1`,
-      [target.id]
-    );
-    const existingStapleIds = new Set(targetItems.map((r) => r.staple_id).filter(Boolean));
-    let copied = 0;
-    let skipped = 0;
-    for (const item of sourceItems) {
-      if (item.staple_id && existingStapleIds.has(item.staple_id)) {
-        skipped++;
-        continue;
-      }
-      await storage.query(
-        `INSERT INTO grocery_order_items
-           (run_id, staple_id, amazon_asin, name, category, brand, size, image_url, unit_price, quantity, added_by_user_id)
-         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)`,
-        [
-          target.id,
-          item.staple_id,
-          item.amazon_asin,
-          item.name,
-          item.category,
-          item.brand,
-          item.size,
-          item.image_url,
-          item.unit_price,
-          item.quantity,
-          req.user.userId
-        ]
-      );
-      if (item.staple_id) existingStapleIds.add(item.staple_id);
-      copied++;
-    }
-    await storage.query(
-      `UPDATE grocery_order_runs
-       SET item_count = (SELECT COUNT(*) FROM grocery_order_items WHERE run_id = $1),
-           updated_at = NOW()
-       WHERE id = $1`,
-      [target.id]
-    );
-    logAudit("grocery-cycle", {
-      category: "home",
-      event_type: "grocery_items_copied",
-      severity: "info",
-      actor_id: req.user.userId,
-      actor_role: "admin",
-      channel: "web",
-      summary: `Copied ${copied} items from run ${sourceRunId} to current cycle (${skipped} skipped)`,
-      detail: { source_run_id: sourceRunId, target_run_id: target.id, copied, skipped },
-      status: "success"
-    }).catch((auditErr) => console.warn(`[audit] write failed: ${auditErr instanceof Error ? auditErr.message : auditErr}`));
-    emitToAll("grocery:items-copied", { runId: target.id, copied, skipped });
-    emitToAll("grocery:item-changed", { runId: target.id, action: "copy" });
-    res.json({ copied, skipped, targetRunId: target.id });
-  } catch (error) {
-    console.error("POST /api/grocery-order/runs/:id/copy-to-current error:", error);
-    res.status(500).json({ error: error.message });
-  }
-});
-router23.post("/api/grocery-order/runs/:id/lock-early", requireAuth, async (req, res) => {
-  try {
-    const isAdmin2 = (await storage.query(
-      `SELECT 1 FROM user_roles WHERE user_id = $1 AND role = 'admin' LIMIT 1`,
-      [req.user.userId]
-    )).rows.length > 0;
-    if (!isAdmin2) return res.status(403).json({ error: "Only admins can lock the cart early" });
-    const { id } = req.params;
-    const runResult = await storage.query(`SELECT * FROM grocery_order_runs WHERE id = $1`, [id]);
-    if (!runResult.rows.length) return res.status(404).json({ error: "Run not found" });
-    const run = runResult.rows[0];
-    if (run.status !== "open") {
-      return res.status(409).json({ error: `Run is not open (status=${run.status})` });
-    }
-    await storage.query(
-      `UPDATE grocery_order_runs SET status='locked', locked_at=NOW(), updated_at=NOW() WHERE id=$1`,
-      [id]
-    );
-    logAudit("grocery-cycle", {
-      category: "home",
-      event_type: "grocery_cycle_locked_early",
-      severity: "info",
-      actor_id: req.user.userId,
-      actor_role: "user",
-      channel: "web",
-      summary: `Grocery cycle locked early by ${req.user.userId}`,
-      detail: { run_id: id },
-      status: "success"
-    }).catch((auditErr) => console.warn(`[audit] write failed: ${auditErr instanceof Error ? auditErr.message : auditErr}`));
-    emitToAll("grocery:item-changed", { runId: id, action: "lock-early" });
-    res.json({ success: true, status: "locked", run_id: id });
-  } catch (error) {
-    console.error("POST /api/grocery-order/runs/:id/lock-early error:", error);
-    res.status(500).json({ error: error.message });
-  }
-});
-router23.post("/api/grocery-order/runs/:id/resubmit", requireAuth, async (req, res) => {
-  try {
-    const roleResult = await storage.query(
-      `SELECT role FROM user_roles WHERE user_id = $1 AND role = 'admin' LIMIT 1`,
-      [req.user.userId]
-    );
-    if (!roleResult.rows.length) return res.status(403).json({ error: "Admin only" });
-    const { id } = req.params;
-    const runResult = await storage.query(`SELECT * FROM grocery_order_runs WHERE id = $1`, [id]);
-    if (!runResult.rows.length) return res.status(404).json({ error: "Run not found" });
-    const run = runResult.rows[0];
-    if (run.status !== "locked") {
-      return res.status(409).json({ error: `Can only resubmit locked runs (status=${run.status})` });
-    }
-    const { rows: items } = await storage.query(
-      `SELECT * FROM grocery_order_items WHERE run_id = $1 ORDER BY category, name`,
-      [id]
-    );
-    let submissionResult;
-    try {
-      submissionResult = await submitToAmazonGrocery(run, items);
-    } catch (submitErr) {
-      submissionResult = { success: false, log: null, error: submitErr.message };
-    }
-    if (submissionResult.success) {
-      await storage.query(
-        `UPDATE grocery_order_runs SET status='submitted', submitted_at=NOW(), submission_log=$2, updated_at=NOW() WHERE id=$1`,
-        [id, JSON.stringify(submissionResult.log)]
-      );
-      return res.json({ success: true, status: "submitted" });
-    }
-    await storage.query(
-      `UPDATE grocery_order_runs SET submission_log=$2, updated_at=NOW() WHERE id=$1`,
-      [id, JSON.stringify({ error: submissionResult.error, attempted_at: (/* @__PURE__ */ new Date()).toISOString() })]
-    );
-    return res.status(500).json({ success: false, status: "locked", error: submissionResult.error });
-  } catch (error) {
-    console.error("POST /api/grocery-order/runs/:id/resubmit error:", error);
-    res.status(500).json({ error: error.message });
-  }
-});
-function deprecationLog(endpoint) {
-  console.warn(`[grocery] DEPRECATED endpoint called: ${endpoint} \u2014 migrate to /api/grocery-order/*`);
-}
-router23.post("/api/grocery-order/prepare-weekly", requireAuth, (_req, res) => {
-  deprecationLog("POST /api/grocery-order/prepare-weekly");
-  res.json({ success: true, message: "Deprecated \u2014 use POST /cron/open-cycle or GET /api/grocery-order/current instead" });
-});
-router23.post("/api/grocery-order/prepare-weekly-cron", async (req, res) => {
-  deprecationLog("POST /api/grocery-order/prepare-weekly-cron");
-  if (!validateCronSecret(req)) return res.status(401).json({ error: "Unauthorized" });
-  res.json({ success: true, message: "Deprecated \u2014 replaced by POST /cron/open-cycle" });
-});
-router23.post("/api/grocery-order/approve/:runId", requireAuth, (_req, res) => {
-  deprecationLog(`POST /api/grocery-order/approve/:runId`);
-  res.json({ success: true, message: "Deprecated \u2014 cart is now always-open until Friday lock" });
-});
-router23.post("/api/grocery-order/cancel/:runId", requireAuth, async (req, res) => {
-  deprecationLog(`POST /api/grocery-order/cancel/${req.params.runId}`);
-  try {
-    const { runId } = req.params;
-    const { rowCount } = await storage.query(
-      `UPDATE grocery_order_runs SET status='cancelled', updated_at=NOW()
-       WHERE id=$1 AND status IN ('open','locked')`,
-      [runId]
-    );
-    if (!rowCount) return res.status(404).json({ error: "Run not found or already in terminal state" });
-    res.json({ success: true, message: "Run cancelled" });
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
-router23.post("/api/grocery-order/auto-order-check", async (req, res) => {
-  deprecationLog("POST /api/grocery-order/auto-order-check");
-  if (!validateCronSecret(req)) return res.status(401).json({ error: "Unauthorized" });
-  res.json({ success: true, message: "Deprecated \u2014 replaced by POST /cron/lock-and-submit on Friday 4 PM PT" });
-});
-var grocery_default = router23;
-
 // server/routes/admin.ts
 init_storage();
-import { Router as Router25 } from "express";
+import { Router as Router24 } from "express";
 init_auditLog();
 
 // server/lib/failed-jobs-constants.ts
@@ -36105,7 +33999,7 @@ var FAILED_JOBS_BACKOFF_MINUTES = [5, 10, 20, 40, 80];
 // server/routes/admin.ts
 init_circuit_breaker();
 init_breakers();
-var router24 = Router25();
+var router23 = Router24();
 function fetchT9(input, init, timeoutMs = 3e4) {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), timeoutMs);
@@ -36130,7 +34024,7 @@ setInterval(() => {
     else clientErrorRateLimit.set(ip, valid);
   }
 }, CLIENT_ERROR_WINDOW_MS);
-router24.post("/api/client-error", async (req, res) => {
+router23.post("/api/client-error", async (req, res) => {
   try {
     const ip = req.ip || req.socket?.remoteAddress || "unknown";
     if (isClientErrorRateLimited(ip)) return res.status(429).json({ error: "Too many error reports" });
@@ -36177,7 +34071,7 @@ router24.post("/api/client-error", async (req, res) => {
     res.status(500).json({ error: "Failed to log error" });
   }
 });
-var ADMIN_EMAIL = "admin@example.com";
+var ADMIN_EMAIL2 = "admin@example.com";
 var JANUS_EMAIL8 = "assistant@example.com";
 async function deriveKey(masterSecret) {
   const enc = new TextEncoder();
@@ -36208,7 +34102,7 @@ async function decrypt(encryptedB64, masterSecret) {
   const plaintext = await crypto.subtle.decrypt({ name: "AES-GCM", iv }, key, ciphertext);
   return new TextDecoder().decode(plaintext);
 }
-router24.all("/api/credential-vault", async (req, res) => {
+router23.all("/api/credential-vault", async (req, res) => {
   try {
     const VAULT_SECRET = process.env.CREDENTIAL_VAULT_SECRET;
     if (!VAULT_SECRET) return res.status(500).json({ error: "Vault not configured" });
@@ -36269,7 +34163,7 @@ router24.all("/api/credential-vault", async (req, res) => {
 });
 var MAX_ATTEMPTS = FAILED_JOBS_MAX_ATTEMPTS;
 var BACKOFF_MINUTES = FAILED_JOBS_BACKOFF_MINUTES;
-router24.post("/api/failed-job-retry-worker", async (req, res) => {
+router23.post("/api/failed-job-retry-worker", async (req, res) => {
   try {
     const db2 = storage;
     const { rows: jobs } = await db2.query(
@@ -36351,20 +34245,20 @@ var RETENTION_RULES = [
   { table: "janus_health_logs", column: "created_at", days: 30 },
   { table: "failed_jobs", column: "created_at", days: 60, filter: { column: "status", values: ["resolved", "dead"] } }
 ];
-router24.post("/api/log-retention-worker", async (req, res) => {
+router23.post("/api/log-retention-worker", async (req, res) => {
   try {
     const db2 = storage;
     const results = [];
     for (const rule of RETENTION_RULES) {
       try {
         const cutoff = new Date(Date.now() - rule.days * 24 * 60 * 60 * 1e3).toISOString();
-        let query2 = `DELETE FROM ${rule.table} WHERE ${rule.column} < $1`;
+        let query3 = `DELETE FROM ${rule.table} WHERE ${rule.column} < $1`;
         const params = [cutoff];
         if (rule.filter) {
-          query2 += ` AND ${rule.filter.column} = ANY($2)`;
+          query3 += ` AND ${rule.filter.column} = ANY($2)`;
           params.push(rule.filter.values);
         }
-        const result = await db2.query(query2, params);
+        const result = await db2.query(query3, params);
         results.push({ table: rule.table, deleted: result.rowCount || 0 });
       } catch (e) {
         results.push({ table: rule.table, deleted: 0, error: e.message });
@@ -36378,7 +34272,7 @@ router24.post("/api/log-retention-worker", async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
-router24.post("/api/notify-signup", async (req, res) => {
+router23.post("/api/notify-signup", async (req, res) => {
   try {
     const { userEmail, displayName } = req.body;
     if (!userEmail) return res.status(400).json({ error: "User email is required" });
@@ -36389,7 +34283,7 @@ router24.post("/api/notify-signup", async (req, res) => {
       headers: { Authorization: `Bearer ${resendKey}`, "Content-Type": "application/json" },
       body: JSON.stringify({
         from: "Janus <noreply@example.com>",
-        to: [ADMIN_EMAIL],
+        to: [ADMIN_EMAIL2],
         subject: "New Janus Signup Request",
         html: `<div style="font-family: sans-serif; max-width: 600px; margin: 0 auto;">
           <h1 style="color: #1a1a2e;">New Signup Request</h1>
@@ -36448,7 +34342,7 @@ function buildMimeMessage(to, subject, body) {
   ].join("\r\n");
   return Buffer.from(mime).toString("base64url");
 }
-router24.post("/api/project-share-notify", async (req, res) => {
+router23.post("/api/project-share-notify", async (req, res) => {
   try {
     const { project_id, shared_with_user_id, shared_by_name, project_name } = req.body;
     if (!project_id || !shared_with_user_id || !shared_by_name || !project_name) {
@@ -36487,7 +34381,7 @@ Click here to access: https://example.com/projects/${project_id}`;
     res.status(500).json({ error: e.message });
   }
 });
-router24.post("/api/suggest-submit", async (req, res) => {
+router23.post("/api/suggest-submit", async (req, res) => {
   try {
     const { action, content, user_display_name, user_email, suggestion_id } = req.body;
     const db2 = storage;
@@ -36499,7 +34393,7 @@ router24.post("/api/suggest-submit", async (req, res) => {
       );
       try {
         const accessToken = await getGmailToken("https://www.googleapis.com/auth/gmail.send https://www.googleapis.com/auth/gmail.readonly https://www.googleapis.com/auth/gmail.modify");
-        const raw1 = buildMimeMessage(ADMIN_EMAIL, `New suggestion from ${user_display_name || user_email}`, `A new suggestion was submitted via Janus.
+        const raw1 = buildMimeMessage(ADMIN_EMAIL2, `New suggestion from ${user_display_name || user_email}`, `A new suggestion was submitted via Janus.
 
 From: ${user_display_name || user_email} (${user_email})
 
@@ -36554,7 +34448,7 @@ Your original suggestion:
     res.status(500).json({ error: e.message });
   }
 });
-router24.get("/api/admin/circuit-breakers", async (req, res) => {
+router23.get("/api/admin/circuit-breakers", async (req, res) => {
   try {
     const cronSecret = process.env.CRON_SECRET;
     const jwtSecret = process.env.JWT_SECRET || process.env.SESSION_SECRET;
@@ -36581,7 +34475,7 @@ router24.get("/api/admin/circuit-breakers", async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
-router24.post("/api/admin/circuit-breakers/:name/reset", async (req, res) => {
+router23.post("/api/admin/circuit-breakers/:name/reset", async (req, res) => {
   try {
     const cronSecret = process.env.CRON_SECRET;
     const jwtSecret = process.env.JWT_SECRET || process.env.SESSION_SECRET;
@@ -36617,7 +34511,7 @@ router24.post("/api/admin/circuit-breakers/:name/reset", async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
-router24.get("/api/admin/llm-usage", async (req, res) => {
+router23.get("/api/admin/llm-usage", async (req, res) => {
   try {
     const cronSecret = process.env.CRON_SECRET;
     const jwtSecret = process.env.JWT_SECRET || process.env.SESSION_SECRET;
@@ -36725,7 +34619,7 @@ router24.get("/api/admin/llm-usage", async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
-router24.get("/api/admin/actionable-audit", async (req, res) => {
+router23.get("/api/admin/actionable-audit", async (req, res) => {
   try {
     const cronSecret = process.env.CRON_SECRET;
     const jwtSecret = process.env.JWT_SECRET || process.env.SESSION_SECRET;
@@ -36779,7 +34673,7 @@ router24.get("/api/admin/actionable-audit", async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
-router24.post("/api/admin/actionable-audit/:id/resolve", async (req, res) => {
+router23.post("/api/admin/actionable-audit/:id/resolve", async (req, res) => {
   try {
     const cronSecret = process.env.CRON_SECRET;
     const jwtSecret = process.env.JWT_SECRET || process.env.SESSION_SECRET;
@@ -36819,20 +34713,28 @@ router24.post("/api/admin/actionable-audit/:id/resolve", async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
-var admin_default = router24;
+var admin_default = router23;
 
 // server/routes/travel.ts
 init_storage();
 init_supabase();
 init_helpers();
-import { Router as Router26 } from "express";
+import { Router as Router25 } from "express";
 init_auditLog();
-var router25 = Router26();
-var TONY_EMAIL4 = "admin@example.com";
+var router24 = Router25();
+var ADMIN_EMAIL3 = process.env.ADMIN_EMAIL || "admin@example.com";
 var GMAIL_API2 = "https://gmail.googleapis.com/gmail/v1/users/me";
-var FAMILY_MEMBERS = ["Tony", "Lana", "Isla", "Emme"];
-var HOME_BASE = "Los Angeles, CA";
+var HOME_BASE = process.env.HOME_LOCATION || "Los Angeles, CA";
 var EMAIL_BATCH_SIZE = 15;
+async function getFamilyMemberNames() {
+  try {
+    const db2 = storage;
+    const { rows } = await db2.query(`SELECT display_name FROM household_members WHERE is_active = true`);
+    if (rows && rows.length > 0) return rows.map((r) => r.display_name);
+  } catch {
+  }
+  return ["Primary", "Family Member"];
+}
 function fetchT10(input, init, timeoutMs = 3e4) {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), timeoutMs);
@@ -36860,7 +34762,7 @@ async function getAccessToken2(saKeyRaw, email, scope) {
 async function getOAuthGmailToken() {
   try {
     const serviceClient = createClient();
-    const { data: rows } = await serviceClient.from("google_tokens").select("*").eq("google_email", TONY_EMAIL4).limit(1);
+    const { data: rows } = await serviceClient.from("google_tokens").select("*").eq("google_email", ADMIN_EMAIL3).limit(1);
     const tokenRow = Array.isArray(rows) ? rows[0] : rows;
     if (!tokenRow?.access_token) return null;
     const scopes = Array.isArray(tokenRow.scopes) ? tokenRow.scopes : [];
@@ -36913,14 +34815,14 @@ var GmailApiError = class extends Error {
     this.name = "GmailApiError";
   }
 };
-async function searchMessages(token, query2, maxResults = 200) {
+async function searchMessages(token, query3, maxResults = 200) {
   const allMessages = [];
   let pageToken;
   const perPage = Math.min(maxResults, 200);
   while (allMessages.length < maxResults) {
     const url = new URL(`${GMAIL_API2}/messages`);
     url.searchParams.set("maxResults", String(perPage));
-    url.searchParams.set("q", query2);
+    url.searchParams.set("q", query3);
     if (pageToken) url.searchParams.set("pageToken", pageToken);
     const r = await fetch(url.toString(), { headers: { Authorization: `Bearer ${token}` } });
     if (!r.ok) {
@@ -36984,8 +34886,9 @@ Date: ${e.date}
 Subject: ${e.subject}
 
 ${e.body}`).join("\n\n");
+  const familyNames = await getFamilyMemberNames();
   const systemPrompt = `You are a travel data extraction specialist for the household family based in ${HOME_BASE}.
-Family members: ${FAMILY_MEMBERS.join(", ")}.
+Family members: ${familyNames.join(", ")}.
 Today is ${today}.
 
 Given travel-related emails, extract structured trip info. Return a JSON array (not an object) of trips.
@@ -37063,7 +34966,7 @@ function deduplicateTrips(trips2) {
     return true;
   });
 }
-router25.get("/api/travel-email-scanner/stream", (req, res, next) => {
+router24.get("/api/travel-email-scanner/stream", (req, res, next) => {
   if (req.query.ticket) {
     const userId = consumeSseTicket(req.query.ticket);
     if (userId) {
@@ -37103,7 +35006,7 @@ router25.get("/api/travel-email-scanner/stream", (req, res, next) => {
     if (saKeyRaw) {
       try {
         console.log("[Travel] SSE: attempting service account Gmail auth");
-        gmailToken = await getAccessToken2(saKeyRaw, TONY_EMAIL4, "https://www.googleapis.com/auth/gmail.readonly");
+        gmailToken = await getAccessToken2(saKeyRaw, ADMIN_EMAIL3, "https://www.googleapis.com/auth/gmail.readonly");
         console.log("[Travel] SSE: service account Gmail auth succeeded");
       } catch (saErr) {
         console.warn("[Travel] SSE: service account auth failed, trying OAuth fallback:", saErr);
@@ -37112,7 +35015,7 @@ router25.get("/api/travel-email-scanner/stream", (req, res, next) => {
       console.log("[Travel] SSE: GOOGLE_SERVICE_ACCOUNT_KEY not set, trying OAuth fallback");
     }
     if (!gmailToken) {
-      console.log("[Travel] SSE: attempting OAuth token retrieval for", TONY_EMAIL4);
+      console.log("[Travel] SSE: attempting OAuth token retrieval for", ADMIN_EMAIL3);
       gmailToken = await getOAuthGmailToken();
       if (gmailToken) {
         console.log("[Travel] SSE: OAuth token retrieved successfully");
@@ -37274,10 +35177,10 @@ ${intel}`].filter(Boolean).join("\n\n");
     res.end();
   }
 });
-router25.post("/api/travel-email-scanner", requireAuth2, (_req, res) => {
+router24.post("/api/travel-email-scanner", requireAuth2, (_req, res) => {
   res.status(410).json({ ok: false, error: "This endpoint has been replaced. Use GET /api/travel-email-scanner/stream (SSE) for real-time scanning." });
 });
-router25.post("/api/trips", requireAuth2, async (req, res) => {
+router24.post("/api/trips", requireAuth2, async (req, res) => {
   try {
     const { trip_name, destination, departure_date, return_date, travelers, notes } = req.body;
     if (!trip_name) return res.status(400).json({ error: "trip_name is required" });
@@ -37318,15 +35221,20 @@ router25.post("/api/trips", requireAuth2, async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
-var TRAVELER_EMAILS = { tony: "admin@example.com", lana: "member@example.com", isla: "member2@example.com", emme: "member3@example.com" };
-function resolveTravelerEmail(name) {
+async function resolveTravelerEmail(name) {
   const lower = name.toLowerCase().trim();
-  for (const [key, email] of Object.entries(TRAVELER_EMAILS)) {
-    if (lower.includes(key)) return email;
+  try {
+    const db2 = storage;
+    const { rows } = await db2.query(
+      `SELECT email FROM household_members WHERE is_active = true AND email IS NOT NULL AND (LOWER(display_name) LIKE $1 OR $2 = ANY(aliases)) LIMIT 1`,
+      [`%${lower}%`, lower]
+    );
+    if (rows && rows[0]?.email) return rows[0].email;
+  } catch {
   }
   return null;
 }
-router25.post("/api/trip-document-upload", requireAuth2, async (req, res) => {
+router24.post("/api/trip-document-upload", requireAuth2, async (req, res) => {
   try {
     const { tripId, documentText, documentType, base64Content, mimeType } = req.body;
     if (!tripId) return res.status(400).json({ error: "tripId is required" });
@@ -37394,14 +35302,14 @@ ${documentText}` });
     res.status(500).json({ error: error.message });
   }
 });
-var travel_default = router25;
+var travel_default = router24;
 
 // server/routes/data.ts
 init_auth();
 init_storage();
 init_auditLog();
-import { Router as Router27 } from "express";
-var router26 = Router27();
+import { Router as Router26 } from "express";
+var router25 = Router26();
 var COLUMN_ALLOWLIST = /^[a-z_][a-z0-9_]*$/;
 var ALLOWED_PROXY_TABLES = [
   "email_logs",
@@ -37454,7 +35362,7 @@ var ALLOWED_PROXY_TABLES = [
   "janus_notifications",
   "janus_reminders"
 ];
-router26.get("/api/data/email-logs", requireAuth, async (req, res) => {
+router25.get("/api/data/email-logs", requireAuth, async (req, res) => {
   try {
     const logs = await storage.getEmailLogs(100);
     res.json(logs);
@@ -37462,7 +35370,7 @@ router26.get("/api/data/email-logs", requireAuth, async (req, res) => {
     res.status(500).json({ error: e.message });
   }
 });
-router26.get("/api/data/poi-sightings", requireAuth, async (req, res) => {
+router25.get("/api/data/poi-sightings", requireAuth, async (req, res) => {
   try {
     const logs = await storage.getVerkadaAlertLogs(200);
     res.json(logs);
@@ -37470,7 +35378,7 @@ router26.get("/api/data/poi-sightings", requireAuth, async (req, res) => {
     res.status(500).json({ error: e.message });
   }
 });
-router26.get("/api/data/poi-profiles", requireAuth, async (req, res) => {
+router25.get("/api/data/poi-profiles", requireAuth, async (req, res) => {
   try {
     const q = storage.query;
     const { rows } = await q("SELECT * FROM poi_profiles ORDER BY label ASC");
@@ -37479,7 +35387,7 @@ router26.get("/api/data/poi-profiles", requireAuth, async (req, res) => {
     res.status(500).json({ error: e.message });
   }
 });
-router26.get("/api/data/system-updates", requireAuth, async (req, res) => {
+router25.get("/api/data/system-updates", requireAuth, async (req, res) => {
   try {
     const updates = await storage.getSystemUpdates(50);
     res.json(updates);
@@ -37487,7 +35395,7 @@ router26.get("/api/data/system-updates", requireAuth, async (req, res) => {
     res.status(500).json({ error: e.message });
   }
 });
-router26.post("/api/data/system-updates", requireRole("admin"), async (req, res) => {
+router25.post("/api/data/system-updates", requireRole("admin"), async (req, res) => {
   try {
     const update = await storage.createSystemUpdate(req.body);
     logAudit("data-admin", {
@@ -37507,7 +35415,7 @@ router26.post("/api/data/system-updates", requireRole("admin"), async (req, res)
     res.status(500).json({ error: e.message });
   }
 });
-router26.patch("/api/data/system-updates/:id", requireRole("admin"), async (req, res) => {
+router25.patch("/api/data/system-updates/:id", requireRole("admin"), async (req, res) => {
   try {
     const q = storage.query;
     const fields = req.body;
@@ -37538,7 +35446,7 @@ router26.patch("/api/data/system-updates/:id", requireRole("admin"), async (req,
     res.status(500).json({ error: e.message });
   }
 });
-router26.delete("/api/data/system-updates/:id", requireRole("admin"), async (req, res) => {
+router25.delete("/api/data/system-updates/:id", requireRole("admin"), async (req, res) => {
   try {
     await storage.deleteSystemUpdate(req.params.id);
     logAudit("data-admin", {
@@ -37558,7 +35466,7 @@ router26.delete("/api/data/system-updates/:id", requireRole("admin"), async (req
     res.status(500).json({ error: e.message });
   }
 });
-router26.get("/api/data/users", requireRole("admin"), async (req, res) => {
+router25.get("/api/data/users", requireRole("admin"), async (req, res) => {
   try {
     const q = storage.query;
     const [{ rows: profiles2 }, { rows: roles }] = await Promise.all([
@@ -37574,7 +35482,7 @@ router26.get("/api/data/users", requireRole("admin"), async (req, res) => {
     res.status(500).json({ error: e.message });
   }
 });
-router26.patch("/api/data/users/:userId/approval", requireRole("admin"), async (req, res) => {
+router25.patch("/api/data/users/:userId/approval", requireRole("admin"), async (req, res) => {
   try {
     await storage.updateProfile(req.params.userId, { approvalStatus: req.body.approval_status });
     logAudit("data-admin", {
@@ -37594,7 +35502,7 @@ router26.patch("/api/data/users/:userId/approval", requireRole("admin"), async (
     res.status(500).json({ error: e.message });
   }
 });
-router26.get("/api/data/invited-emails", requireRole("admin"), async (req, res) => {
+router25.get("/api/data/invited-emails", requireRole("admin"), async (req, res) => {
   try {
     const q = storage.query;
     const { rows } = await q("SELECT * FROM invited_emails ORDER BY created_at DESC");
@@ -37603,7 +35511,7 @@ router26.get("/api/data/invited-emails", requireRole("admin"), async (req, res) 
     res.status(500).json({ error: e.message });
   }
 });
-router26.post("/api/data/invited-emails", requireRole("admin"), async (req, res) => {
+router25.post("/api/data/invited-emails", requireRole("admin"), async (req, res) => {
   try {
     const result = await storage.createInvitedEmail({
       email: req.body.email,
@@ -37631,7 +35539,7 @@ router26.post("/api/data/invited-emails", requireRole("admin"), async (req, res)
     }
   }
 });
-router26.delete("/api/data/invited-emails/:id", requireRole("admin"), async (req, res) => {
+router25.delete("/api/data/invited-emails/:id", requireRole("admin"), async (req, res) => {
   try {
     const q = storage.query;
     await q("DELETE FROM invited_emails WHERE id = $1", [req.params.id]);
@@ -37652,7 +35560,7 @@ router26.delete("/api/data/invited-emails/:id", requireRole("admin"), async (req
     res.status(500).json({ error: e.message });
   }
 });
-router26.get("/api/data/system-prompts", requireAuth, async (req, res) => {
+router25.get("/api/data/system-prompts", requireAuth, async (req, res) => {
   try {
     const prompts = await storage.getAllSystemPrompts();
     res.json(prompts);
@@ -37660,7 +35568,7 @@ router26.get("/api/data/system-prompts", requireAuth, async (req, res) => {
     res.status(500).json({ error: e.message });
   }
 });
-router26.post("/api/data/system-prompts", requireRole("admin"), async (req, res) => {
+router25.post("/api/data/system-prompts", requireRole("admin"), async (req, res) => {
   try {
     const prompt = await storage.upsertSystemPrompt(req.body);
     logAudit("data-admin", {
@@ -37680,7 +35588,7 @@ router26.post("/api/data/system-prompts", requireRole("admin"), async (req, res)
     res.status(500).json({ error: e.message });
   }
 });
-router26.patch("/api/data/system-prompts/:id", requireRole("admin"), async (req, res) => {
+router25.patch("/api/data/system-prompts/:id", requireRole("admin"), async (req, res) => {
   try {
     const q = storage.query;
     const fields = req.body;
@@ -37711,7 +35619,7 @@ router26.patch("/api/data/system-prompts/:id", requireRole("admin"), async (req,
     res.status(500).json({ error: e.message });
   }
 });
-router26.delete("/api/data/system-prompts/:id", requireRole("admin"), async (req, res) => {
+router25.delete("/api/data/system-prompts/:id", requireRole("admin"), async (req, res) => {
   try {
     const q = storage.query;
     await q("DELETE FROM system_prompts WHERE id = $1", [req.params.id]);
@@ -37732,7 +35640,7 @@ router26.delete("/api/data/system-prompts/:id", requireRole("admin"), async (req
     res.status(500).json({ error: e.message });
   }
 });
-router26.get("/api/data/suggestions", requireAuth, async (req, res) => {
+router25.get("/api/data/suggestions", requireAuth, async (req, res) => {
   try {
     const suggestions2 = await storage.getSuggestions();
     res.json(suggestions2);
@@ -37740,7 +35648,7 @@ router26.get("/api/data/suggestions", requireAuth, async (req, res) => {
     res.status(500).json({ error: e.message });
   }
 });
-router26.get("/api/data/suggestions/mine", requireAuth, async (req, res) => {
+router25.get("/api/data/suggestions/mine", requireAuth, async (req, res) => {
   try {
     const q = storage.query;
     const { rows } = await q("SELECT * FROM suggestions WHERE user_id = $1 ORDER BY created_at DESC", [req.user.userId]);
@@ -37749,7 +35657,7 @@ router26.get("/api/data/suggestions/mine", requireAuth, async (req, res) => {
     res.status(500).json({ error: e.message });
   }
 });
-router26.patch("/api/data/suggestions/:id", requireRole("admin"), async (req, res) => {
+router25.patch("/api/data/suggestions/:id", requireRole("admin"), async (req, res) => {
   try {
     const result = await storage.updateSuggestion(String(req.params.id), req.body);
     res.json(result);
@@ -37757,7 +35665,7 @@ router26.patch("/api/data/suggestions/:id", requireRole("admin"), async (req, re
     res.status(500).json({ error: e.message });
   }
 });
-router26.get("/api/data/platform-credentials", requireAuth, async (req, res) => {
+router25.get("/api/data/platform-credentials", requireAuth, async (req, res) => {
   try {
     const creds = await storage.getUserPlatformCredentials(req.user.userId);
     res.json(creds);
@@ -37765,7 +35673,7 @@ router26.get("/api/data/platform-credentials", requireAuth, async (req, res) => 
     res.status(500).json({ error: e.message });
   }
 });
-router26.delete("/api/data/platform-credentials/:id", requireAuth, async (req, res) => {
+router25.delete("/api/data/platform-credentials/:id", requireAuth, async (req, res) => {
   try {
     await storage.deleteUserPlatformCredential(String(req.params.id));
     res.json({ success: true });
@@ -37773,7 +35681,7 @@ router26.delete("/api/data/platform-credentials/:id", requireAuth, async (req, r
     res.status(500).json({ error: e.message });
   }
 });
-router26.get("/api/data/trips", requireAuth, async (req, res) => {
+router25.get("/api/data/trips", requireAuth, async (req, res) => {
   try {
     const q = storage.query;
     const { rows } = await q("SELECT * FROM trips WHERE deleted_at IS NULL ORDER BY departure_date ASC NULLS LAST");
@@ -37782,7 +35690,7 @@ router26.get("/api/data/trips", requireAuth, async (req, res) => {
     res.status(500).json({ error: e.message });
   }
 });
-router26.patch("/api/data/trips/:id", requireAuth, async (req, res) => {
+router25.patch("/api/data/trips/:id", requireAuth, async (req, res) => {
   try {
     const result = await storage.updateTrip(String(req.params.id), req.body);
     res.json(result);
@@ -37790,7 +35698,7 @@ router26.patch("/api/data/trips/:id", requireAuth, async (req, res) => {
     res.status(500).json({ error: e.message });
   }
 });
-router26.delete("/api/data/trips/:id", requireAuth, async (req, res) => {
+router25.delete("/api/data/trips/:id", requireAuth, async (req, res) => {
   try {
     await storage.deleteTrip(String(req.params.id));
     res.json({ success: true });
@@ -37798,7 +35706,7 @@ router26.delete("/api/data/trips/:id", requireAuth, async (req, res) => {
     res.status(500).json({ error: e.message });
   }
 });
-router26.get("/api/data/project-shares/:projectId", requireAuth, async (req, res) => {
+router25.get("/api/data/project-shares/:projectId", requireAuth, async (req, res) => {
   try {
     const q = storage.query;
     const [{ rows: users }, { rows: shares }] = await Promise.all([
@@ -37814,7 +35722,7 @@ router26.get("/api/data/project-shares/:projectId", requireAuth, async (req, res
     res.status(500).json({ error: e.message });
   }
 });
-router26.post("/api/data/project-shares/:projectId", requireAuth, async (req, res) => {
+router25.post("/api/data/project-shares/:projectId", requireAuth, async (req, res) => {
   try {
     await storage.createJanusProjectShare({
       projectId: String(req.params.projectId),
@@ -37826,7 +35734,7 @@ router26.post("/api/data/project-shares/:projectId", requireAuth, async (req, re
     res.status(500).json({ error: e.message });
   }
 });
-router26.delete("/api/data/project-shares/revoke/:id", requireAuth, async (req, res) => {
+router25.delete("/api/data/project-shares/revoke/:id", requireAuth, async (req, res) => {
   try {
     await storage.deleteJanusProjectShare(String(req.params.id));
     res.json({ success: true });
@@ -37834,7 +35742,7 @@ router26.delete("/api/data/project-shares/revoke/:id", requireAuth, async (req, 
     res.status(500).json({ error: e.message });
   }
 });
-router26.get("/api/data/failed-jobs", requireRole("admin"), async (req, res) => {
+router25.get("/api/data/failed-jobs", requireRole("admin"), async (req, res) => {
   try {
     const status = req.query.status || void 0;
     const jobs = await storage.getFailedJobs(status);
@@ -37843,7 +35751,7 @@ router26.get("/api/data/failed-jobs", requireRole("admin"), async (req, res) => 
     res.status(500).json({ error: e.message });
   }
 });
-router26.patch("/api/data/failed-jobs/:id", requireRole("admin"), async (req, res) => {
+router25.patch("/api/data/failed-jobs/:id", requireRole("admin"), async (req, res) => {
   try {
     const result = await storage.updateFailedJob(String(req.params.id), req.body);
     res.json(result);
@@ -37851,7 +35759,7 @@ router26.patch("/api/data/failed-jobs/:id", requireRole("admin"), async (req, re
     res.status(500).json({ error: e.message });
   }
 });
-router26.delete("/api/data/failed-jobs/:id", requireRole("admin"), async (req, res) => {
+router25.delete("/api/data/failed-jobs/:id", requireRole("admin"), async (req, res) => {
   try {
     await storage.deleteFailedJob(String(req.params.id));
     res.json({ success: true });
@@ -37859,7 +35767,7 @@ router26.delete("/api/data/failed-jobs/:id", requireRole("admin"), async (req, r
     res.status(500).json({ error: e.message });
   }
 });
-router26.get("/api/data/household-members", requireAuth, async (req, res) => {
+router25.get("/api/data/household-members", requireAuth, async (req, res) => {
   try {
     const members = await storage.getHouseholdMembers();
     res.json(members);
@@ -37867,7 +35775,7 @@ router26.get("/api/data/household-members", requireAuth, async (req, res) => {
     res.status(500).json({ error: e.message });
   }
 });
-router26.post("/api/data/household-members", requireRole("admin"), async (req, res) => {
+router25.post("/api/data/household-members", requireRole("admin"), async (req, res) => {
   try {
     const member = await storage.createHouseholdMember(req.body);
     logAudit("data-admin", {
@@ -37887,7 +35795,7 @@ router26.post("/api/data/household-members", requireRole("admin"), async (req, r
     res.status(500).json({ error: e.message });
   }
 });
-router26.patch("/api/data/household-members/:id", requireRole("admin"), async (req, res) => {
+router25.patch("/api/data/household-members/:id", requireRole("admin"), async (req, res) => {
   try {
     const result = await storage.updateHouseholdMember(req.params.id, req.body);
     logAudit("data-admin", {
@@ -37907,7 +35815,7 @@ router26.patch("/api/data/household-members/:id", requireRole("admin"), async (r
     res.status(500).json({ error: e.message });
   }
 });
-router26.delete("/api/data/household-members/:id", requireRole("admin"), async (req, res) => {
+router25.delete("/api/data/household-members/:id", requireRole("admin"), async (req, res) => {
   try {
     await storage.deleteHouseholdMember(req.params.id);
     logAudit("data-admin", {
@@ -37927,7 +35835,7 @@ router26.delete("/api/data/household-members/:id", requireRole("admin"), async (
     res.status(500).json({ error: e.message });
   }
 });
-router26.get("/api/data/group-configs", requireAuth, async (req, res) => {
+router25.get("/api/data/group-configs", requireAuth, async (req, res) => {
   try {
     const q = storage.query;
     const { rows } = await q("SELECT * FROM notification_group_configs ORDER BY group_name ASC");
@@ -37936,7 +35844,7 @@ router26.get("/api/data/group-configs", requireAuth, async (req, res) => {
     res.status(500).json({ error: e.message });
   }
 });
-router26.post("/api/data/group-configs", requireRole("admin"), async (req, res) => {
+router25.post("/api/data/group-configs", requireRole("admin"), async (req, res) => {
   try {
     const q = storage.query;
     const { rows } = await q(
@@ -37948,7 +35856,7 @@ router26.post("/api/data/group-configs", requireRole("admin"), async (req, res) 
     res.status(500).json({ error: e.message });
   }
 });
-router26.patch("/api/data/group-configs/:id", requireRole("admin"), async (req, res) => {
+router25.patch("/api/data/group-configs/:id", requireRole("admin"), async (req, res) => {
   try {
     const q = storage.query;
     const fields = req.body;
@@ -37967,7 +35875,7 @@ router26.patch("/api/data/group-configs/:id", requireRole("admin"), async (req, 
     res.status(500).json({ error: e.message });
   }
 });
-router26.delete("/api/data/group-configs/:id", requireRole("admin"), async (req, res) => {
+router25.delete("/api/data/group-configs/:id", requireRole("admin"), async (req, res) => {
   try {
     const q = storage.query;
     await q("DELETE FROM notification_group_configs WHERE id = $1", [req.params.id]);
@@ -37976,7 +35884,7 @@ router26.delete("/api/data/group-configs/:id", requireRole("admin"), async (req,
     res.status(500).json({ error: e.message });
   }
 });
-router26.get("/api/data/activity-events", requireAuth, async (req, res) => {
+router25.get("/api/data/activity-events", requireAuth, async (req, res) => {
   try {
     const events = await storage.getActivityEvents(Number(req.query.limit) || 100);
     res.json(events);
@@ -37984,7 +35892,7 @@ router26.get("/api/data/activity-events", requireAuth, async (req, res) => {
     res.status(500).json({ error: e.message });
   }
 });
-router26.get("/api/data/speed-tests", requireAuth, async (req, res) => {
+router25.get("/api/data/speed-tests", requireAuth, async (req, res) => {
   try {
     const tests = await storage.getSpeedTests(Number(req.query.limit) || 50);
     res.json(tests);
@@ -37992,7 +35900,7 @@ router26.get("/api/data/speed-tests", requireAuth, async (req, res) => {
     res.status(500).json({ error: e.message });
   }
 });
-router26.get("/api/data/entertainment-events", requireAuth, async (req, res) => {
+router25.get("/api/data/entertainment-events", requireAuth, async (req, res) => {
   try {
     const events = await storage.getEntertainmentEvents();
     res.json(events);
@@ -38000,7 +35908,7 @@ router26.get("/api/data/entertainment-events", requireAuth, async (req, res) => 
     res.status(500).json({ error: e.message });
   }
 });
-router26.get("/api/data/media-items", requireAuth, async (req, res) => {
+router25.get("/api/data/media-items", requireAuth, async (req, res) => {
   try {
     const items = await storage.getMediaItems();
     res.json(items);
@@ -38008,7 +35916,7 @@ router26.get("/api/data/media-items", requireAuth, async (req, res) => {
     res.status(500).json({ error: e.message });
   }
 });
-router26.get("/api/data/verkada-alert-logs", requireAuth, async (req, res) => {
+router25.get("/api/data/verkada-alert-logs", requireAuth, async (req, res) => {
   try {
     const logs = await storage.getVerkadaAlertLogs(Number(req.query.limit) || 100);
     res.json(logs);
@@ -38016,7 +35924,7 @@ router26.get("/api/data/verkada-alert-logs", requireAuth, async (req, res) => {
     res.status(500).json({ error: e.message });
   }
 });
-router26.get("/api/data/system-audit-logs", requireRole("admin"), async (req, res) => {
+router25.get("/api/data/system-audit-logs", requireRole("admin"), async (req, res) => {
   try {
     const logs = await storage.getSystemAuditLogs(Number(req.query.limit) || 100);
     res.json(logs);
@@ -38024,7 +35932,7 @@ router26.get("/api/data/system-audit-logs", requireRole("admin"), async (req, re
     res.status(500).json({ error: e.message });
   }
 });
-router26.post("/api/data/system-audit-logs/query", requireRole("admin"), async (req, res) => {
+router25.post("/api/data/system-audit-logs/query", requireRole("admin"), async (req, res) => {
   try {
     const { category, severity, since, search, limit = 50, offset = 0 } = req.body;
     console.log(`[audit-logs] POST /api/data/system-audit-logs/query user=${req.user?.email || "unknown"} category=${category} severity=${severity} limit=${limit} offset=${offset}`);
@@ -38036,7 +35944,7 @@ router26.post("/api/data/system-audit-logs/query", requireRole("admin"), async (
     res.status(500).json({ error: e.message });
   }
 });
-router26.get("/api/data/external-api/endpoint-stats", requireRole("admin"), async (req, res) => {
+router25.get("/api/data/external-api/endpoint-stats", requireRole("admin"), async (req, res) => {
   try {
     const hours = Math.min(Math.max(Number(req.query.hours) || 24, 1), 168);
     const topN = Math.min(Math.max(Number(req.query.top) || 5, 1), 25);
@@ -38046,7 +35954,7 @@ router26.get("/api/data/external-api/endpoint-stats", requireRole("admin"), asyn
     res.status(500).json({ error: e instanceof Error ? e.message : String(e) });
   }
 });
-router26.get("/api/data/janus-chat-logs", requireAuth, async (req, res) => {
+router25.get("/api/data/janus-chat-logs", requireAuth, async (req, res) => {
   try {
     const logs = await storage.getJanusChatLogs(req.user.userId, Number(req.query.limit) || 50);
     res.json(logs);
@@ -38054,7 +35962,7 @@ router26.get("/api/data/janus-chat-logs", requireAuth, async (req, res) => {
     res.status(500).json({ error: e.message });
   }
 });
-router26.get("/api/data/profiles/me", requireAuth, async (req, res) => {
+router25.get("/api/data/profiles/me", requireAuth, async (req, res) => {
   try {
     const profile = await storage.getProfileByUserId(req.user.userId);
     res.json(profile || null);
@@ -38062,7 +35970,7 @@ router26.get("/api/data/profiles/me", requireAuth, async (req, res) => {
     res.status(500).json({ error: e.message });
   }
 });
-router26.patch("/api/data/profiles/me", requireAuth, async (req, res) => {
+router25.patch("/api/data/profiles/me", requireAuth, async (req, res) => {
   try {
     const result = await storage.updateProfile(req.user.userId, req.body);
     res.json(result);
@@ -38070,7 +35978,7 @@ router26.patch("/api/data/profiles/me", requireAuth, async (req, res) => {
     res.status(500).json({ error: e.message });
   }
 });
-router26.get("/api/data/query", requireAuth, async (req, res) => {
+router25.get("/api/data/query", requireAuth, async (req, res) => {
   const table = req.query.table;
   const limit = Number(req.query.limit) || 100;
   const orderBy = req.query.orderBy || "created_at";
@@ -38090,7 +35998,7 @@ router26.get("/api/data/query", requireAuth, async (req, res) => {
     res.status(500).json({ error: e.message });
   }
 });
-router26.post("/api/data/proxy", requireAuth, async (req, res) => {
+router25.post("/api/data/proxy", requireAuth, async (req, res) => {
   const { table, method, columns, filters, orderColumn, orderAsc, orderNullsFirst, limit, single, body: payload } = req.body;
   if (!table || !ALLOWED_PROXY_TABLES.includes(table)) {
     res.status(400).json({ error: "Invalid table" });
@@ -38253,11 +36161,11 @@ router26.post("/api/data/proxy", requireAuth, async (req, res) => {
     res.status(500).json({ error: e.message });
   }
 });
-var data_default = router26;
+var data_default = router25;
 
 // server/routes/perplexity.ts
 init_perplexity();
-import { Router as Router28 } from "express";
+import { Router as Router27 } from "express";
 
 // server/lib/rate-limiter.ts
 var buckets2 = /* @__PURE__ */ new Map();
@@ -38281,8 +36189,8 @@ function checkRateLimit2(userId, functionName, config = DEFAULT_CONFIG3) {
 
 // server/routes/perplexity.ts
 init_auth();
-var router27 = Router28();
-router27.post("/search", requireAuth, async (req, res) => {
+var router26 = Router27();
+router26.post("/search", requireAuth, async (req, res) => {
   try {
     const userId = req.user?.userId || "anonymous";
     const { allowed, retryAfterMs } = checkRateLimit2(userId, "perplexity", {
@@ -38295,11 +36203,11 @@ router27.post("/search", requireAuth, async (req, res) => {
         retryAfterMs
       });
     }
-    const { query: query2, deep } = req.body;
-    if (!query2 || typeof query2 !== "string") {
+    const { query: query3, deep } = req.body;
+    if (!query3 || typeof query3 !== "string") {
       return res.status(400).json({ error: "Missing required field: query" });
     }
-    const result = await executePerplexitySearch(query2, !!deep);
+    const result = await executePerplexitySearch(query3, !!deep);
     try {
       const parsed = JSON.parse(result);
       if (parsed.error) {
@@ -38319,10 +36227,10 @@ router27.post("/search", requireAuth, async (req, res) => {
     });
   }
 });
-var perplexity_default = router27;
+var perplexity_default = router26;
 
 // server/routes/fortigate.ts
-import { Router as Router29 } from "express";
+import { Router as Router28 } from "express";
 init_fortigate();
 
 // server/deviceClassifier.ts
@@ -39006,7 +36914,7 @@ init_db2();
 var CONNECTION_CACHE_TTL_MS = 10 * 60 * 1e3;
 async function getRuckusFeedHealthy() {
   try {
-    const { rows } = await query(`SELECT MAX(captured_at) AS last_snap FROM wireless_snapshots`, []);
+    const { rows } = await query2(`SELECT MAX(captured_at) AS last_snap FROM wireless_snapshots`, []);
     const lastSnap = rows[0]?.last_snap;
     if (!lastSnap) return false;
     const snapMs = lastSnap instanceof Date ? lastSnap.getTime() : new Date(String(lastSnap)).getTime();
@@ -39021,7 +36929,7 @@ async function loadRuckusContext() {
   try {
     const recentWindowInterval = `${Math.ceil(RECENT_WINDOW_MS / 6e4)} minutes`;
     const [ndRes, snapRes] = await Promise.all([
-      query(
+      query2(
         `SELECT mac_address, ssids, last_seen
            FROM network_devices
           WHERE ssids IS NOT NULL
@@ -39029,7 +36937,7 @@ async function loadRuckusContext() {
             AND last_seen >= NOW() - $1::interval`,
         [recentWindowInterval]
       ),
-      query(`SELECT MAX(captured_at) AS last_snap FROM wireless_snapshots`, []).catch(() => ({ rows: [] }))
+      query2(`SELECT MAX(captured_at) AS last_snap FROM wireless_snapshots`, []).catch(() => ({ rows: [] }))
     ]);
     ruckusRows = ndRes.rows;
     const snapRow = snapRes.rows[0];
@@ -39047,7 +36955,7 @@ async function readCachedConnections(macs) {
   const out = /* @__PURE__ */ new Map();
   const unique = Array.from(new Set(macs.filter((m) => typeof m === "string" && m.length > 0)));
   if (unique.length === 0) return out;
-  const res = await query(
+  const res = await query2(
     `SELECT mac_address, resolved_connection, resolved_connection_at
        FROM network_devices
       WHERE mac_address = ANY($1::text[])
@@ -39077,7 +36985,7 @@ async function writeCachedConnections(entries) {
     jsons.push(JSON.stringify(e.connection));
   }
   if (macs.length === 0) return;
-  await query(
+  await query2(
     `INSERT INTO network_devices (mac_address, resolved_connection, resolved_connection_at, first_seen, last_seen)
      SELECT m, j::jsonb, NOW(), NOW(), NOW()
        FROM unnest($1::text[], $2::text[]) AS t(m, j)
@@ -39089,7 +36997,7 @@ async function writeCachedConnections(entries) {
 }
 async function getConnectionCacheFreshness() {
   try {
-    const { rows } = await query(
+    const { rows } = await query2(
       `SELECT MIN(resolved_connection_at) AS oldest,
               MAX(resolved_connection_at) AS newest,
               COUNT(*)::int               AS cnt
@@ -39116,7 +37024,7 @@ async function getConnectionCacheFreshness() {
 async function invalidateConnectionCache(macs) {
   const unique = Array.from(new Set(macs.filter((m) => typeof m === "string" && m.length > 0)));
   if (unique.length === 0) return;
-  await query(
+  await query2(
     `UPDATE network_devices SET resolved_connection_at = NULL WHERE mac_address = ANY($1::text[])`,
     [unique]
   );
@@ -39249,7 +37157,7 @@ function haTopSites() {
 }
 
 // server/routes/fortigate.ts
-var router28 = Router29();
+var router27 = Router28();
 var FORTIGATE_BASE_URL2 = getFortigateBaseUrl();
 function requireAdmin2(req, res, next) {
   if (req.userRole !== "admin") {
@@ -39416,7 +37324,7 @@ function isHtmlResponse(data) {
   }
   return false;
 }
-router28.get("/api/fortigate/interfaces", requireAuth2, requireAdmin2, async (_req, res) => {
+router27.get("/api/fortigate/interfaces", requireAuth2, requireAdmin2, async (_req, res) => {
   try {
     const [cmdbResult, monitorResult] = await Promise.allSettled([
       fortigateRequest2("/api/v2/cmdb/system/interface?format=name%7Cip%7Cmask%7Ctype%7Cvlanid%7Cstatus%7Cspeed%7Cdescription%7Callowaccess%7Cmtu"),
@@ -39483,7 +37391,7 @@ function extractResourceValue(val) {
   }
   return null;
 }
-router28.get("/api/fortigate/system-health", requireAuth2, async (_req, res) => {
+router27.get("/api/fortigate/system-health", requireAuth2, async (_req, res) => {
   try {
     const fromHa = haSystemHealth();
     if (fromHa) {
@@ -39513,7 +37421,7 @@ router28.get("/api/fortigate/system-health", requireAuth2, async (_req, res) => 
     res.status(503).json({ error: "FortiGate unreachable", details: message });
   }
 });
-router28.get("/api/fortigate/system-status", requireAuth2, async (_req, res) => {
+router27.get("/api/fortigate/system-status", requireAuth2, async (_req, res) => {
   try {
     const result = await fortigateRequest2("/api/v2/monitor/system/status");
     if (!isSuccessStatus(result.status)) {
@@ -39539,7 +37447,7 @@ router28.get("/api/fortigate/system-status", requireAuth2, async (_req, res) => 
     res.status(503).json({ error: "FortiGate unreachable", details: message });
   }
 });
-router28.get("/api/fortigate/devices", requireAuth2, async (req, res) => {
+router27.get("/api/fortigate/devices", requireAuth2, async (req, res) => {
   try {
     const [deviceRes, fortiviewRes] = await Promise.allSettled([
       fortigateRequest2("/api/v2/monitor/user/device/query?with_forticlient=false"),
@@ -39662,7 +37570,7 @@ router28.get("/api/fortigate/devices", requireAuth2, async (req, res) => {
     res.status(503).json({ error: "FortiGate unreachable", details: message });
   }
 });
-router28.post("/api/fortigate/devices/refresh-connections", requireAuth2, requireAdmin2, async (_req, res) => {
+router27.post("/api/fortigate/devices/refresh-connections", requireAuth2, requireAdmin2, async (_req, res) => {
   try {
     const updated = await refreshConnectionMethodCache();
     const connectionCache = await getConnectionCacheFreshness().catch(() => ({ oldest: null, newest: null, count: 0 }));
@@ -39673,7 +37581,7 @@ router28.post("/api/fortigate/devices/refresh-connections", requireAuth2, requir
     res.status(503).json({ error: "Failed to refresh connection labels", details: message });
   }
 });
-router28.get("/api/fortigate/device-overrides", requireAuth2, requireAdmin2, async (_req, res) => {
+router27.get("/api/fortigate/device-overrides", requireAuth2, requireAdmin2, async (_req, res) => {
   try {
     const overrides = await storage.getDeviceOverrides();
     res.json({ overrides });
@@ -39682,7 +37590,7 @@ router28.get("/api/fortigate/device-overrides", requireAuth2, requireAdmin2, asy
     res.status(500).json({ error: "Failed to fetch device overrides", details: message });
   }
 });
-router28.put("/api/fortigate/device-overrides/:mac", requireAuth2, requireAdmin2, async (req, res) => {
+router27.put("/api/fortigate/device-overrides/:mac", requireAuth2, requireAdmin2, async (req, res) => {
   try {
     const macParam = req.params["mac"];
     const mac = Array.isArray(macParam) ? macParam[0] : macParam;
@@ -39709,7 +37617,7 @@ router28.put("/api/fortigate/device-overrides/:mac", requireAuth2, requireAdmin2
     res.status(500).json({ error: "Failed to save device override", details: message });
   }
 });
-router28.delete("/api/fortigate/device-overrides/:mac", requireAuth2, requireAdmin2, async (req, res) => {
+router27.delete("/api/fortigate/device-overrides/:mac", requireAuth2, requireAdmin2, async (req, res) => {
   try {
     const mac = String(req.params.mac);
     await storage.deleteDeviceOverride(mac);
@@ -39721,7 +37629,7 @@ router28.delete("/api/fortigate/device-overrides/:mac", requireAuth2, requireAdm
     res.status(500).json({ error: "Failed to delete device override", details: message });
   }
 });
-router28.get("/api/fortigate/traffic", requireAuth2, requireAdmin2, async (_req, res) => {
+router27.get("/api/fortigate/traffic", requireAuth2, requireAdmin2, async (_req, res) => {
   try {
     let topTalkers = [];
     let topTalkersSource = "none";
@@ -39893,7 +37801,7 @@ router28.get("/api/fortigate/traffic", requireAuth2, requireAdmin2, async (_req,
     res.json({ top_talkers: [], interface_bandwidth: [], wan_throughput: { rx_bytes: null, tx_bytes: null, history: [] } });
   }
 });
-router28.get("/api/fortigate/top-sites", requireAuth2, requireAdmin2, async (_req, res) => {
+router27.get("/api/fortigate/top-sites", requireAuth2, requireAdmin2, async (_req, res) => {
   try {
     const haSites = haTopSites();
     if (haSites && haSites.length > 0) {
@@ -39946,7 +37854,7 @@ router28.get("/api/fortigate/top-sites", requireAuth2, requireAdmin2, async (_re
     res.json({ sites: [], total: 0 });
   }
 });
-router28.post("/api/fortigate-wan-snapshot", requireAuth2, async (_req, res) => {
+router27.post("/api/fortigate-wan-snapshot", requireAuth2, async (_req, res) => {
   try {
     const wan = haWanStats();
     if (!wan) {
@@ -39954,12 +37862,12 @@ router28.post("/api/fortigate-wan-snapshot", requireAuth2, async (_req, res) => 
       return;
     }
     try {
-      await query(
+      await query2(
         `INSERT INTO wan_throughput_history (wan_rx_gb, wan_tx_gb, wan_speed, wan_status, wan_link)
          VALUES ($1, $2, $3, $4, $5)`,
         [wan.rx_gb, wan.tx_gb, wan.wan_speed, wan.wan_status, wan.link]
       );
-      await query(`DELETE FROM wan_throughput_history WHERE captured_at < NOW() - INTERVAL '4 hours'`, []);
+      await query2(`DELETE FROM wan_throughput_history WHERE captured_at < NOW() - INTERVAL '4 hours'`, []);
     } catch (dbErr) {
       const dbMsg = dbErr instanceof Error ? dbErr.message : "Unknown DB error";
       if (dbMsg.toLowerCase().includes("relation") && dbMsg.toLowerCase().includes("does not exist")) {
@@ -39978,10 +37886,10 @@ router28.post("/api/fortigate-wan-snapshot", requireAuth2, async (_req, res) => 
     res.status(500).json({ error: message });
   }
 });
-router28.get("/api/fortigate/wan-history", requireAuth2, requireAdmin2, async (req, res) => {
+router27.get("/api/fortigate/wan-history", requireAuth2, requireAdmin2, async (req, res) => {
   try {
     const windowMinutes = Math.min(Math.max(parseInt(String(req.query["window"] ?? "60"), 10) || 60, 1), 1440);
-    const { rows } = await query(
+    const { rows } = await query2(
       `WITH windowed AS (
          SELECT captured_at, wan_rx_gb, wan_tx_gb
          FROM wan_throughput_history
@@ -40029,7 +37937,7 @@ router28.get("/api/fortigate/wan-history", requireAuth2, requireAdmin2, async (r
     res.json({ points: [], windowMinutes: 60 });
   }
 });
-router28.get("/api/fortigate/devices/:identifier/traffic", requireAuth2, requireAdmin2, async (req, res) => {
+router27.get("/api/fortigate/devices/:identifier/traffic", requireAuth2, requireAdmin2, async (req, res) => {
   const identifier = String(req.params.identifier);
   const srcip = req.query["srcip"];
   if (!srcip) {
@@ -40134,7 +38042,7 @@ router28.get("/api/fortigate/devices/:identifier/traffic", requireAuth2, require
     res.status(503).json({ error: "FortiGate unreachable", details: message });
   }
 });
-router28.get("/api/fortigate/threats", requireAuth2, async (req, res) => {
+router27.get("/api/fortigate/threats", requireAuth2, async (req, res) => {
   try {
     const { getIpsThreats: getIpsThreats2 } = await Promise.resolve().then(() => (init_fortigate(), fortigate_exports));
     const limit = parseInt(String(req.query["limit"] ?? "100"), 10) || 100;
@@ -40177,7 +38085,7 @@ router28.get("/api/fortigate/threats", requireAuth2, async (req, res) => {
     });
   }
 });
-router28.get("/api/fortigate/vpn", requireAuth2, async (_req, res) => {
+router27.get("/api/fortigate/vpn", requireAuth2, async (_req, res) => {
   try {
     const [sslResult, ipsecResult] = await Promise.allSettled([
       fortigateRequest2("/api/v2/monitor/vpn/ssl"),
@@ -40225,7 +38133,7 @@ router28.get("/api/fortigate/vpn", requireAuth2, async (_req, res) => {
     res.status(503).json({ error: "FortiGate unreachable", details: message });
   }
 });
-router28.get("/api/fortigate/ha-status", requireAuth2, requireAdmin2, async (_req, res) => {
+router27.get("/api/fortigate/ha-status", requireAuth2, requireAdmin2, async (_req, res) => {
   try {
     const result = await fortigateRequest2("/api/v2/monitor/system/ha-peer");
     if (isSuccessStatus(result.status)) {
@@ -40246,7 +38154,7 @@ router28.get("/api/fortigate/ha-status", requireAuth2, requireAdmin2, async (_re
     res.status(503).json({ error: "FortiGate unreachable", details: message });
   }
 });
-router28.get("/api/fortigate/wan-stats", requireAuth2, async (_req, res) => {
+router27.get("/api/fortigate/wan-stats", requireAuth2, async (_req, res) => {
   const bytesToGb = (bytes) => bytes != null ? Math.round(bytes / 1073741824 * 100) / 100 : null;
   function buildLinkStats(iface) {
     if (!iface) return null;
@@ -40326,7 +38234,7 @@ router28.get("/api/fortigate/wan-stats", requireAuth2, async (_req, res) => {
     wan2: wan2Stats
   });
 });
-router28.get("/api/fortigate/sdwan-health", requireAuth2, async (_req, res) => {
+router27.get("/api/fortigate/sdwan-health", requireAuth2, async (_req, res) => {
   try {
     const health = await getSdwanHealth();
     res.json(health);
@@ -40344,7 +38252,7 @@ router28.get("/api/fortigate/sdwan-health", requireAuth2, async (_req, res) => {
     res.status(503).json({ error: "FortiGate unreachable", details: message });
   }
 });
-router28.get("/api/fortigate/sdwan-health", requireAuth2, async (_req, res) => {
+router27.get("/api/fortigate/sdwan-health", requireAuth2, async (_req, res) => {
   try {
     const health = await getSdwanHealth();
     res.json(health);
@@ -40362,7 +38270,7 @@ router28.get("/api/fortigate/sdwan-health", requireAuth2, async (_req, res) => {
     res.status(503).json({ error: "FortiGate unreachable", details: message });
   }
 });
-router28.get("/api/fortigate/dns-dhcp", requireAuth2, requireAdmin2, async (_req, res) => {
+router27.get("/api/fortigate/dns-dhcp", requireAuth2, requireAdmin2, async (_req, res) => {
   const dnsCandidates = [
     "/api/v2/log/disk/dns?rows=100&start=0",
     "/api/v2/log/memory/dns?rows=100&start=0",
@@ -40522,7 +38430,7 @@ router28.get("/api/fortigate/dns-dhcp", requireAuth2, requireAdmin2, async (_req
     res.status(503).json({ error: "FortiGate unreachable", details: message });
   }
 });
-router28.put("/api/fortigate/interfaces/:name/toggle", requireAuth2, requireAdmin2, async (req, res) => {
+router27.put("/api/fortigate/interfaces/:name/toggle", requireAuth2, requireAdmin2, async (req, res) => {
   const name = String(req.params.name);
   const body = req.body;
   const enable = body["enable"];
@@ -40554,7 +38462,7 @@ router28.put("/api/fortigate/interfaces/:name/toggle", requireAuth2, requireAdmi
     res.status(503).json({ error: "FortiGate unreachable", details: message });
   }
 });
-router28.get("/api/fortigate/wifi-networks", requireAuth2, requireAdmin2, async (_req, res) => {
+router27.get("/api/fortigate/wifi-networks", requireAuth2, requireAdmin2, async (_req, res) => {
   try {
     const devRes = await fortigateRequest2("/api/v2/monitor/user/device/query?with_forticlient=false");
     if (!isSuccessStatus(devRes.status)) {
@@ -40567,7 +38475,7 @@ router28.get("/api/fortigate/wifi-networks", requireAuth2, requireAdmin2, async 
     const rawDevices = Array.isArray(results) ? results : [];
     const ruckusByMac = /* @__PURE__ */ new Map();
     try {
-      const { rows } = await query(
+      const { rows } = await query2(
         `SELECT mac_address, ssids, expected_ssid, last_seen
            FROM network_devices
           WHERE ssids IS NOT NULL
@@ -40702,7 +38610,7 @@ function requireConfigured(res) {
   });
   return false;
 }
-router28.get("/api/fortigate/status", requireAuth2, requireAdmin2, async (_req, res) => {
+router27.get("/api/fortigate/status", requireAuth2, requireAdmin2, async (_req, res) => {
   if (!requireConfigured(res)) return;
   try {
     const { getSystemStatus: getSystemStatus2 } = await Promise.resolve().then(() => (init_fortigate(), fortigate_exports));
@@ -40712,10 +38620,10 @@ router28.get("/api/fortigate/status", requireAuth2, requireAdmin2, async (_req, 
     handleLibError(res, err, "status");
   }
 });
-router28.get("/api/fortigate/fortiview-status", requireAuth2, requireAdmin2, (_req, res) => {
+router27.get("/api/fortigate/fortiview-status", requireAuth2, requireAdmin2, (_req, res) => {
   res.json(haFortiViewSensorsPresent());
 });
-router28.get("/api/fortigate/resources", requireAuth2, requireAdmin2, async (_req, res) => {
+router27.get("/api/fortigate/resources", requireAuth2, requireAdmin2, async (_req, res) => {
   if (!requireConfigured(res)) return;
   try {
     const { getResourceUsage: getResourceUsage2 } = await Promise.resolve().then(() => (init_fortigate(), fortigate_exports));
@@ -40725,7 +38633,7 @@ router28.get("/api/fortigate/resources", requireAuth2, requireAdmin2, async (_re
     handleLibError(res, err, "resources");
   }
 });
-router28.get("/api/fortigate/sessions", requireAuth2, requireAdmin2, async (req, res) => {
+router27.get("/api/fortigate/sessions", requireAuth2, requireAdmin2, async (req, res) => {
   if (!requireConfigured(res)) return;
   try {
     const limit = parseInt(String(req.query["limit"] ?? "50"), 10) || 50;
@@ -40736,7 +38644,7 @@ router28.get("/api/fortigate/sessions", requireAuth2, requireAdmin2, async (req,
     handleLibError(res, err, "sessions");
   }
 });
-router28.get("/api/fortigate/arp", requireAuth2, requireAdmin2, async (_req, res) => {
+router27.get("/api/fortigate/arp", requireAuth2, requireAdmin2, async (_req, res) => {
   if (!requireConfigured(res)) return;
   try {
     const { getArpTable: getArpTable2 } = await Promise.resolve().then(() => (init_fortigate(), fortigate_exports));
@@ -40746,7 +38654,7 @@ router28.get("/api/fortigate/arp", requireAuth2, requireAdmin2, async (_req, res
     handleLibError(res, err, "arp");
   }
 });
-router28.get("/api/fortigate/dhcp", requireAuth2, requireAdmin2, async (_req, res) => {
+router27.get("/api/fortigate/dhcp", requireAuth2, requireAdmin2, async (_req, res) => {
   if (!requireConfigured(res)) return;
   try {
     const { getDhcpLeases: getDhcpLeases2 } = await Promise.resolve().then(() => (init_fortigate(), fortigate_exports));
@@ -40756,7 +38664,7 @@ router28.get("/api/fortigate/dhcp", requireAuth2, requireAdmin2, async (_req, re
     handleLibError(res, err, "dhcp");
   }
 });
-router28.get("/api/fortigate/web-filter", requireAuth2, requireAdmin2, async (req, res) => {
+router27.get("/api/fortigate/web-filter", requireAuth2, requireAdmin2, async (req, res) => {
   if (!requireConfigured(res)) return;
   try {
     const limit = parseInt(String(req.query["limit"] ?? "100"), 10) || 100;
@@ -40768,7 +38676,7 @@ router28.get("/api/fortigate/web-filter", requireAuth2, requireAdmin2, async (re
     handleLibError(res, err, "web-filter");
   }
 });
-router28.get("/api/fortigate/policies", requireAuth2, requireAdmin2, async (_req, res) => {
+router27.get("/api/fortigate/policies", requireAuth2, requireAdmin2, async (_req, res) => {
   if (!requireConfigured(res)) return;
   try {
     const { getPolicyStats: getPolicyStats2 } = await Promise.resolve().then(() => (init_fortigate(), fortigate_exports));
@@ -40778,7 +38686,7 @@ router28.get("/api/fortigate/policies", requireAuth2, requireAdmin2, async (_req
     handleLibError(res, err, "policies");
   }
 });
-router28.get("/api/fortigate/top-bandwidth", requireAuth2, requireAdmin2, async (req, res) => {
+router27.get("/api/fortigate/top-bandwidth", requireAuth2, requireAdmin2, async (req, res) => {
   if (!requireConfigured(res)) return;
   try {
     const hours = parseInt(String(req.query["hours"] ?? "1"), 10) || 1;
@@ -40790,7 +38698,7 @@ router28.get("/api/fortigate/top-bandwidth", requireAuth2, requireAdmin2, async 
     handleLibError(res, err, "top-bandwidth");
   }
 });
-router28.get("/api/fortigate/summary", requireAuth2, requireAdmin2, async (_req, res) => {
+router27.get("/api/fortigate/summary", requireAuth2, requireAdmin2, async (_req, res) => {
   if (!requireConfigured(res)) return;
   try {
     const summary = await getSummary();
@@ -40799,7 +38707,7 @@ router28.get("/api/fortigate/summary", requireAuth2, requireAdmin2, async (_req,
     handleLibError(res, err, "summary");
   }
 });
-router28.get("/api/fortigate/health-trends", requireAuth2, requireAdmin2, async (req, res) => {
+router27.get("/api/fortigate/health-trends", requireAuth2, requireAdmin2, async (req, res) => {
   if (!requireConfigured(res)) return;
   try {
     const interval = typeof req.query["interval"] === "string" ? req.query["interval"] : "1-hour";
@@ -40810,7 +38718,7 @@ router28.get("/api/fortigate/health-trends", requireAuth2, requireAdmin2, async 
     handleLibError(res, err, "health-trends");
   }
 });
-router28.get("/api/fortigate/dns-blocks", requireAuth2, requireAdmin2, async (req, res) => {
+router27.get("/api/fortigate/dns-blocks", requireAuth2, requireAdmin2, async (req, res) => {
   if (!requireConfigured(res)) return;
   try {
     const limit = parseInt(String(req.query["limit"] ?? "100"), 10) || 100;
@@ -40833,10 +38741,10 @@ router28.get("/api/fortigate/dns-blocks", requireAuth2, requireAdmin2, async (re
     handleLibError(res, err, "dns-blocks");
   }
 });
-var fortigate_default = router28;
+var fortigate_default = router27;
 
 // server/routes/wireless.ts
-import { Router as Router30 } from "express";
+import { Router as Router29 } from "express";
 init_db2();
 init_auditLog();
 
@@ -40989,7 +38897,7 @@ function summarize(curr, recentEvents) {
 }
 
 // server/routes/wireless.ts
-var router29 = Router30();
+var router28 = Router29();
 function requireAdmin3(req, res, next) {
   if (req.userRole !== "admin") {
     res.status(403).json({ error: "Forbidden" });
@@ -41119,7 +39027,7 @@ function resolveSection(settled, cache3, fallback, setCache2, now) {
   }
   return { value: fallback, stale: false, fetchedAt: null, error: errMsg };
 }
-router29.get("/api/wireless/status", requireAuth2, requireAdmin3, async (_req, res) => {
+router28.get("/api/wireless/status", requireAuth2, requireAdmin3, async (_req, res) => {
   if (!isRuckusConfigured()) {
     res.status(503).json({
       error: "Ruckus controller not configured",
@@ -41217,7 +39125,7 @@ router29.get("/api/wireless/status", requireAuth2, requireAdmin3, async (_req, r
     handleError(res, err, "status");
   }
 });
-router29.get("/api/wireless/system", requireAuth2, requireAdmin3, async (_req, res) => {
+router28.get("/api/wireless/system", requireAuth2, requireAdmin3, async (_req, res) => {
   if (!isRuckusConfigured()) {
     res.status(503).json({ error: "Ruckus controller not configured" });
     return;
@@ -41229,7 +39137,7 @@ router29.get("/api/wireless/system", requireAuth2, requireAdmin3, async (_req, r
     handleError(res, err, "system");
   }
 });
-router29.get("/api/wireless/aps", requireAuth2, requireAdmin3, async (_req, res) => {
+router28.get("/api/wireless/aps", requireAuth2, requireAdmin3, async (_req, res) => {
   if (!isRuckusConfigured()) {
     res.status(503).json({ error: "Ruckus controller not configured" });
     return;
@@ -41242,7 +39150,7 @@ router29.get("/api/wireless/aps", requireAuth2, requireAdmin3, async (_req, res)
     handleError(res, err, "aps");
   }
 });
-router29.get("/api/wireless/clients", requireAuth2, requireAdmin3, async (_req, res) => {
+router28.get("/api/wireless/clients", requireAuth2, requireAdmin3, async (_req, res) => {
   if (!isRuckusConfigured()) {
     res.status(503).json({ error: "Ruckus controller not configured" });
     return;
@@ -41254,7 +39162,7 @@ router29.get("/api/wireless/clients", requireAuth2, requireAdmin3, async (_req, 
     handleError(res, err, "clients");
   }
 });
-router29.get("/api/wireless/grouped", requireAuth2, requireAdmin3, async (_req, res) => {
+router28.get("/api/wireless/grouped", requireAuth2, requireAdmin3, async (_req, res) => {
   if (!isRuckusConfigured()) {
     res.status(503).json({ error: "Ruckus controller not configured" });
     return;
@@ -41287,7 +39195,7 @@ router29.get("/api/wireless/grouped", requireAuth2, requireAdmin3, async (_req, 
     source: "ruckus"
   });
 });
-router29.get("/api/wireless/ssids", requireAuth2, requireAdmin3, async (_req, res) => {
+router28.get("/api/wireless/ssids", requireAuth2, requireAdmin3, async (_req, res) => {
   if (!isRuckusConfigured()) {
     res.status(503).json({ error: "Ruckus controller not configured" });
     return;
@@ -41308,7 +39216,7 @@ router29.get("/api/wireless/ssids", requireAuth2, requireAdmin3, async (_req, re
     handleError(res, err, "ssids");
   }
 });
-router29.get("/api/wireless/wlans", requireAuth2, requireAdmin3, async (_req, res) => {
+router28.get("/api/wireless/wlans", requireAuth2, requireAdmin3, async (_req, res) => {
   if (!isRuckusConfigured()) {
     res.status(503).json({ error: "Ruckus controller not configured" });
     return;
@@ -41329,7 +39237,7 @@ function isCronAuthorized(req) {
   return req.headers["x-cron-secret"] === secret;
 }
 async function loadPreviousSnapshot() {
-  const { rows } = await query(
+  const { rows } = await query2(
     `SELECT ap_total, ap_online, ap_offline, ap_unknown, client_total, ssid_total,
             clients_by_ssid, aps_by_mac, stale, section_errors
        FROM wireless_snapshots
@@ -41351,7 +39259,7 @@ async function loadPreviousSnapshot() {
     section_errors: r.section_errors ?? {}
   };
 }
-router29.post("/api/wireless-snapshot", async (req, res) => {
+router28.post("/api/wireless-snapshot", async (req, res) => {
   if (!isCronAuthorized(req)) {
     res.status(401).json({ error: "unauthorized" });
     return;
@@ -41433,7 +39341,7 @@ router29.post("/api/wireless-snapshot", async (req, res) => {
     });
     const prev = await loadPreviousSnapshot();
     const events = detectEvents(prev, snap);
-    const { rows: insertedRows } = await query(
+    const { rows: insertedRows } = await query2(
       `INSERT INTO wireless_snapshots
         (ap_total, ap_online, ap_offline, ap_unknown, client_total, ssid_total,
          clients_by_ssid, aps_by_mac, stale, section_errors, source)
@@ -41455,16 +39363,16 @@ router29.post("/api/wireless-snapshot", async (req, res) => {
     );
     const snapshotId = insertedRows[0]?.id;
     for (const ev of events) {
-      await query(
+      await query2(
         `INSERT INTO wireless_events (event_type, severity, evidence, summary, detail)
          VALUES ($1,$2,$3,$4,$5)`,
         [ev.event_type, ev.severity, ev.evidence, ev.summary, JSON.stringify(ev.detail)]
       );
     }
-    await query(
+    await query2(
       `DELETE FROM wireless_snapshots WHERE captured_at < NOW() - INTERVAL '${RETENTION_DAYS} days'`
     );
-    await query(
+    await query2(
       `DELETE FROM wireless_events WHERE detected_at < NOW() - INTERVAL '${RETENTION_DAYS} days'`
     );
     const elapsed = Date.now() - t0;
@@ -41523,9 +39431,9 @@ router29.post("/api/wireless-snapshot", async (req, res) => {
     res.status(500).json({ error: msg });
   }
 });
-router29.get("/api/wireless/diagnostics", requireAuth2, requireAdmin3, async (_req, res) => {
+router28.get("/api/wireless/diagnostics", requireAuth2, requireAdmin3, async (_req, res) => {
   try {
-    const { rows: snapRows } = await query(
+    const { rows: snapRows } = await query2(
       `SELECT id, captured_at, ap_total, ap_online, ap_offline, ap_unknown,
               client_total, ssid_total, clients_by_ssid, aps_by_mac,
               stale, section_errors
@@ -41533,20 +39441,20 @@ router29.get("/api/wireless/diagnostics", requireAuth2, requireAdmin3, async (_r
         ORDER BY captured_at DESC
         LIMIT 1`
     );
-    const { rows: eventRows } = await query(
+    const { rows: eventRows } = await query2(
       `SELECT id, detected_at, event_type, severity, evidence, summary, detail
          FROM wireless_events
         WHERE detected_at > NOW() - INTERVAL '24 hours'
         ORDER BY detected_at DESC
         LIMIT 100`
     );
-    const { rows: countRows } = await query(
+    const { rows: countRows } = await query2(
       `SELECT COUNT(*)::int AS n
          FROM wireless_events
         WHERE detected_at > NOW() - INTERVAL '24 hours'`
     );
     const eventCount24h = countRows[0]?.n ?? 0;
-    const { rows: history } = await query(
+    const { rows: history } = await query2(
       `SELECT captured_at, ap_online, ap_total, ap_unknown, client_total, stale
          FROM wireless_snapshots
         WHERE captured_at > NOW() - INTERVAL '24 hours'
@@ -41600,11 +39508,11 @@ router29.get("/api/wireless/diagnostics", requireAuth2, requireAdmin3, async (_r
     res.status(500).json({ error: msg });
   }
 });
-router29.get("/api/wireless/events", requireAuth2, requireAdmin3, async (req, res) => {
+router28.get("/api/wireless/events", requireAuth2, requireAdmin3, async (req, res) => {
   try {
     const hours = Math.min(Math.max(parseInt(String(req.query.hours ?? "24"), 10) || 24, 1), 168);
     const limit = Math.min(Math.max(parseInt(String(req.query.limit ?? "200"), 10) || 200, 1), 500);
-    const { rows } = await query(
+    const { rows } = await query2(
       `SELECT id, detected_at, event_type, severity, evidence, summary, detail
          FROM wireless_events
         WHERE detected_at > NOW() - INTERVAL '${hours} hours'
@@ -41618,12 +39526,12 @@ router29.get("/api/wireless/events", requireAuth2, requireAdmin3, async (req, re
     res.status(500).json({ error: msg });
   }
 });
-var wireless_default = router29;
+var wireless_default = router28;
 
 // server/routes/network-devices.ts
-import { Router as Router31 } from "express";
+import { Router as Router30 } from "express";
 init_network_devices();
-var router30 = Router31();
+var router29 = Router30();
 function requireAdmin4(req, res, next) {
   if (req.userRole !== "admin") {
     res.status(403).json({ error: "Forbidden" });
@@ -41643,7 +39551,7 @@ function parseBool(v) {
   if (t === "false" || t === "0") return false;
   return void 0;
 }
-router30.get(
+router29.get(
   "/api/network-devices/unknowns",
   requireAuth2,
   requireAdmin4,
@@ -41661,7 +39569,7 @@ router30.get(
     }
   }
 );
-router30.get(
+router29.get(
   "/api/network-devices",
   requireAuth2,
   requireAdmin4,
@@ -41682,7 +39590,7 @@ router30.get(
     }
   }
 );
-router30.get(
+router29.get(
   "/api/network-devices/:mac",
   requireAuth2,
   requireAdmin4,
@@ -41699,7 +39607,7 @@ router30.get(
     }
   }
 );
-router30.put(
+router29.put(
   "/api/network-devices/:mac",
   requireAuth2,
   requireAdmin4,
@@ -41729,7 +39637,7 @@ router30.put(
     }
   }
 );
-router30.delete(
+router29.delete(
   "/api/network-devices/:mac",
   requireAuth2,
   requireAdmin4,
@@ -41742,14 +39650,14 @@ router30.delete(
     }
   }
 );
-var network_devices_default = router30;
+var network_devices_default = router29;
 
 // server/routes/computerAuth.ts
 init_auth();
-import { Router as Router32 } from "express";
+import { Router as Router31 } from "express";
 init_auditLog();
-var router31 = Router32();
-router31.post("/api/auth/computer/session", (req, res) => {
+var router30 = Router31();
+router30.post("/api/auth/computer/session", (req, res) => {
   const headerValue = req.header("x-computer-token");
   if (!isComputerTokenValid(headerValue)) {
     res.status(401).json({ error: "invalid_token" });
@@ -41782,12 +39690,12 @@ router31.post("/api/auth/computer/session", (req, res) => {
     expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1e3).toISOString()
   });
 });
-var computerAuth_default = router31;
+var computerAuth_default = router30;
 
 // server/routes/goaccess.ts
 init_helpers();
 init_db2();
-import { Router as Router33 } from "express";
+import { Router as Router32 } from "express";
 
 // server/handlers/goaccess-poll.ts
 init_db2();
@@ -41869,7 +39777,7 @@ async function pollGoAccessEmails(_req, res) {
       res.json({ success: false, error: "GoAccess Google account not connected" });
       return;
     }
-    await query(
+    await query2(
       `CREATE TABLE IF NOT EXISTS goaccess_checkins (
         id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
         guest_name TEXT NOT NULL,
@@ -41880,14 +39788,14 @@ async function pollGoAccessEmails(_req, res) {
         created_at TIMESTAMPTZ DEFAULT NOW()
       )`
     );
-    await query(
+    await query2(
       `CREATE TABLE IF NOT EXISTS goaccess_poll_state (
         id INTEGER PRIMARY KEY DEFAULT 1,
         last_poll_at TIMESTAMPTZ,
         last_message_id TEXT
       )`
     );
-    const stateResult = await query(
+    const stateResult = await query2(
       `SELECT last_poll_at FROM goaccess_poll_state WHERE id = 1`
     );
     const lastPollAt = stateResult.rows[0]?.last_poll_at;
@@ -41910,7 +39818,7 @@ async function pollGoAccessEmails(_req, res) {
     const messages = listData.messages || [];
     if (messages.length === 0) {
       console.log("[goaccess-poll] No GoAccess emails found");
-      await query(
+      await query2(
         `INSERT INTO goaccess_poll_state (id, last_poll_at)
          VALUES (1, NOW())
          ON CONFLICT (id) DO UPDATE SET last_poll_at = NOW()`
@@ -41921,7 +39829,7 @@ async function pollGoAccessEmails(_req, res) {
     let processed = 0;
     let skipped = 0;
     for (const msg of messages) {
-      const existingResult = await query(
+      const existingResult = await query2(
         `SELECT id FROM goaccess_checkins WHERE gmail_message_id = $1`,
         [msg.id]
       );
@@ -41941,7 +39849,7 @@ async function pollGoAccessEmails(_req, res) {
       const parsed = parseGoAccessEmail(subject, msgData.internalDate, dateHeader);
       if (!parsed) continue;
       try {
-        await query(
+        await query2(
           `INSERT INTO goaccess_checkins (guest_name, company_name, checked_in_at, raw_email_subject, gmail_message_id)
            VALUES ($1, $2, $3, $4, $5)
            ON CONFLICT (gmail_message_id) DO NOTHING`,
@@ -41952,7 +39860,7 @@ async function pollGoAccessEmails(_req, res) {
         console.error("[goaccess-poll] Insert error:", err);
       }
     }
-    await query(
+    await query2(
       `INSERT INTO goaccess_poll_state (id, last_poll_at, last_message_id)
        VALUES (1, NOW(), $1)
        ON CONFLICT (id) DO UPDATE SET last_poll_at = NOW(), last_message_id = $1`,
@@ -41980,11 +39888,11 @@ async function pollGoAccessEmails(_req, res) {
 }
 
 // server/routes/goaccess.ts
-var router32 = Router33();
+var router31 = Router32();
 var GOACCESS_SCOPES = "https://www.googleapis.com/auth/gmail.readonly";
 var GOACCESS_USER_ID2 = "goaccess_system";
 var GOACCESS_EMAIL = "gate-notifications@example.com";
-router32.post("/poll", async (req, res) => {
+router31.post("/poll", async (req, res) => {
   const cronSecret = process.env.CRON_SECRET;
   const cronHeader = req.headers["x-cron-secret"];
   if (cronHeader && cronSecret && cronHeader === cronSecret) {
@@ -41994,11 +39902,11 @@ router32.post("/poll", async (req, res) => {
   if (auth.error) return res.status(401).json({ error: auth.error });
   return pollGoAccessEmails(req, res);
 });
-router32.get("/checkins", async (req, res) => {
+router31.get("/checkins", async (req, res) => {
   const auth = await authenticateRequest(req.headers.authorization, req.cookies?.auth_token);
   if (auth.error) return res.status(401).json({ error: auth.error });
   try {
-    await query(
+    await query2(
       `CREATE TABLE IF NOT EXISTS goaccess_checkins (
         id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
         guest_name TEXT NOT NULL,
@@ -42018,7 +39926,7 @@ router32.get("/checkins", async (req, res) => {
     } else if (filter === "30days") {
       dateCondition = "WHERE checked_in_at >= CURRENT_DATE - INTERVAL '30 days'";
     }
-    const result = await query(
+    const result = await query2(
       `SELECT id, guest_name, company_name, checked_in_at, raw_email_subject, gmail_message_id, created_at
        FROM goaccess_checkins
        ${dateCondition}
@@ -42032,7 +39940,7 @@ router32.get("/checkins", async (req, res) => {
     res.status(500).json({ success: false, error: msg });
   }
 });
-router32.post("/auth", async (req, res) => {
+router31.post("/auth", async (req, res) => {
   try {
     const action = req.query.action || req.body?.action;
     if (action === "authorize") {
@@ -42149,18 +40057,18 @@ router32.post("/auth", async (req, res) => {
     return res.status(500).json({ success: false, error: msg });
   }
 });
-var goaccess_default = router32;
+var goaccess_default = router31;
 
 // server/routes/external.ts
 init_auditLog();
-import { Router as Router34 } from "express";
+import { Router as Router33 } from "express";
 import crypto5 from "crypto";
 import Ajv from "ajv";
 init_storage();
 init_supabase();
 init_helpers();
 init_irrigationFlow();
-var router33 = Router34();
+var router32 = Router33();
 var SOURCE = "external_api";
 var CHANNEL = "external_api";
 var ACTOR_ID = "external_api";
@@ -42277,8 +40185,8 @@ function rateLimit2(req, res, next) {
   }
   next();
 }
-router33.use(requireExternalApiKey);
-router33.use(rateLimit2);
+router32.use(requireExternalApiKey);
+router32.use(rateLimit2);
 function ok(res, data) {
   const cid = res.req?.correlationId;
   res.json({ success: true, data: sanitize(data), ...cid ? { correlation_id: cid } : {} });
@@ -42375,7 +40283,7 @@ var ACTION_ENDPOINTS = [
     description: "Broadcast a TTS message to Google Home speakers, with WhatsApp fallback if all speakers fail",
     body: { type: "object", required: ["message"], properties: {
       message: { type: "string" },
-      speakers: { type: "array<string>", description: "media_player.* entity IDs (defaults to the three girls' speakers)" },
+      speakers: { type: "array<string>", description: "media_player.* entity IDs (defaults to bedroom speakers)" },
       volume: { type: "number" },
       voice_id: { type: "string" },
       fallback_phone: { type: "string" }
@@ -42517,12 +40425,12 @@ function validateBody(endpoint, method, defPath) {
     next();
   };
 }
-router33.get("/health", (req, res) => {
+router32.get("/health", (req, res) => {
   audit(req, { endpoint: "health", status: "success", durationMs: 0 });
   res.json({ success: true, data: { ok: true, timestamp: (/* @__PURE__ */ new Date()).toISOString() } });
 });
 var TOOLS = ALL_TOOLS;
-router33.get("/capabilities", asyncH("capabilities", async () => ({
+router32.get("/capabilities", asyncH("capabilities", async () => ({
   name: "Janus External API",
   version: "v1",
   base_path: "/api/v1/external",
@@ -42535,14 +40443,14 @@ router33.get("/capabilities", asyncH("capabilities", async () => ({
     parameters: t.function.parameters
   }))
 })));
-router33.get("/tools", asyncH("tools.list", async () => ({
+router32.get("/tools", asyncH("tools.list", async () => ({
   tools: TOOLS.map((t) => ({
     name: t.function.name,
     description: t.function.description,
     parameters: t.function.parameters
   }))
 })));
-router33.post("/tools/:name/invoke", async (req, res) => {
+router32.post("/tools/:name/invoke", async (req, res) => {
   const start = Date.now();
   const name = req.params.name;
   const tool = TOOLS.find((t) => t.function.name === name);
@@ -42600,7 +40508,7 @@ function enrichZoneLabels(parsed) {
   if (Array.isArray(parsed)) return parsed.map(enrichZoneLabel);
   return enrichZoneLabel(parsed);
 }
-router33.get("/home/states", asyncH("home.states", async (req) => {
+router32.get("/home/states", asyncH("home.states", async (req) => {
   const domain = req.query.domain || void 0;
   const raw = await executeHAGetStates(domain);
   try {
@@ -42609,7 +40517,7 @@ router33.get("/home/states", asyncH("home.states", async (req) => {
     return raw;
   }
 }));
-router33.get("/home/state/:entity_id", asyncH("home.state", async (req) => {
+router32.get("/home/state/:entity_id", asyncH("home.state", async (req) => {
   const raw = await executeHAGetState(String(req.params.entity_id));
   try {
     return enrichZoneLabels(JSON.parse(raw));
@@ -42617,7 +40525,7 @@ router33.get("/home/state/:entity_id", asyncH("home.state", async (req) => {
     return raw;
   }
 }));
-router33.get("/home/logbook", asyncH("home.logbook", async (req) => {
+router32.get("/home/logbook", asyncH("home.logbook", async (req) => {
   const hours = req.query.hours ? Number(req.query.hours) : void 0;
   const entity_id = req.query.entity_id || void 0;
   const raw = await executeHAGetLogbook(hours, entity_id);
@@ -42627,13 +40535,13 @@ router33.get("/home/logbook", asyncH("home.logbook", async (req) => {
     return raw;
   }
 }));
-router33.post("/home/call-service", validateBody("home.call_service", "POST", "/home/call-service"), asyncH("home.call_service", async (req) => {
+router32.post("/home/call-service", validateBody("home.call_service", "POST", "/home/call-service"), asyncH("home.call_service", async (req) => {
   const { domain, service, service_data } = req.body || {};
   if (!domain || !service) throw new Error("domain and service are required");
   const result = await executeHACallService(domain, service, service_data);
   return { result };
 }));
-router33.get("/tesla/status", asyncH("tesla.status", async () => {
+router32.get("/tesla/status", asyncH("tesla.status", async () => {
   const svc = getServiceClient();
   const raw = await executeCheckTeslaStatus(svc);
   try {
@@ -42642,7 +40550,7 @@ router33.get("/tesla/status", asyncH("tesla.status", async () => {
     return raw;
   }
 }));
-router33.get("/verkada/status", asyncH("verkada.status", async () => {
+router32.get("/verkada/status", asyncH("verkada.status", async () => {
   const svc = getServiceClient();
   const raw = await executeCheckVerkadaSecurity(svc);
   try {
@@ -42651,7 +40559,7 @@ router33.get("/verkada/status", asyncH("verkada.status", async () => {
     return raw;
   }
 }));
-router33.get("/generator/status", asyncH("generator.status", async () => {
+router32.get("/generator/status", asyncH("generator.status", async () => {
   const raw = await executeCheckGeneratorStatus();
   try {
     return JSON.parse(raw);
@@ -42659,12 +40567,12 @@ router33.get("/generator/status", asyncH("generator.status", async () => {
     return raw;
   }
 }));
-router33.get("/pool/status", asyncH("pool.status", async () => {
+router32.get("/pool/status", asyncH("pool.status", async () => {
   const session = await getIaqualinkSession();
   const devices = await iaqualinkSimpleGet("/devices.json", session);
   return { devices };
 }));
-router33.get("/network/status", asyncH("network.status", async () => {
+router32.get("/network/status", asyncH("network.status", async () => {
   const [statusRes, healthRes, interfacesRes] = await Promise.all([
     fortigateRequest2("/api/v2/monitor/system/status"),
     fortigateRequest2("/api/v2/monitor/system/resource/usage?scope=global"),
@@ -42687,7 +40595,7 @@ router33.get("/network/status", asyncH("network.status", async () => {
   };
 }));
 var weatherCache = null;
-router33.get("/weather", asyncH("weather.current", async () => {
+router32.get("/weather", asyncH("weather.current", async () => {
   if (weatherCache && Date.now() < weatherCache.expiresAt) return weatherCache.data;
   const port = process.env.PORT || 5e3;
   const r = await fetch(`http://localhost:${port}/api/weather-dashboard`, {
@@ -42699,12 +40607,12 @@ router33.get("/weather", asyncH("weather.current", async () => {
   weatherCache = { data, expiresAt: Date.now() + 5 * 60 * 1e3 };
   return data;
 }));
-router33.get("/calendars", asyncH("calendar.list", async (req) => {
+router32.get("/calendars", asyncH("calendar.list", async (req) => {
   const calendarId = req.query.calendar_id || void 0;
   const data = await callCalendarProxy({ action: "list-calendars", calendarId: calendarId || "admin@example.com" });
   return data;
 }));
-router33.get("/calendar/events", asyncH("calendar.events", async (req) => {
+router32.get("/calendar/events", asyncH("calendar.events", async (req) => {
   const calendar_id = req.query.calendar_id || void 0;
   const now = /* @__PURE__ */ new Date();
   const time_min = req.query.time_min || now.toISOString();
@@ -42717,7 +40625,7 @@ router33.get("/calendar/events", asyncH("calendar.events", async (req) => {
     return { summary: raw };
   }
 }));
-router33.post("/calendar/event", validateBody("calendar.create", "POST", "/calendar/event"), asyncH("calendar.create", async (req) => {
+router32.post("/calendar/event", validateBody("calendar.create", "POST", "/calendar/event"), asyncH("calendar.create", async (req) => {
   const { calendar_id, title, start, end, description, location, attendees } = req.body || {};
   if (!title || !start || !end) throw new Error("title, start, end are required");
   const raw = await executeCreateCalendarEvent(calendar_id, title, start, end, description, location, attendees);
@@ -42727,7 +40635,7 @@ router33.post("/calendar/event", validateBody("calendar.create", "POST", "/calen
     return { result: raw };
   }
 }));
-router33.patch("/calendar/event/:event_id", validateBody("calendar.update", "PATCH", "/calendar/event/:event_id"), asyncH("calendar.update", async (req) => {
+router32.patch("/calendar/event/:event_id", validateBody("calendar.update", "PATCH", "/calendar/event/:event_id"), asyncH("calendar.update", async (req) => {
   const { calendar_id, title, start, end, description, location, attendees } = req.body || {};
   const data = await callCalendarProxy({
     action: "update-event",
@@ -42742,7 +40650,7 @@ router33.patch("/calendar/event/:event_id", validateBody("calendar.update", "PAT
   });
   return data;
 }));
-router33.delete("/calendar/event/:event_id", asyncH("calendar.delete", async (req) => {
+router32.delete("/calendar/event/:event_id", asyncH("calendar.delete", async (req) => {
   const calendar_id = req.query.calendar_id || void 0;
   const raw = await executeDeleteCalendarEvent(calendar_id, String(req.params.event_id));
   try {
@@ -42751,7 +40659,7 @@ router33.delete("/calendar/event/:event_id", asyncH("calendar.delete", async (re
     return { result: raw };
   }
 }));
-router33.get("/notion/database/:id", asyncH("notion.database", async (req) => {
+router32.get("/notion/database/:id", asyncH("notion.database", async (req) => {
   const apiKey = process.env.NOTION_API_KEY;
   if (!apiKey) throw new Error("NOTION_API_KEY not configured");
   const r = await fetch(`https://api.notion.com/v1/databases/${req.params.id}`, {
@@ -42763,7 +40671,7 @@ router33.get("/notion/database/:id", asyncH("notion.database", async (req) => {
   if (!r.ok) throw new Error(`Notion HTTP ${r.status}`);
   return await r.json();
 }));
-router33.post("/notion/query", validateBody("notion.query", "POST", "/notion/query"), asyncH("notion.query", async (req) => {
+router32.post("/notion/query", validateBody("notion.query", "POST", "/notion/query"), asyncH("notion.query", async (req) => {
   const apiKey = process.env.NOTION_API_KEY;
   if (!apiKey) throw new Error("NOTION_API_KEY not configured");
   const { database_id, filter, sorts, page_size, start_cursor } = req.body || {};
@@ -42780,7 +40688,7 @@ router33.post("/notion/query", validateBody("notion.query", "POST", "/notion/que
   if (!r.ok) throw new Error(`Notion HTTP ${r.status}`);
   return await r.json();
 }));
-router33.post("/notion/page", validateBody("notion.create_page", "POST", "/notion/page"), asyncH("notion.create_page", async (req) => {
+router32.post("/notion/page", validateBody("notion.create_page", "POST", "/notion/page"), asyncH("notion.create_page", async (req) => {
   const apiKey = process.env.NOTION_API_KEY;
   if (!apiKey) throw new Error("NOTION_API_KEY not configured");
   const { database_id, properties, children } = req.body || {};
@@ -42800,7 +40708,7 @@ router33.post("/notion/page", validateBody("notion.create_page", "POST", "/notio
   }
   return await r.json();
 }));
-router33.patch("/notion/page/:page_id", validateBody("notion.update_page", "PATCH", "/notion/page/:page_id"), asyncH("notion.update_page", async (req) => {
+router32.patch("/notion/page/:page_id", validateBody("notion.update_page", "PATCH", "/notion/page/:page_id"), asyncH("notion.update_page", async (req) => {
   const apiKey = process.env.NOTION_API_KEY;
   if (!apiKey) throw new Error("NOTION_API_KEY not configured");
   const { properties, archived } = req.body || {};
@@ -42820,7 +40728,7 @@ router33.patch("/notion/page/:page_id", validateBody("notion.update_page", "PATC
   }
   return await r.json();
 }));
-router33.post("/email/send", validateBody("email.send", "POST", "/email/send"), asyncH("email.send", async (req) => {
+router32.post("/email/send", validateBody("email.send", "POST", "/email/send"), asyncH("email.send", async (req) => {
   const { to, subject, html, text: text2, from } = req.body || {};
   if (!to || !subject || !html && !text2) {
     throw new Error("to, subject, and html or text are required");
@@ -42832,7 +40740,7 @@ router33.post("/email/send", validateBody("email.send", "POST", "/email/send"), 
   if (!sent) throw new Error("Gmail send failed");
   return { sent: true, to, subject };
 }));
-router33.post("/broadcast", validateBody("broadcast.send", "POST", "/broadcast"), asyncH("broadcast.send", async (req) => {
+router32.post("/broadcast", validateBody("broadcast.send", "POST", "/broadcast"), asyncH("broadcast.send", async (req) => {
   const {
     message,
     speakers,
@@ -42842,11 +40750,7 @@ router33.post("/broadcast", validateBody("broadcast.send", "POST", "/broadcast")
     fallback_phone
   } = req.body || {};
   if (!message || typeof message !== "string") throw new Error("message is required");
-  const targetSpeakers = Array.isArray(speakers) && speakers.length > 0 ? speakers : [
-    "media_player.emme_s_room_speaker",
-    "media_player.isla_s_room_speaker",
-    "media_player.lanas_closet_speaker"
-  ];
+  const targetSpeakers = Array.isArray(speakers) && speakers.length > 0 ? speakers : getMorningSpeakers();
   const errors = [];
   let succeeded = 0;
   for (const sp of targetSpeakers) {
@@ -42892,39 +40796,39 @@ router33.post("/broadcast", validateBody("broadcast.send", "POST", "/broadcast")
     whatsapp_fallback
   };
 }));
-router33.get("/memory", asyncH("memory.list", async (req) => {
+router32.get("/memory", asyncH("memory.list", async (req) => {
   const userId = req.query.user_id || ACTOR_ID;
   const facts = await storage.getJanusMemory(userId);
   return { user_id: userId, facts };
 }));
-router33.post("/memory", validateBody("memory.upsert", "POST", "/memory"), asyncH("memory.upsert", async (req) => {
+router32.post("/memory", validateBody("memory.upsert", "POST", "/memory"), asyncH("memory.upsert", async (req) => {
   const { user_id, key, value, context } = req.body || {};
   if (!user_id || !key || !value) throw new Error("user_id, key, value are required");
   const fact = await storage.upsertJanusMemory({ userId: user_id, key, value, context: context || null });
   return { fact };
 }));
-router33.get("/reminders", asyncH("reminders.list", async (req) => {
+router32.get("/reminders", asyncH("reminders.list", async (req) => {
   const userId = req.query.user_id || ACTOR_ID;
   const reminders = await storage.getJanusReminders(userId);
   return { user_id: userId, reminders };
 }));
-router33.get("/trips", asyncH("trips.list", async () => {
+router32.get("/trips", asyncH("trips.list", async () => {
   const trips2 = await storage.getTrips();
   return { trips: trips2 };
 }));
-router33.get("/entertainment", asyncH("entertainment.list", async () => {
+router32.get("/entertainment", asyncH("entertainment.list", async () => {
   const events = await storage.getEntertainmentEvents();
   return { events };
 }));
-router33.get("/household", asyncH("household.list", async () => {
+router32.get("/household", asyncH("household.list", async () => {
   const members = await storage.getHouseholdMembers();
   return { members };
 }));
-router33.get("/automations", asyncH("automations.list", async () => {
+router32.get("/automations", asyncH("automations.list", async () => {
   const automations = await storage.getFamilyAutomations();
   return { automations };
 }));
-router33.get("/audit-log", asyncH("audit_log.list", async (req) => {
+router32.get("/audit-log", asyncH("audit_log.list", async (req) => {
   const limit = req.query.limit ? Math.min(Number(req.query.limit), 500) : 100;
   const category = req.query.category || void 0;
   const severity = req.query.severity || void 0;
@@ -42932,34 +40836,34 @@ router33.get("/audit-log", asyncH("audit_log.list", async (req) => {
   const result = await storage.querySystemAuditLogs({ limit, category, severity, since });
   return result;
 }));
-router33.get("/activity", asyncH("activity.list", async (req) => {
+router32.get("/activity", asyncH("activity.list", async (req) => {
   const limit = req.query.limit ? Math.min(Number(req.query.limit), 200) : 50;
   const since = req.query.since || void 0;
   const result = await storage.querySystemAuditLogs({ limit: limit * 4, since });
   const rows = (result?.rows || []).filter((row) => row.category !== "external_api").slice(0, limit);
   return { ...result, rows };
 }));
-router33.get("/chat-history", asyncH("chat.history", async (req) => {
+router32.get("/chat-history", asyncH("chat.history", async (req) => {
   const userId = req.query.user_id;
   if (!userId) throw new Error("user_id is required");
   const limit = req.query.limit ? Math.min(Number(req.query.limit), 200) : 50;
   const messages = await storage.getJanusChatLogs(userId, limit);
   return { user_id: userId, messages };
 }));
-router33.use((req, res) => {
+router32.use((req, res) => {
   audit(req, { endpoint: "not_found", status: "error", detail: { path: req.originalUrl }, severity: "warning", durationMs: 0 });
   res.status(404).json({ success: false, error: `Endpoint not found: ${req.method} ${req.originalUrl}` });
 });
-var external_default = router33;
+var external_default = router32;
 
 // server/routes/deploy.ts
-import { Router as Router35 } from "express";
+import { Router as Router34 } from "express";
 import { execFile as execFile2 } from "child_process";
 import { promisify as promisify2 } from "util";
 import crypto6 from "crypto";
 var execFileAsync2 = promisify2(execFile2);
-var router34 = Router35();
-router34.get("/api/fortigate/config-status", (_req, res) => {
+var router33 = Router34();
+router33.get("/api/fortigate/config-status", (_req, res) => {
   const tokenSet = !!process.env.FORTIGATE_API_TOKEN;
   const baseUrl = process.env.FORTIGATE_BASE_URL || "https://fortigate.example.com";
   res.json({
@@ -42968,7 +40872,7 @@ router34.get("/api/fortigate/config-status", (_req, res) => {
     hint: tokenSet ? null : "Set FORTIGATE_API_TOKEN in environment variables and restart"
   });
 });
-router34.post("/api/deploy/webhook", async (req, res) => {
+router33.post("/api/deploy/webhook", async (req, res) => {
   const secret = process.env.DEPLOY_WEBHOOK_SECRET;
   if (!secret) {
     console.error("[deploy] DEPLOY_WEBHOOK_SECRET not set \u2014 rejecting");
@@ -43022,10 +40926,10 @@ router34.post("/api/deploy/webhook", async (req, res) => {
     }
   }, 200);
 });
-var deploy_default = router34;
+var deploy_default = router33;
 
 // server/routes/electricity.ts
-import { Router as Router36 } from "express";
+import { Router as Router35 } from "express";
 init_auditLog();
 
 // server/lib/ladwpRates.ts
@@ -43840,8 +41744,8 @@ var ENERGY_CIRCUITS = [
   { entityId: "sensor.gh_furnace_energy_today", powerEntityId: "sensor.gh_furnace_power_minute_average", label: "GH Furnace", category: "HVAC", panel: "guest_house" },
   { entityId: "sensor.gym_ac_energy_today", powerEntityId: "sensor.gym_ac_power_minute_average", label: "Gym AC", category: "HVAC", panel: "guest_house" },
   { entityId: "sensor.gym_furnace_energy_today", powerEntityId: "sensor.gym_furnace_power_minute_average", label: "Gym Furnace", category: "HVAC", panel: "guest_house" },
-  { entityId: "sensor.lana_s_car_charger_energy_today", powerEntityId: "sensor.lana_s_car_charger_power_minute_average", label: "Lana's Car Charger", category: "Vehicles", panel: "guest_house" },
-  { entityId: "sensor.tony_s_car_charger_energy_today", powerEntityId: "sensor.tony_s_car_charger_power_minute_average", label: "Tony's Car Charger", category: "Vehicles", panel: "guest_house" },
+  { entityId: "sensor.lana_s_car_charger_energy_today", powerEntityId: "sensor.lana_s_car_charger_power_minute_average", label: "EV Charger 1", category: "Vehicles", panel: "guest_house" },
+  { entityId: "sensor.tony_s_car_charger_energy_today", powerEntityId: "sensor.tony_s_car_charger_power_minute_average", label: "EV Charger 2", category: "Vehicles", panel: "guest_house" },
   { entityId: "sensor.equipment_room_cabana_energy_today", powerEntityId: "sensor.equipment_room_cabana_power_minute_average", label: "ERC Panel (Main)", category: "Outdoor", panel: "equipment_room" },
   { entityId: "sensor.equipment_room_cabana_energy_today_2", powerEntityId: "sensor.equipment_room_cabana_power_minute_average_2", label: "ERC Breaker 2", category: "Outdoor", panel: "equipment_room" },
   { entityId: "sensor.equipment_room_cabana_energy_today_3", powerEntityId: "sensor.equipment_room_cabana_power_minute_average_3", label: "ERC Breaker 3", category: "Outdoor", panel: "equipment_room" },
@@ -44066,7 +41970,7 @@ async function getCycleConsumptionFromDb(cycleStart) {
   let daysWithData = 0;
   const coveredDates = [];
   try {
-    const { rows } = await query(
+    const { rows } = await query2(
       `SELECT entity_id, MAX(label) AS label, MAX(category) AS category,
               SUM(kwh) AS kwh, COUNT(DISTINCT usage_date) AS days
        FROM circuit_energy_daily
@@ -44089,7 +41993,7 @@ async function getCycleConsumptionFromDb(cycleStart) {
     }
     daysWithData = maxDays;
     if (rows.length > 0) {
-      const { rows: dateRows } = await query(
+      const { rows: dateRows } = await query2(
         `SELECT DISTINCT to_char(usage_date, 'YYYY-MM-DD') AS d
          FROM circuit_energy_daily
          WHERE usage_date >= $1::date AND usage_date < $2::date
@@ -44196,7 +42100,7 @@ async function getCycleConsumptionRobust(cycleStart) {
 // server/routes/electricity.ts
 init_haWebSocket();
 init_storage();
-var router35 = Router36();
+var router34 = Router35();
 var LA_UTILITY_TAX = 0.1;
 var STATE_SURCHARGE = 3e-4;
 function allInMarginalRate(tierRate) {
@@ -44272,7 +42176,7 @@ function formatBillingPeriod(start, end) {
   const endStr = `${BILL_MONTHS[end.getUTCMonth()]} ${end.getUTCDate()}, ${eY}`;
   return `${startStr} \u2013 ${endStr}`;
 }
-router35.get("/live-cost", requireAuth2, async (_req, res) => {
+router34.get("/live-cost", requireAuth2, async (_req, res) => {
   try {
     const t0 = Date.now();
     const now = /* @__PURE__ */ new Date();
@@ -44382,7 +42286,7 @@ router35.get("/live-cost", requireAuth2, async (_req, res) => {
     res.status(500).json(safeErrorJson(err));
   }
 });
-router35.get("/breakdown", requireAuth2, async (req, res) => {
+router34.get("/breakdown", requireAuth2, async (req, res) => {
   try {
     const t0 = Date.now();
     const range = req.query.range || "cycle";
@@ -44500,7 +42404,7 @@ router35.get("/breakdown", requireAuth2, async (req, res) => {
     res.status(500).json(safeErrorJson(err));
   }
 });
-router35.get("/projection", requireAuth2, async (_req, res) => {
+router34.get("/projection", requireAuth2, async (_req, res) => {
   try {
     const cycleStart = estimateBillingCycleStart();
     const now = /* @__PURE__ */ new Date();
@@ -44538,7 +42442,7 @@ router35.get("/projection", requireAuth2, async (_req, res) => {
     res.status(500).json(safeErrorJson(err));
   }
 });
-router35.get("/history", requireAuth2, async (req, res) => {
+router34.get("/history", requireAuth2, async (req, res) => {
   try {
     const months = Math.min(parseInt(req.query.months) || 6, 12);
     const now = /* @__PURE__ */ new Date();
@@ -44582,7 +42486,7 @@ router35.get("/history", requireAuth2, async (req, res) => {
     res.status(500).json(safeErrorJson(err));
   }
 });
-router35.post("/bill-import", requireAuth2, async (req, res) => {
+router34.post("/bill-import", requireAuth2, async (req, res) => {
   try {
     const {
       billing_period_start,
@@ -44637,7 +42541,7 @@ router35.post("/bill-import", requireAuth2, async (req, res) => {
     res.status(500).json(safeErrorJson(err));
   }
 });
-router35.get("/savings-suggestions", requireAuth2, async (_req, res) => {
+router34.get("/savings-suggestions", requireAuth2, async (_req, res) => {
   try {
     const cycleStart = estimateBillingCycleStart();
     const { totalKwh, circuits: circuits2, daysWithData } = await getCycleConsumptionRobust(cycleStart);
@@ -44710,7 +42614,7 @@ router35.get("/savings-suggestions", requireAuth2, async (_req, res) => {
     res.status(500).json(safeErrorJson(err));
   }
 });
-router35.get("/comparison", requireAuth2, async (_req, res) => {
+router34.get("/comparison", requireAuth2, async (_req, res) => {
   try {
     let bills = [];
     try {
@@ -44750,7 +42654,7 @@ router35.get("/comparison", requireAuth2, async (_req, res) => {
     res.status(500).json(safeErrorJson(err));
   }
 });
-router35.get("/rates", requireAuth2, (_req, res) => {
+router34.get("/rates", requireAuth2, (_req, res) => {
   const now = /* @__PURE__ */ new Date();
   const current = getSeasonalRate(now);
   const tierInfo = getCurrentTierRate(0, now);
@@ -44805,7 +42709,7 @@ async function snapshotOneDay(bounds) {
   }
   return { circuits: written, totalKwh: +totalKwh.toFixed(3) };
 }
-router35.post("/snapshot-daily", async (req, res) => {
+router34.post("/snapshot-daily", async (req, res) => {
   try {
     if (!isCronAuthorized2(req)) {
       return res.status(403).json({ error: "Unauthorized. Admin access or valid cron secret required." });
@@ -44836,7 +42740,7 @@ router35.post("/snapshot-daily", async (req, res) => {
     res.status(500).json(safeErrorJson(err));
   }
 });
-router35.post("/backfill", async (req, res) => {
+router34.post("/backfill", async (req, res) => {
   try {
     if (!isCronAuthorized2(req)) {
       return res.status(403).json({ error: "Unauthorized. Admin access or valid cron secret required." });
@@ -44950,7 +42854,7 @@ router35.post("/backfill", async (req, res) => {
     res.status(500).json(safeErrorJson(err));
   }
 });
-router35.get("/circuit-history", requireAuth2, async (req, res) => {
+router34.get("/circuit-history", requireAuth2, async (req, res) => {
   try {
     const groupBy = req.query.groupBy === "circuit" ? "circuit" : "category";
     const granularity = req.query.granularity === "day" ? "day" : "month";
@@ -44996,7 +42900,7 @@ router35.get("/circuit-history", requireAuth2, async (req, res) => {
   }
 });
 var PANEL_MAIN_ENERGY_ENTITIES = [...PANEL_MAIN_ENERGY_ENTITY_IDS];
-router35.get("/panel-history", requireAuth2, async (req, res) => {
+router34.get("/panel-history", requireAuth2, async (req, res) => {
   try {
     const t0 = Date.now();
     const target = (req.query.target || "").trim().toLowerCase();
@@ -45111,7 +43015,7 @@ router35.get("/panel-history", requireAuth2, async (req, res) => {
     res.status(500).json(safeErrorJson(err));
   }
 });
-router35.get("/live-rate", requireAuth2, async (_req, res) => {
+router34.get("/live-rate", requireAuth2, async (_req, res) => {
   try {
     const cycleStart = estimateBillingCycleStart();
     const robust = await getCycleConsumptionRobust(cycleStart);
@@ -45230,7 +43134,7 @@ function requireElectricityAdmin(req, res, next) {
   }
   next();
 }
-router35.get("/insights", requireAuth2, async (_req, res) => {
+router34.get("/insights", requireAuth2, async (_req, res) => {
   try {
     const yesterday = laDayBounds(1).usageDate;
     const { rows } = await storage.query(
@@ -45388,7 +43292,7 @@ router35.get("/insights", requireAuth2, async (_req, res) => {
     res.status(500).json(safeErrorJson(err));
   }
 });
-router35.patch("/insights/:findingId/investigation", requireAuth2, requireElectricityAdmin, async (req, res) => {
+router34.patch("/insights/:findingId/investigation", requireAuth2, requireElectricityAdmin, async (req, res) => {
   try {
     const findingId = String(req.params.findingId ?? "").trim();
     const actionDate = String(req.body?.actionDate ?? "");
@@ -45446,10 +43350,10 @@ router35.patch("/insights/:findingId/investigation", requireAuth2, requireElectr
     res.status(500).json(safeErrorJson(err));
   }
 });
-var electricity_default = router35;
+var electricity_default = router34;
 
 // server/routes/water.ts
-import { Router as Router37 } from "express";
+import { Router as Router36 } from "express";
 init_auditLog();
 init_fetchWithTimeout();
 init_haWebSocket();
@@ -45577,7 +43481,7 @@ function readManualUsage() {
 }
 
 // server/routes/water.ts
-var router36 = Router37();
+var router35 = Router36();
 function asRecord2(value) {
   if (value && typeof value === "object" && !Array.isArray(value)) {
     return value;
@@ -45681,7 +43585,7 @@ function getRunningZones() {
   }
   return running;
 }
-router36.get("/live", requireAuth2, async (_req, res) => {
+router35.get("/live", requireAuth2, async (_req, res) => {
   try {
     const t0 = Date.now();
     const cycleHcf = await getCycleHcf();
@@ -45733,7 +43637,7 @@ router36.get("/live", requireAuth2, async (_req, res) => {
     res.status(500).json(safeErrorJson(err));
   }
 });
-router36.get("/breakdown", requireAuth2, async (req, res) => {
+router35.get("/breakdown", requireAuth2, async (req, res) => {
   try {
     const t0 = Date.now();
     const range = req.query.range === "today" ? "today" : "cycle";
@@ -45791,7 +43695,7 @@ router36.get("/breakdown", requireAuth2, async (req, res) => {
     res.status(500).json(safeErrorJson(err));
   }
 });
-router36.get("/history", requireAuth2, async (req, res) => {
+router35.get("/history", requireAuth2, async (req, res) => {
   try {
     const groupBy = req.query.groupBy === "zone" ? "zone" : "source";
     const granularity = req.query.granularity === "day" ? "day" : "month";
@@ -45835,7 +43739,7 @@ router36.get("/history", requireAuth2, async (req, res) => {
     res.status(500).json(safeErrorJson(err));
   }
 });
-router36.get("/insights", requireAuth2, async (_req, res) => {
+router35.get("/insights", requireAuth2, async (_req, res) => {
   try {
     let latest;
     try {
@@ -45971,7 +43875,7 @@ router36.get("/insights", requireAuth2, async (_req, res) => {
     res.status(500).json(safeErrorJson(err));
   }
 });
-router36.post("/snapshot-daily", async (req, res) => {
+router35.post("/snapshot-daily", async (req, res) => {
   try {
     if (!isCronAuthorized3(req)) {
       return res.status(403).json({ error: "Unauthorized. Admin access or valid cron secret required." });
@@ -46044,7 +43948,7 @@ router36.post("/snapshot-daily", async (req, res) => {
     res.status(500).json(safeErrorJson(err));
   }
 });
-router36.get("/rates", requireAuth2, (_req, res) => {
+router35.get("/rates", requireAuth2, (_req, res) => {
   const cycleHcf = 0;
   const tier = getCurrentWaterTierRate(cycleHcf);
   const exampleBill = computeWaterBill(217, 58, { includeSewer: false });
@@ -46094,16 +43998,16 @@ async function upsertWaterRow(usageDate, source, zone2, gallons, hcf, dollars) {
     [usageDate, source, zone2, gallons, hcf, dollars]
   );
 }
-var water_default = router36;
+var water_default = router35;
 
 // server/routes/storage-compat.ts
 init_objectStore();
-import { Router as Router38 } from "express";
+import { Router as Router37 } from "express";
 import fs6 from "fs";
 import path7 from "path";
 import crypto7 from "crypto";
 import express from "express";
-var router37 = Router38();
+var router36 = Router37();
 function serviceSecret() {
   const configured = process.env.JWT_SECRET || process.env.SESSION_SECRET;
   if (configured) return configured;
@@ -46175,7 +44079,7 @@ var CACHE_DIRS = [
   path7.join(process.cwd(), "public"),
   path7.join(process.cwd(), "dist", "public")
 ];
-router37.post("/storage/v1/object/:bucket/*filename", requireServiceAuth, express.raw({ type: "*/*", limit: "100mb" }), async (req, res) => {
+router36.post("/storage/v1/object/:bucket/*filename", requireServiceAuth, express.raw({ type: "*/*", limit: "100mb" }), async (req, res) => {
   try {
     const parsed = parseParams(req);
     if (!parsed) return res.status(400).json({ error: "Invalid bucket or filename" });
@@ -46203,7 +44107,7 @@ router37.post("/storage/v1/object/:bucket/*filename", requireServiceAuth, expres
     return res.status(500).json({ error: e.message });
   }
 });
-router37.get("/storage/v1/object/public/:bucket/*filename", async (req, res) => {
+router36.get("/storage/v1/object/public/:bucket/*filename", async (req, res) => {
   try {
     const parsed = parseParams(req);
     if (!parsed) return res.status(400).send("Invalid bucket or filename");
@@ -46253,7 +44157,7 @@ router37.get("/storage/v1/object/public/:bucket/*filename", async (req, res) => 
     return res.status(500).send(e.message);
   }
 });
-router37.delete("/storage/v1/object/:bucket/*filename", requireServiceAuth, async (req, res) => {
+router36.delete("/storage/v1/object/:bucket/*filename", requireServiceAuth, async (req, res) => {
   try {
     const parsed = parseParams(req);
     if (!parsed) return res.status(400).json({ error: "Invalid bucket or filename" });
@@ -46272,13 +44176,13 @@ router37.delete("/storage/v1/object/:bucket/*filename", requireServiceAuth, asyn
     return res.status(500).json({ error: e.message });
   }
 });
-var storage_compat_default = router37;
+var storage_compat_default = router36;
 
 // server/routes/updates-autogen.ts
 init_db();
 init_auditLog();
 init_socket();
-import { Router as Router39 } from "express";
+import { Router as Router38 } from "express";
 
 // server/lib/pendingRelease.ts
 import { readFileSync as readFileSync2, writeFileSync } from "fs";
@@ -46414,7 +44318,7 @@ async function publishPendingRelease(client, trigger = "manual", t0 = Date.now()
 }
 
 // server/routes/updates-autogen.ts
-var router38 = Router39();
+var router37 = Router38();
 function isCronAuthorized4(req) {
   const secret = process.env.CRON_SECRET;
   if (!secret) {
@@ -46436,7 +44340,7 @@ function auditRun(summary, detail, t0) {
   }).catch((e) => console.warn(`[updates-autogen] audit failed: ${e}`));
 }
 var inFlight2 = false;
-router38.post("/api/updates-autogen", async (req, res) => {
+router37.post("/api/updates-autogen", async (req, res) => {
   const t0 = Date.now();
   if (!isCronAuthorized4(req)) {
     return res.status(401).json({ error: "unauthorized" });
@@ -46505,13 +44409,13 @@ router38.post("/api/updates-autogen", async (req, res) => {
     inFlight2 = false;
   }
 });
-var updates_autogen_default = router38;
+var updates_autogen_default = router37;
 
 // server/routes/irrigation.ts
-import { Router as Router40 } from "express";
+import { Router as Router39 } from "express";
 init_storage();
 init_irrigationFlow();
-var router39 = Router40();
+var router38 = Router39();
 function requireAdmin5(req, res, next) {
   if (req.userRole !== "admin") {
     res.status(403).json({ error: "Forbidden" });
@@ -46523,7 +44427,7 @@ var SVG_ID_RE = /^clock-\d+-valve-\d+$/;
 var MAX_ZONE_NAME_LEN = 80;
 var VIEW_W = 900;
 var VIEW_H = 706;
-router39.get("/api/irrigation/label-positions", requireAuth2, async (_req, res) => {
+router38.get("/api/irrigation/label-positions", requireAuth2, async (_req, res) => {
   try {
     const positions = await storage.getValveLabelPositions();
     res.json({ positions });
@@ -46532,7 +44436,7 @@ router39.get("/api/irrigation/label-positions", requireAuth2, async (_req, res) 
     res.status(500).json({ error: "Failed to fetch label positions", details: message });
   }
 });
-router39.put("/api/irrigation/label-positions/:svgId", requireAuth2, requireAdmin5, async (req, res) => {
+router38.put("/api/irrigation/label-positions/:svgId", requireAuth2, requireAdmin5, async (req, res) => {
   try {
     const svgId = String(req.params.svgId);
     const { x, y } = req.body;
@@ -46555,7 +44459,7 @@ router39.put("/api/irrigation/label-positions/:svgId", requireAuth2, requireAdmi
     res.status(500).json({ error: "Failed to save label position", details: message });
   }
 });
-router39.delete("/api/irrigation/label-positions/:svgId", requireAuth2, requireAdmin5, async (req, res) => {
+router38.delete("/api/irrigation/label-positions/:svgId", requireAuth2, requireAdmin5, async (req, res) => {
   try {
     const svgId = String(req.params.svgId);
     if (!svgId) {
@@ -46569,7 +44473,7 @@ router39.delete("/api/irrigation/label-positions/:svgId", requireAuth2, requireA
     res.status(500).json({ error: "Failed to reset label position", details: message });
   }
 });
-router39.get("/api/irrigation/zone-names", requireAuth2, async (_req, res) => {
+router38.get("/api/irrigation/zone-names", requireAuth2, async (_req, res) => {
   try {
     const names = await storage.getIrrigationZoneNames();
     res.json({ names });
@@ -46578,7 +44482,7 @@ router39.get("/api/irrigation/zone-names", requireAuth2, async (_req, res) => {
     res.status(500).json({ error: "Failed to fetch zone names", details: message });
   }
 });
-router39.put("/api/irrigation/zone-names/:svgId", requireAuth2, requireAdmin5, async (req, res) => {
+router38.put("/api/irrigation/zone-names/:svgId", requireAuth2, requireAdmin5, async (req, res) => {
   try {
     const svgId = String(req.params.svgId);
     const { name } = req.body;
@@ -46603,7 +44507,7 @@ router39.put("/api/irrigation/zone-names/:svgId", requireAuth2, requireAdmin5, a
     res.status(500).json({ error: "Failed to save zone name", details: message });
   }
 });
-router39.delete("/api/irrigation/zone-names/:svgId", requireAuth2, requireAdmin5, async (req, res) => {
+router38.delete("/api/irrigation/zone-names/:svgId", requireAuth2, requireAdmin5, async (req, res) => {
   try {
     const svgId = String(req.params.svgId);
     if (!svgId) {
@@ -46618,7 +44522,7 @@ router39.delete("/api/irrigation/zone-names/:svgId", requireAuth2, requireAdmin5
     res.status(500).json({ error: "Failed to reset zone name", details: message });
   }
 });
-router39.get("/api/irrigation/zone-flows", requireAuth2, (_req, res) => {
+router38.get("/api/irrigation/zone-flows", requireAuth2, (_req, res) => {
   res.json({
     flows: ZONE_FLOW_CONFIG.map((z) => ({
       svgId: z.svgId,
@@ -46629,16 +44533,16 @@ router39.get("/api/irrigation/zone-flows", requireAuth2, (_req, res) => {
     }))
   });
 });
-var irrigation_default = router39;
+var irrigation_default = router38;
 
 // server/routes/time.ts
 init_auth();
 init_auditLog();
 init_db2();
 init_db();
-import { Router as Router41 } from "express";
+import { Router as Router40 } from "express";
 import ExcelJS from "exceljs";
-var router40 = Router41();
+var router39 = Router40();
 var PT = "America/Los_Angeles";
 function getTodayPT() {
   return new Intl.DateTimeFormat("en-CA", { timeZone: PT }).format(/* @__PURE__ */ new Date());
@@ -46667,28 +44571,28 @@ function isTimeAdmin(user) {
   return user.roles.includes("admin");
 }
 async function getWorkerByEmail(email) {
-  const res = await query(
+  const res = await query2(
     `SELECT * FROM tt_workers WHERE email = $1`,
     [email.toLowerCase()]
   );
   return res.rows[0] ?? null;
 }
 async function getWorkerByUserId(profileId) {
-  const res = await query(
+  const res = await query2(
     `SELECT * FROM tt_workers WHERE user_id = $1`,
     [profileId]
   );
   return res.rows[0] ?? null;
 }
 async function getProfileId(userId) {
-  const res = await query(
+  const res = await query2(
     `SELECT id FROM profiles WHERE user_id = $1`,
     [userId]
   );
   return res.rows[0]?.id ?? null;
 }
 async function snapshotRate(workerId, dateStr) {
-  const res = await query(
+  const res = await query2(
     `SELECT hourly_rate_cents FROM tt_rate_history
      WHERE worker_id = $1 AND effective_from <= $2
      ORDER BY effective_from DESC LIMIT 1`,
@@ -46723,7 +44627,7 @@ function requireTimeAdmin(req, res) {
   }
   return { user };
 }
-router40.get("/api/time/is-admin", async (req, res) => {
+router39.get("/api/time/is-admin", async (req, res) => {
   try {
     const user = getAuthUser(req);
     if (!user) {
@@ -46736,7 +44640,7 @@ router40.get("/api/time/is-admin", async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 });
-router40.get("/api/time/me", async (req, res) => {
+router39.get("/api/time/me", async (req, res) => {
   try {
     const auth = requireWorkerOrAdmin(req, res);
     if (!auth) return;
@@ -46756,22 +44660,22 @@ router40.get("/api/time/me", async (req, res) => {
     if (!worker && vendorPreview) {
       worker = await getWorkerByEmail(user.email);
       if (worker && !worker.user_id) {
-        await query(`UPDATE tt_workers SET user_id = $1 WHERE id = $2`, [profileId, worker.id]);
+        await query2(`UPDATE tt_workers SET user_id = $1 WHERE id = $2`, [profileId, worker.id]);
         worker.user_id = profileId;
       }
       if (!worker) {
-        const created = await query(
+        const created = await query2(
           `INSERT INTO tt_workers (full_name, email, mobile, zelle_handle, can_add_expenses, default_category_id, created_by, user_id)
            VALUES ($1, $2, NULL, NULL, true, NULL, $3, $3) RETURNING *`,
           ["Test Vendor", user.email.toLowerCase(), profileId]
         );
         worker = created.rows[0];
-        await query(
+        await query2(
           `INSERT INTO tt_rate_history (worker_id, hourly_rate_cents, effective_from, created_by)
            VALUES ($1, $2, $3, $4)`,
           [worker.id, 1e4, getTodayPT(), profileId]
         );
-        await query(
+        await query2(
           `INSERT INTO tt_worker_categories (worker_id, category_id)
            SELECT $1, id FROM tt_categories WHERE active = true
            ON CONFLICT DO NOTHING`,
@@ -46793,7 +44697,7 @@ router40.get("/api/time/me", async (req, res) => {
     const today = getTodayPT();
     const windowStart = addDays2(today, -6);
     const [catRows, rateRow] = await Promise.all([
-      query(
+      query2(
         `SELECT c.id, c.name, c.sort_order
          FROM tt_categories c
          JOIN tt_worker_categories wc ON wc.category_id = c.id
@@ -46801,7 +44705,7 @@ router40.get("/api/time/me", async (req, res) => {
          ORDER BY c.sort_order, c.name`,
         [worker.id]
       ),
-      query(
+      query2(
         `SELECT hourly_rate_cents, effective_from FROM tt_rate_history
          WHERE worker_id = $1 ORDER BY effective_from DESC LIMIT 1`,
         [worker.id]
@@ -46822,7 +44726,7 @@ router40.get("/api/time/me", async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 });
-router40.get("/api/time/entries", async (req, res) => {
+router39.get("/api/time/entries", async (req, res) => {
   try {
     const auth = requireWorkerOrAdmin(req, res);
     if (!auth) return;
@@ -46841,7 +44745,7 @@ router40.get("/api/time/entries", async (req, res) => {
     const weekStart = weekParam && /^\d{4}-\d{2}-\d{2}$/.test(weekParam) ? getWeekStartPT(weekParam) : getWeekStartPT(getTodayPT());
     const weekEnd = addDays2(weekStart, 6);
     const [entries, expenses] = await Promise.all([
-      query(
+      query2(
         `SELECT te.*, c.name AS category_name
          FROM tt_time_entries te
          JOIN tt_categories c ON c.id = te.category_id
@@ -46849,7 +44753,7 @@ router40.get("/api/time/entries", async (req, res) => {
          ORDER BY te.work_date, te.created_at`,
         [worker.id, weekStart, weekEnd]
       ),
-      query(
+      query2(
         `SELECT e.*, c.name AS category_name
          FROM tt_expenses e
          LEFT JOIN tt_categories c ON c.id = e.category_id
@@ -46864,7 +44768,7 @@ router40.get("/api/time/entries", async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 });
-router40.post("/api/time/entries", async (req, res) => {
+router39.post("/api/time/entries", async (req, res) => {
   try {
     const auth = requireWorkerOrAdmin(req, res);
     if (!auth) return;
@@ -46901,7 +44805,7 @@ router40.post("/api/time/entries", async (req, res) => {
       res.status(400).json({ error: "hours must be in 0.25 increments" });
       return;
     }
-    const dayTotal = await query(
+    const dayTotal = await query2(
       `SELECT COALESCE(SUM(hours::numeric), 0) AS total FROM tt_time_entries
        WHERE worker_id = $1 AND work_date = $2 AND status != 'rejected'`,
       [worker.id, work_date]
@@ -46911,7 +44815,7 @@ router40.post("/api/time/entries", async (req, res) => {
       res.status(400).json({ error: "Daily hours cap of 24 would be exceeded" });
       return;
     }
-    const catCheck = await query(
+    const catCheck = await query2(
       `SELECT 1 FROM tt_worker_categories WHERE worker_id = $1 AND category_id = $2`,
       [worker.id, category_id]
     );
@@ -46924,7 +44828,7 @@ router40.post("/api/time/entries", async (req, res) => {
       res.status(400).json({ error: "No hourly rate defined for this worker" });
       return;
     }
-    const result = await query(
+    const result = await query2(
       `INSERT INTO tt_time_entries (worker_id, work_date, category_id, hours, note, rate_cents, created_by)
        VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *`,
       [worker.id, work_date, category_id, hoursNum, note || null, rateCents, profileId]
@@ -46944,7 +44848,7 @@ router40.post("/api/time/entries", async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 });
-router40.patch("/api/time/entries/:id", async (req, res) => {
+router39.patch("/api/time/entries/:id", async (req, res) => {
   try {
     const auth = requireWorkerOrAdmin(req, res);
     if (!auth) return;
@@ -46964,7 +44868,7 @@ router40.patch("/api/time/entries/:id", async (req, res) => {
       return;
     }
     const { id } = req.params;
-    const existing = await query(
+    const existing = await query2(
       `SELECT * FROM tt_time_entries WHERE id = $1 AND worker_id = $2`,
       [id, worker.id]
     );
@@ -46995,7 +44899,7 @@ router40.patch("/api/time/entries/:id", async (req, res) => {
       }
     }
     if (category_id && category_id !== String(entry.category_id)) {
-      const catCheck = await query(
+      const catCheck = await query2(
         `SELECT 1 FROM tt_worker_categories WHERE worker_id = $1 AND category_id = $2`,
         [worker.id, category_id]
       );
@@ -47004,7 +44908,7 @@ router40.patch("/api/time/entries/:id", async (req, res) => {
         return;
       }
     }
-    const dailyOtherHours = await query(
+    const dailyOtherHours = await query2(
       `SELECT COALESCE(SUM(hours::numeric), 0) AS total
        FROM tt_time_entries
        WHERE worker_id = $1 AND work_date = $2 AND id != $3 AND status != 'rejected'`,
@@ -47016,7 +44920,7 @@ router40.patch("/api/time/entries/:id", async (req, res) => {
       return;
     }
     const newStatus = entry.status === "rejected" ? "pending" : entry.status;
-    const updated = await query(
+    const updated = await query2(
       `UPDATE tt_time_entries
        SET hours = $1, note = $2, category_id = COALESCE($3, category_id),
            status = $4, rejected_reason = CASE WHEN $4 = 'pending' THEN NULL ELSE rejected_reason END,
@@ -47043,7 +44947,7 @@ router40.patch("/api/time/entries/:id", async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 });
-router40.delete("/api/time/entries/:id", async (req, res) => {
+router39.delete("/api/time/entries/:id", async (req, res) => {
   try {
     const auth = requireWorkerOrAdmin(req, res);
     if (!auth) return;
@@ -47063,7 +44967,7 @@ router40.delete("/api/time/entries/:id", async (req, res) => {
       return;
     }
     const { id } = req.params;
-    const existing = await query(
+    const existing = await query2(
       `SELECT * FROM tt_time_entries WHERE id = $1 AND worker_id = $2`,
       [id, worker.id]
     );
@@ -47080,7 +44984,7 @@ router40.delete("/api/time/entries/:id", async (req, res) => {
       res.status(403).json({ error: "Entry date is outside the 7-day window" });
       return;
     }
-    const deleted = await query(
+    const deleted = await query2(
       `DELETE FROM tt_time_entries WHERE id = $1 AND worker_id = $2 AND status = $3 RETURNING id`,
       [id, worker.id, entry.status]
     );
@@ -47102,7 +45006,7 @@ router40.delete("/api/time/entries/:id", async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 });
-router40.post("/api/time/expenses", async (req, res) => {
+router39.post("/api/time/expenses", async (req, res) => {
   try {
     const auth = requireWorkerOrAdmin(req, res);
     if (!auth) return;
@@ -47138,7 +45042,7 @@ router40.post("/api/time/expenses", async (req, res) => {
       res.status(400).json({ error: "amount_cents must be positive" });
       return;
     }
-    const result = await query(
+    const result = await query2(
       `INSERT INTO tt_expenses (worker_id, expense_date, amount_cents, note, category_id)
        VALUES ($1, $2, $3, $4, $5) RETURNING *`,
       [worker.id, expense_date, amount_cents, note, category_id || null]
@@ -47157,7 +45061,7 @@ router40.post("/api/time/expenses", async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 });
-router40.patch("/api/time/expenses/:id", async (req, res) => {
+router39.patch("/api/time/expenses/:id", async (req, res) => {
   try {
     const auth = requireWorkerOrAdmin(req, res);
     if (!auth) return;
@@ -47181,7 +45085,7 @@ router40.patch("/api/time/expenses/:id", async (req, res) => {
       return;
     }
     const { id } = req.params;
-    const existing = await query(
+    const existing = await query2(
       `SELECT * FROM tt_expenses WHERE id = $1 AND worker_id = $2`,
       [id, worker.id]
     );
@@ -47200,7 +45104,7 @@ router40.patch("/api/time/expenses/:id", async (req, res) => {
     }
     const { amount_cents, note, category_id } = req.body;
     const newStatus = expense.status === "rejected" ? "pending" : expense.status;
-    const updated = await query(
+    const updated = await query2(
       `UPDATE tt_expenses
        SET amount_cents = COALESCE($1, amount_cents),
            note = COALESCE($2, note),
@@ -47229,7 +45133,7 @@ router40.patch("/api/time/expenses/:id", async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 });
-router40.delete("/api/time/expenses/:id", async (req, res) => {
+router39.delete("/api/time/expenses/:id", async (req, res) => {
   try {
     const auth = requireWorkerOrAdmin(req, res);
     if (!auth) return;
@@ -47249,7 +45153,7 @@ router40.delete("/api/time/expenses/:id", async (req, res) => {
       return;
     }
     const { id } = req.params;
-    const existing = await query(`SELECT * FROM tt_expenses WHERE id = $1 AND worker_id = $2`, [id, worker.id]);
+    const existing = await query2(`SELECT * FROM tt_expenses WHERE id = $1 AND worker_id = $2`, [id, worker.id]);
     if (existing.rows.length === 0) {
       res.status(404).json({ error: "Expense not found" });
       return;
@@ -47263,7 +45167,7 @@ router40.delete("/api/time/expenses/:id", async (req, res) => {
       res.status(403).json({ error: "Expense date is outside the 7-day window" });
       return;
     }
-    const deleted = await query(
+    const deleted = await query2(
       `DELETE FROM tt_expenses WHERE id = $1 AND worker_id = $2 AND status = $3 RETURNING id`,
       [id, worker.id, expense.status]
     );
@@ -47285,7 +45189,7 @@ router40.delete("/api/time/expenses/:id", async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 });
-router40.get("/api/time/weeks", async (req, res) => {
+router39.get("/api/time/weeks", async (req, res) => {
   try {
     const auth = requireWorkerOrAdmin(req, res);
     if (!auth) return;
@@ -47301,7 +45205,7 @@ router40.get("/api/time/weeks", async (req, res) => {
       return;
     }
     const limit = Math.min(Number(req.query.limit ?? 26), 52);
-    const weeksRes = await query(
+    const weeksRes = await query2(
       `SELECT
          date_trunc('week', work_date::timestamp)::date AS week_start_raw,
          date_trunc('week', work_date::timestamp)::date AS week_mon
@@ -47327,19 +45231,19 @@ router40.get("/api/time/weeks", async (req, res) => {
       weekStarts.slice(0, limit).map(async (ws) => {
         const we = addDays2(ws, 6);
         const [entries, expenses, payment] = await Promise.all([
-          query(
+          query2(
             `SELECT status, SUM(hours::numeric) AS hours, SUM(hours::numeric * rate_cents) AS labor_cents
              FROM tt_time_entries WHERE worker_id = $1 AND work_date >= $2 AND work_date <= $3
              GROUP BY status`,
             [worker.id, ws, we]
           ),
-          query(
+          query2(
             `SELECT status, SUM(amount_cents) AS amount_cents
              FROM tt_expenses WHERE worker_id = $1 AND expense_date >= $2 AND expense_date <= $3
              GROUP BY status`,
             [worker.id, ws, we]
           ),
-          query(
+          query2(
             `SELECT * FROM tt_payments WHERE worker_id = $1 AND week_start = $2`,
             [worker.id, ws]
           )
@@ -47377,31 +45281,31 @@ router40.get("/api/time/weeks", async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 });
-router40.get("/api/time/admin/overview", async (req, res) => {
+router39.get("/api/time/admin/overview", async (req, res) => {
   try {
     const auth = requireTimeAdmin(req, res);
     if (!auth) return;
     const weekParam = String(req.query.week || "");
     const weekStart = weekParam && /^\d{4}-\d{2}-\d{2}$/.test(weekParam) ? getWeekStartPT(weekParam) : getWeekStartPT(getTodayPT());
     const weekEnd = addDays2(weekStart, 6);
-    const workers = await query(`SELECT * FROM tt_workers ORDER BY full_name`);
+    const workers = await query2(`SELECT * FROM tt_workers ORDER BY full_name`);
     const overviews = await Promise.all(
       workers.rows.map(async (w) => {
         const [entries, expenses, payment, pendingCount] = await Promise.all([
-          query(
+          query2(
             `SELECT status, COUNT(*) AS cnt, SUM(hours::numeric) AS hours, SUM(hours::numeric * rate_cents) AS labor_cents
              FROM tt_time_entries WHERE worker_id = $1 AND work_date >= $2 AND work_date <= $3
              GROUP BY status`,
             [w.id, weekStart, weekEnd]
           ),
-          query(
+          query2(
             `SELECT status, COUNT(*) AS cnt, SUM(amount_cents) AS amount_cents
              FROM tt_expenses WHERE worker_id = $1 AND expense_date >= $2 AND expense_date <= $3
              GROUP BY status`,
             [w.id, weekStart, weekEnd]
           ),
-          query(`SELECT * FROM tt_payments WHERE worker_id = $1 AND week_start = $2`, [w.id, weekStart]),
-          query(
+          query2(`SELECT * FROM tt_payments WHERE worker_id = $1 AND week_start = $2`, [w.id, weekStart]),
+          query2(
             `SELECT COUNT(*) AS cnt FROM tt_time_entries WHERE worker_id = $1 AND status = 'pending'`,
             [w.id]
           )
@@ -47423,7 +45327,7 @@ router40.get("/api/time/admin/overview", async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 });
-router40.get("/api/time/admin/entries", async (req, res) => {
+router39.get("/api/time/admin/entries", async (req, res) => {
   try {
     const auth = requireTimeAdmin(req, res);
     if (!auth) return;
@@ -47436,14 +45340,14 @@ router40.get("/api/time/admin/entries", async (req, res) => {
       return;
     }
     const [entries, expenses] = await Promise.all([
-      query(
+      query2(
         `SELECT te.*, c.name AS category_name
          FROM tt_time_entries te JOIN tt_categories c ON c.id = te.category_id
          WHERE te.worker_id = $1 AND te.work_date >= $2 AND te.work_date <= $3
          ORDER BY te.work_date, te.created_at`,
         [workerId, weekStart, weekEnd]
       ),
-      query(
+      query2(
         `SELECT e.*, c.name AS category_name
          FROM tt_expenses e LEFT JOIN tt_categories c ON c.id = e.category_id
          WHERE e.worker_id = $1 AND e.expense_date >= $2 AND e.expense_date <= $3
@@ -47457,7 +45361,7 @@ router40.get("/api/time/admin/entries", async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 });
-router40.post("/api/time/admin/entries/status", async (req, res) => {
+router39.post("/api/time/admin/entries/status", async (req, res) => {
   try {
     const auth = requireTimeAdmin(req, res);
     if (!auth) return;
@@ -47567,7 +45471,7 @@ router40.post("/api/time/admin/entries/status", async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 });
-router40.post("/api/time/admin/entries", async (req, res) => {
+router39.post("/api/time/admin/entries", async (req, res) => {
   try {
     const auth = requireTimeAdmin(req, res);
     if (!auth) return;
@@ -47591,7 +45495,7 @@ router40.post("/api/time/admin/entries", async (req, res) => {
       res.status(400).json({ error: "hours must be in 0.25 increments" });
       return;
     }
-    const dailyTotalRes = await query(
+    const dailyTotalRes = await query2(
       `SELECT COALESCE(SUM(hours::numeric), 0) AS total
        FROM tt_time_entries WHERE worker_id = $1 AND work_date = $2`,
       [worker_id, work_date]
@@ -47601,7 +45505,7 @@ router40.post("/api/time/admin/entries", async (req, res) => {
       res.status(400).json({ error: `Adding ${hoursNum}h would exceed the 24h daily cap (${dailyTotal}h already logged)` });
       return;
     }
-    const catCheck = await query(
+    const catCheck = await query2(
       `SELECT id FROM tt_categories WHERE id = $1 AND active = true`,
       [category_id]
     );
@@ -47614,7 +45518,7 @@ router40.post("/api/time/admin/entries", async (req, res) => {
       res.status(400).json({ error: "No rate defined for worker on that date" });
       return;
     }
-    const result = await query(
+    const result = await query2(
       `INSERT INTO tt_time_entries (worker_id, work_date, category_id, hours, note, rate_cents, is_adjustment, created_by, status)
        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, 'pending') RETURNING *`,
       [worker_id, work_date, category_id, hoursNum, note ?? null, rateCents, is_adjustment ?? false, profileId]
@@ -47633,7 +45537,7 @@ router40.post("/api/time/admin/entries", async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 });
-router40.get("/api/time/admin/payments/preview", async (req, res) => {
+router39.get("/api/time/admin/payments/preview", async (req, res) => {
   try {
     const auth = requireTimeAdmin(req, res);
     if (!auth) return;
@@ -47645,35 +45549,35 @@ router40.get("/api/time/admin/payments/preview", async (req, res) => {
     }
     const weekStart = getWeekStartPT(weekParam);
     const weekEnd = addDays2(weekStart, 6);
-    const worker = await query(`SELECT * FROM tt_workers WHERE id = $1`, [workerId]);
+    const worker = await query2(`SELECT * FROM tt_workers WHERE id = $1`, [workerId]);
     if (worker.rows.length === 0) {
       res.status(404).json({ error: "Worker not found" });
       return;
     }
-    const pendingCheck = await query(
+    const pendingCheck = await query2(
       `SELECT COUNT(*) AS cnt FROM tt_time_entries
        WHERE worker_id = $1 AND work_date >= $2 AND work_date <= $3 AND status = 'pending'`,
       [workerId, weekStart, weekEnd]
     );
-    const pendingExpCheck = await query(
+    const pendingExpCheck = await query2(
       `SELECT COUNT(*) AS cnt FROM tt_expenses
        WHERE worker_id = $1 AND expense_date >= $2 AND expense_date <= $3 AND status = 'pending'`,
       [workerId, weekStart, weekEnd]
     );
     const pendingCount = parseInt(String(pendingCheck.rows[0].cnt), 10) + parseInt(String(pendingExpCheck.rows[0].cnt), 10);
-    const entries = await query(
+    const entries = await query2(
       `SELECT * FROM tt_time_entries WHERE worker_id = $1 AND work_date >= $2 AND work_date <= $3 AND status = 'approved'`,
       [workerId, weekStart, weekEnd]
     );
-    const priorEntries = await query(
+    const priorEntries = await query2(
       `SELECT * FROM tt_time_entries WHERE worker_id = $1 AND work_date < $2 AND status = 'approved' AND payment_id IS NULL`,
       [workerId, weekStart]
     );
-    const expensesThis = await query(
+    const expensesThis = await query2(
       `SELECT * FROM tt_expenses WHERE worker_id = $1 AND expense_date >= $2 AND expense_date <= $3 AND status = 'approved'`,
       [workerId, weekStart, weekEnd]
     );
-    const priorExpenses = await query(
+    const priorExpenses = await query2(
       `SELECT * FROM tt_expenses WHERE worker_id = $1 AND expense_date < $2 AND status = 'approved' AND payment_id IS NULL`,
       [workerId, weekStart]
     );
@@ -47682,7 +45586,7 @@ router40.get("/api/time/admin/payments/preview", async (req, res) => {
     const hoursTotal = allEntries.reduce((sum, e) => sum + parseFloat(String(e.hours ?? 0)), 0);
     const laborCents = Math.round(allEntries.reduce((sum, e) => sum + parseFloat(String(e.hours ?? 0)) * parseInt(String(e.rate_cents ?? 0), 10), 0));
     const expensesCents = allExpenses.reduce((sum, e) => sum + parseInt(String(e.amount_cents ?? 0), 10), 0);
-    const existingPayment = await query(
+    const existingPayment = await query2(
       `SELECT * FROM tt_payments WHERE worker_id = $1 AND week_start = $2`,
       [workerId, weekStart]
     );
@@ -47708,7 +45612,7 @@ router40.get("/api/time/admin/payments/preview", async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 });
-router40.post("/api/time/admin/payments", async (req, res) => {
+router39.post("/api/time/admin/payments", async (req, res) => {
   try {
     const auth = requireTimeAdmin(req, res);
     if (!auth) return;
@@ -47830,7 +45734,7 @@ router40.post("/api/time/admin/payments", async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 });
-router40.get("/api/time/admin/reports", async (req, res) => {
+router39.get("/api/time/admin/reports", async (req, res) => {
   try {
     const auth = requireTimeAdmin(req, res);
     if (!auth) return;
@@ -47878,7 +45782,7 @@ router40.get("/api/time/admin/reports", async (req, res) => {
     const catFilter = catParamIdx ? `AND te.category_id = $${catParamIdx}` : "";
     const [headlines, byWorker, byCategory, weeklyChart] = await Promise.all([
       // Headline cards
-      query(
+      query2(
         `SELECT status,
           COUNT(*) AS entry_count,
           SUM(hours::numeric) AS hours,
@@ -47889,7 +45793,7 @@ router40.get("/api/time/admin/reports", async (req, res) => {
         baseParams
       ),
       // By worker pivot (no workerFilter — this groups by worker)
-      query(
+      query2(
         `SELECT w.id, w.full_name, te.status,
           SUM(te.hours::numeric) AS hours,
           SUM(te.hours::numeric * te.rate_cents) AS labor_cents,
@@ -47902,7 +45806,7 @@ router40.get("/api/time/admin/reports", async (req, res) => {
         baseParams
       ),
       // By category pivot (no catFilter — this groups by category)
-      query(
+      query2(
         `SELECT c.id, c.name, te.status,
           SUM(te.hours::numeric) AS hours,
           SUM(te.hours::numeric * te.rate_cents) AS labor_cents,
@@ -47915,7 +45819,7 @@ router40.get("/api/time/admin/reports", async (req, res) => {
         baseParams
       ),
       // Weekly chart: $ per week by status
-      query(
+      query2(
         `SELECT date_trunc('week', work_date::timestamp)::date AS week_start,
           status,
           SUM(hours::numeric * rate_cents) AS labor_cents
@@ -47928,7 +45832,7 @@ router40.get("/api/time/admin/reports", async (req, res) => {
     ]);
     const expParams = [periodStart, periodEnd];
     const expWorkerClause = worker_id ? `AND worker_id = $${expParams.push(worker_id)}` : "";
-    const expHeadlines = await query(
+    const expHeadlines = await query2(
       `SELECT status, SUM(amount_cents) AS amount_cents
        FROM tt_expenses WHERE expense_date >= $1 AND expense_date <= $2
        ${expWorkerClause}
@@ -47950,7 +45854,7 @@ router40.get("/api/time/admin/reports", async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 });
-router40.get("/api/time/admin/reports/export.xlsx", async (req, res) => {
+router39.get("/api/time/admin/reports/export.xlsx", async (req, res) => {
   try {
     const auth = requireTimeAdmin(req, res);
     if (!auth) return;
@@ -47960,7 +45864,7 @@ router40.get("/api/time/admin/reports/export.xlsx", async (req, res) => {
     const periodEnd = end ?? addDays2(getWeekStartPT(today), 6);
     const entryParams = [periodStart, periodEnd];
     const entryWorkerClause = worker_id ? `AND te.worker_id = $${entryParams.push(worker_id)}` : "";
-    const entries = await query(
+    const entries = await query2(
       `SELECT te.*, w.full_name AS worker_name, w.email AS worker_email,
          c.name AS category_name
        FROM tt_time_entries te
@@ -47972,7 +45876,7 @@ router40.get("/api/time/admin/reports/export.xlsx", async (req, res) => {
     );
     const expExportParams = [periodStart, periodEnd];
     const expExportWorkerClause = worker_id ? `AND e.worker_id = $${expExportParams.push(worker_id)}` : "";
-    const expenses = await query(
+    const expenses = await query2(
       `SELECT e.*, w.full_name AS worker_name, w.email AS worker_email,
          c.name AS category_name
        FROM tt_expenses e
@@ -48023,11 +45927,11 @@ router40.get("/api/time/admin/reports/export.xlsx", async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 });
-router40.get("/api/time/admin/workers", async (req, res) => {
+router39.get("/api/time/admin/workers", async (req, res) => {
   try {
     const auth = requireTimeAdmin(req, res);
     if (!auth) return;
-    const workers = await query(
+    const workers = await query2(
       `SELECT w.*,
          (SELECT hourly_rate_cents FROM tt_rate_history WHERE worker_id = w.id ORDER BY effective_from DESC LIMIT 1) AS current_rate_cents,
          (SELECT SUM(te.hours::numeric * te.rate_cents) FROM tt_time_entries te WHERE te.worker_id = w.id AND te.status = 'approved' AND te.payment_id IS NULL) AS unpaid_labor_cents,
@@ -48036,7 +45940,7 @@ router40.get("/api/time/admin/workers", async (req, res) => {
     );
     const workersWithCats = await Promise.all(
       workers.rows.map(async (w) => {
-        const cats = await query(
+        const cats = await query2(
           `SELECT c.id, c.name FROM tt_categories c
            JOIN tt_worker_categories wc ON wc.category_id = c.id
            WHERE wc.worker_id = $1 AND c.active = true ORDER BY c.name`,
@@ -48051,7 +45955,7 @@ router40.get("/api/time/admin/workers", async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 });
-router40.post("/api/time/admin/workers", async (req, res) => {
+router39.post("/api/time/admin/workers", async (req, res) => {
   try {
     const auth = requireTimeAdmin(req, res);
     if (!auth) return;
@@ -48073,7 +45977,7 @@ router40.post("/api/time/admin/workers", async (req, res) => {
       return;
     }
     const normalizedEmail = email.toLowerCase().trim();
-    const existingInvite = await query(
+    const existingInvite = await query2(
       `SELECT role FROM invited_emails WHERE email = $1`,
       [normalizedEmail]
     );
@@ -48084,7 +45988,7 @@ router40.post("/api/time/admin/workers", async (req, res) => {
         return;
       }
     }
-    const existingGoogleToken = await query(
+    const existingGoogleToken = await query2(
       `SELECT 1 FROM google_tokens WHERE lower(google_email) = $1 LIMIT 1`,
       [normalizedEmail]
     );
@@ -48092,33 +45996,33 @@ router40.post("/api/time/admin/workers", async (req, res) => {
       res.status(400).json({ error: "This email belongs to an existing household member. Cannot add as worker." });
       return;
     }
-    const existingWorker = await query(`SELECT id FROM tt_workers WHERE email = $1`, [normalizedEmail]);
+    const existingWorker = await query2(`SELECT id FROM tt_workers WHERE email = $1`, [normalizedEmail]);
     if (existingWorker.rows.length > 0) {
       res.status(409).json({ error: "Worker with this email already exists" });
       return;
     }
     const today = getTodayPT();
     const rateFrom = effective_from || today;
-    const workerRes = await query(
+    const workerRes = await query2(
       `INSERT INTO tt_workers (full_name, email, mobile, zelle_handle, can_add_expenses, default_category_id, created_by)
        VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *`,
       [full_name, normalizedEmail, mobile ?? null, zelle_handle ?? null, can_add_expenses ?? false, default_category_id ?? null, profileId]
     );
     const worker = workerRes.rows[0];
-    await query(
+    await query2(
       `INSERT INTO tt_rate_history (worker_id, hourly_rate_cents, effective_from, created_by)
        VALUES ($1, $2, $3, $4)`,
       [worker.id, hourly_rate_cents, rateFrom, profileId]
     );
     if (category_ids && category_ids.length > 0) {
       for (const catId of category_ids) {
-        await query(
+        await query2(
           `INSERT INTO tt_worker_categories (worker_id, category_id) VALUES ($1, $2) ON CONFLICT DO NOTHING`,
           [worker.id, catId]
         );
       }
     }
-    await query(
+    await query2(
       `INSERT INTO invited_emails (email, invited_by, role)
        VALUES ($1, $2, 'worker')
        ON CONFLICT DO NOTHING`,
@@ -48139,7 +46043,7 @@ router40.post("/api/time/admin/workers", async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 });
-router40.patch("/api/time/admin/workers/:id", async (req, res) => {
+router39.patch("/api/time/admin/workers/:id", async (req, res) => {
   try {
     const auth = requireTimeAdmin(req, res);
     if (!auth) return;
@@ -48147,7 +46051,7 @@ router40.patch("/api/time/admin/workers/:id", async (req, res) => {
     const profileId = await getProfileId(user.userId);
     const { id } = req.params;
     const { full_name, mobile, zelle_handle, can_add_expenses, default_category_id, category_ids } = req.body;
-    const updated = await query(
+    const updated = await query2(
       `UPDATE tt_workers SET
          full_name = COALESCE($1, full_name),
          mobile = COALESCE($2, mobile),
@@ -48163,9 +46067,9 @@ router40.patch("/api/time/admin/workers/:id", async (req, res) => {
       return;
     }
     if (category_ids !== void 0) {
-      await query(`DELETE FROM tt_worker_categories WHERE worker_id = $1`, [id]);
+      await query2(`DELETE FROM tt_worker_categories WHERE worker_id = $1`, [id]);
       for (const catId of category_ids) {
-        await query(`INSERT INTO tt_worker_categories (worker_id, category_id) VALUES ($1, $2) ON CONFLICT DO NOTHING`, [id, catId]);
+        await query2(`INSERT INTO tt_worker_categories (worker_id, category_id) VALUES ($1, $2) ON CONFLICT DO NOTHING`, [id, catId]);
       }
     }
     await logAudit("time-tracking", {
@@ -48182,14 +46086,14 @@ router40.patch("/api/time/admin/workers/:id", async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 });
-router40.post("/api/time/admin/workers/:id/activate", async (req, res) => {
+router39.post("/api/time/admin/workers/:id/activate", async (req, res) => {
   try {
     const auth = requireTimeAdmin(req, res);
     if (!auth) return;
     const { user } = auth;
     const { id } = req.params;
     const { active } = req.body;
-    const updated = await query(
+    const updated = await query2(
       `UPDATE tt_workers SET active = $1, deactivated_at = CASE WHEN $1 = false THEN now() ELSE NULL END, updated_at = now()
        WHERE id = $2 RETURNING *`,
       [active, id]
@@ -48214,11 +46118,11 @@ router40.post("/api/time/admin/workers/:id/activate", async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 });
-router40.get("/api/time/admin/workers/:id/rate-history", async (req, res) => {
+router39.get("/api/time/admin/workers/:id/rate-history", async (req, res) => {
   try {
     const auth = requireTimeAdmin(req, res);
     if (!auth) return;
-    const rates = await query(
+    const rates = await query2(
       `SELECT * FROM tt_rate_history WHERE worker_id = $1 ORDER BY effective_from DESC`,
       [req.params.id]
     );
@@ -48228,7 +46132,7 @@ router40.get("/api/time/admin/workers/:id/rate-history", async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 });
-router40.post("/api/time/admin/workers/:id/rate", async (req, res) => {
+router39.post("/api/time/admin/workers/:id/rate", async (req, res) => {
   try {
     const auth = requireTimeAdmin(req, res);
     if (!auth) return;
@@ -48240,7 +46144,7 @@ router40.post("/api/time/admin/workers/:id/rate", async (req, res) => {
       res.status(400).json({ error: "hourly_rate_cents and effective_from required" });
       return;
     }
-    const result = await query(
+    const result = await query2(
       `INSERT INTO tt_rate_history (worker_id, hourly_rate_cents, effective_from, created_by)
        VALUES ($1, $2, $3, $4)
        ON CONFLICT (worker_id, effective_from) DO UPDATE SET hourly_rate_cents = EXCLUDED.hourly_rate_cents
@@ -48261,26 +46165,26 @@ router40.post("/api/time/admin/workers/:id/rate", async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 });
-router40.get("/api/time/admin/categories", async (req, res) => {
+router39.get("/api/time/admin/categories", async (req, res) => {
   try {
     const auth = requireTimeAdmin(req, res);
     if (!auth) return;
-    const cats = await query(`SELECT * FROM tt_categories ORDER BY sort_order, name`);
+    const cats = await query2(`SELECT * FROM tt_categories ORDER BY sort_order, name`);
     res.json({ categories: cats.rows });
   } catch (e) {
     console.error("[time] GET /api/time/admin/categories error:", e);
     res.status(500).json({ error: "Internal server error" });
   }
 });
-router40.get("/api/time/categories", async (_req, res) => {
+router39.get("/api/time/categories", async (_req, res) => {
   try {
-    const cats = await query(`SELECT * FROM tt_categories WHERE active = true ORDER BY sort_order, name`);
+    const cats = await query2(`SELECT * FROM tt_categories WHERE active = true ORDER BY sort_order, name`);
     res.json({ categories: cats.rows });
   } catch (e) {
     res.status(500).json({ error: "Internal server error" });
   }
 });
-router40.post("/api/time/admin/categories", async (req, res) => {
+router39.post("/api/time/admin/categories", async (req, res) => {
   try {
     const auth = requireTimeAdmin(req, res);
     if (!auth) return;
@@ -48290,7 +46194,7 @@ router40.post("/api/time/admin/categories", async (req, res) => {
       res.status(400).json({ error: "name required" });
       return;
     }
-    const result = await query(
+    const result = await query2(
       `INSERT INTO tt_categories (name, sort_order) VALUES ($1, $2) RETURNING *`,
       [name, sort_order ?? 0]
     );
@@ -48308,14 +46212,14 @@ router40.post("/api/time/admin/categories", async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 });
-router40.patch("/api/time/admin/categories/:id", async (req, res) => {
+router39.patch("/api/time/admin/categories/:id", async (req, res) => {
   try {
     const auth = requireTimeAdmin(req, res);
     if (!auth) return;
     const { user } = auth;
     const { id } = req.params;
     const { name, active, sort_order } = req.body;
-    const updated = await query(
+    const updated = await query2(
       `UPDATE tt_categories SET name = COALESCE($1, name), active = COALESCE($2, active), sort_order = COALESCE($3, sort_order)
        WHERE id = $4 RETURNING *`,
       [name ?? null, active ?? null, sort_order ?? null, id]
@@ -48340,7 +46244,7 @@ router40.patch("/api/time/admin/categories/:id", async (req, res) => {
 });
 async function getTimeAutomation(name) {
   try {
-    const { rows } = await query(
+    const { rows } = await query2(
       `SELECT id, is_active FROM family_automations WHERE name = $1 LIMIT 1`,
       [name]
     );
@@ -48351,7 +46255,7 @@ async function getTimeAutomation(name) {
 }
 async function markTimeAutomationRan(id) {
   try {
-    await query(`UPDATE family_automations SET last_run_at = NOW() WHERE id = $1`, [id]);
+    await query2(`UPDATE family_automations SET last_run_at = NOW() WHERE id = $1`, [id]);
   } catch {
   }
 }
@@ -48370,7 +46274,7 @@ function auditTimeCron(edgeFunction, eventType, summary, status, t0, detail) {
   }).catch(() => {
   });
 }
-router40.post("/api/time/cron/worker-digest", async (req, res) => {
+router39.post("/api/time/cron/worker-digest", async (req, res) => {
   const t0 = Date.now();
   try {
     const cronSecret = process.env.CRON_SECRET;
@@ -48400,7 +46304,7 @@ router40.post("/api/time/cron/worker-digest", async (req, res) => {
     }
     const today = getTodayPT();
     const yesterday = addDays2(today, -1);
-    const changes = await query(
+    const changes = await query2(
       `SELECT DISTINCT te.worker_id FROM tt_time_entries te
        WHERE (te.approved_at::date = $1 OR te.updated_at::date = $1)
          AND te.status IN ('approved', 'rejected')`,
@@ -48408,10 +46312,10 @@ router40.post("/api/time/cron/worker-digest", async (req, res) => {
     );
     let sent = 0;
     for (const row of changes.rows) {
-      const worker = await query(`SELECT * FROM tt_workers WHERE id = $1`, [row.worker_id]);
+      const worker = await query2(`SELECT * FROM tt_workers WHERE id = $1`, [row.worker_id]);
       if (!worker.rows[0]) continue;
       const w = worker.rows[0];
-      const entries = await query(
+      const entries = await query2(
         `SELECT te.*, c.name AS category_name FROM tt_time_entries te
          JOIN tt_categories c ON c.id = te.category_id
          WHERE te.worker_id = $1 AND (te.approved_at::date = $2 OR (te.status = 'rejected' AND te.updated_at::date = $2))
@@ -48439,7 +46343,7 @@ router40.post("/api/time/cron/worker-digest", async (req, res) => {
     res.json({ skipped: true, reason: String(e) });
   }
 });
-router40.post("/api/time/cron/admin-pending-digest", async (req, res) => {
+router39.post("/api/time/cron/admin-pending-digest", async (req, res) => {
   const t0 = Date.now();
   try {
     const cronSecret = process.env.CRON_SECRET;
@@ -48467,9 +46371,9 @@ router40.post("/api/time/cron/admin-pending-digest", async (req, res) => {
       res.json({ skipped: true, reason: "no_service_account_key" });
       return;
     }
-    const { TONY_EMAIL: TONY_EMAIL5 } = await Promise.resolve().then(() => (init_helpers(), helpers_exports));
-    const adminEmails = [TONY_EMAIL5];
-    const pending = await query(
+    const { TONY_EMAIL: TONY_EMAIL4 } = await Promise.resolve().then(() => (init_helpers(), helpers_exports));
+    const adminEmails = [TONY_EMAIL4];
+    const pending = await query2(
       `SELECT w.full_name, COUNT(te.id) AS cnt, SUM(te.hours::numeric * te.rate_cents) AS labor_cents
        FROM tt_time_entries te JOIN tt_workers w ON w.id = te.worker_id
        WHERE te.status = 'pending'
@@ -48500,7 +46404,7 @@ router40.post("/api/time/cron/admin-pending-digest", async (req, res) => {
     res.json({ skipped: true, reason: String(e) });
   }
 });
-router40.post("/api/time/cron/weekly-closeout", async (req, res) => {
+router39.post("/api/time/cron/weekly-closeout", async (req, res) => {
   const t0 = Date.now();
   try {
     const cronSecret = process.env.CRON_SECRET;
@@ -48528,12 +46432,12 @@ router40.post("/api/time/cron/weekly-closeout", async (req, res) => {
       res.json({ skipped: true, reason: "no_service_account_key" });
       return;
     }
-    const { TONY_EMAIL: TONY_EMAIL5 } = await Promise.resolve().then(() => (init_helpers(), helpers_exports));
-    const adminEmails = [TONY_EMAIL5];
+    const { TONY_EMAIL: TONY_EMAIL4 } = await Promise.resolve().then(() => (init_helpers(), helpers_exports));
+    const adminEmails = [TONY_EMAIL4];
     const today = getTodayPT();
     const lastWeekEnd = addDays2(today, -1);
     const lastWeekStart = getWeekStartPT(lastWeekEnd);
-    const summary = await query(
+    const summary = await query2(
       `SELECT w.full_name,
          SUM(CASE WHEN te.status = 'approved' AND te.payment_id IS NULL THEN te.hours::numeric * te.rate_cents ELSE 0 END) AS unpaid_approved_cents,
          SUM(CASE WHEN te.status = 'pending' THEN te.hours::numeric * te.rate_cents ELSE 0 END) AS pending_cents,
@@ -48574,7 +46478,7 @@ async function sendWelcomeEmail(worker, rateCents, categoryIds) {
     if (!saKey) return;
     let catNames = "";
     if (categoryIds.length > 0) {
-      const cats = await query(
+      const cats = await query2(
         `SELECT name FROM tt_categories WHERE id = ANY($1::uuid[])`,
         [categoryIds]
       );
@@ -48622,7 +46526,7 @@ async function sendPaymentEmail(workerId, payment) {
       saKey = null;
     }
     if (!saKey) return;
-    const workerRes = await query(`SELECT * FROM tt_workers WHERE id = $1`, [workerId]);
+    const workerRes = await query2(`SELECT * FROM tt_workers WHERE id = $1`, [workerId]);
     const worker = workerRes.rows[0];
     if (!worker) return;
     const totalCents = parseInt(String(payment.total_cents ?? 0), 10);
@@ -48646,7 +46550,7 @@ ${payment.confirmation_ref ? `<p>Zelle Confirmation: ${payment.confirmation_ref}
     console.error("[time] sendPaymentEmail error:", e);
   }
 }
-var time_default = router40;
+var time_default = router39;
 
 // server/routes.ts
 var SUPABASE_COMPAT_MAP = {
@@ -48676,7 +46580,6 @@ var SUPABASE_COMPAT_MAP = {
   "entertainment-sync": "/api/entertainment-sync",
   "showtimes-proxy": "/api/showtimes-proxy",
   "ai-movie-recommender": "/api/ai-movie-recommender",
-  "grocery-order": "/api/grocery-order",
   "travel-email-scanner": "/api/travel-email-scanner",
   "trip-document-upload": "/api/trip-document-upload",
   "generac-proxy": "/api/generac",
@@ -48712,7 +46615,6 @@ async function registerRoutes(app2) {
   app2.use(scraping_default);
   app2.use(monitoring_default);
   app2.use(energySavings_default);
-  app2.use(grocery_default);
   app2.use(data_default);
   app2.use(updates_autogen_default);
   app2.use(computerAuth_default);
@@ -48789,7 +46691,7 @@ async function seedDatabase() {
 }
 async function applyInlineMigrations() {
   try {
-    await query(`
+    await query2(`
       CREATE TABLE IF NOT EXISTS thermostat_logs (
         id uuid DEFAULT gen_random_uuid() PRIMARY KEY NOT NULL,
         entity_id text NOT NULL,
@@ -48801,40 +46703,40 @@ async function applyInlineMigrations() {
         logged_at timestamp with time zone DEFAULT now() NOT NULL
       )
     `);
-    await query(`CREATE INDEX IF NOT EXISTS thermostat_logs_entity_id_idx ON thermostat_logs (entity_id)`);
-    await query(`CREATE INDEX IF NOT EXISTS thermostat_logs_logged_at_idx ON thermostat_logs (logged_at DESC)`);
+    await query2(`CREATE INDEX IF NOT EXISTS thermostat_logs_entity_id_idx ON thermostat_logs (entity_id)`);
+    await query2(`CREATE INDEX IF NOT EXISTS thermostat_logs_logged_at_idx ON thermostat_logs (logged_at DESC)`);
     console.log("[SEED] Inline migration: thermostat_logs table ensured.");
   } catch (err) {
     console.error("[SEED] Inline migration failed:", err.message);
   }
   try {
-    await query(`ALTER TABLE grocery_staples ADD COLUMN IF NOT EXISTS amazon_url TEXT`);
+    await query2(`ALTER TABLE grocery_staples ADD COLUMN IF NOT EXISTS amazon_url TEXT`);
   } catch (err) {
     console.error("[SEED] Inline migration grocery_staples.amazon_url failed:", err.message);
   }
   try {
-    await query(`ALTER TABLE shopping_cart_items ADD COLUMN IF NOT EXISTS image_url TEXT`);
+    await query2(`ALTER TABLE shopping_cart_items ADD COLUMN IF NOT EXISTS image_url TEXT`);
   } catch (err) {
     console.error("[SEED] Inline migration shopping_cart_items.image_url failed:", err.message);
   }
   try {
-    await query(`ALTER TABLE device_overrides ADD COLUMN IF NOT EXISTS owner TEXT`);
+    await query2(`ALTER TABLE device_overrides ADD COLUMN IF NOT EXISTS owner TEXT`);
     console.log("[SEED] Inline migration: device_overrides.owner ensured.");
   } catch (err) {
     console.error("[SEED] Inline migration device_overrides.owner failed:", err.message);
   }
   try {
-    await query(`ALTER TABLE device_overrides ADD COLUMN IF NOT EXISTS trusted BOOLEAN NOT NULL DEFAULT FALSE`);
-    await query(`ALTER TABLE device_overrides ADD COLUMN IF NOT EXISTS is_random BOOLEAN NOT NULL DEFAULT FALSE`);
-    await query(`ALTER TABLE device_overrides ADD COLUMN IF NOT EXISTS first_seen TIMESTAMPTZ`);
-    await query(`ALTER TABLE device_overrides ADD COLUMN IF NOT EXISTS last_seen TIMESTAMPTZ`);
-    await query(`ALTER TABLE device_overrides ADD COLUMN IF NOT EXISTS notes TEXT`);
+    await query2(`ALTER TABLE device_overrides ADD COLUMN IF NOT EXISTS trusted BOOLEAN NOT NULL DEFAULT FALSE`);
+    await query2(`ALTER TABLE device_overrides ADD COLUMN IF NOT EXISTS is_random BOOLEAN NOT NULL DEFAULT FALSE`);
+    await query2(`ALTER TABLE device_overrides ADD COLUMN IF NOT EXISTS first_seen TIMESTAMPTZ`);
+    await query2(`ALTER TABLE device_overrides ADD COLUMN IF NOT EXISTS last_seen TIMESTAMPTZ`);
+    await query2(`ALTER TABLE device_overrides ADD COLUMN IF NOT EXISTS notes TEXT`);
     console.log("[SEED] Inline migration: device_overrides extended fields ensured.");
   } catch (err) {
     console.error("[SEED] Inline migration device_overrides extended fields failed:", err.message);
   }
   try {
-    await query(`
+    await query2(`
       CREATE TABLE IF NOT EXISTS device_categories (
         id serial PRIMARY KEY,
         name text NOT NULL UNIQUE,
@@ -48847,7 +46749,7 @@ async function applyInlineMigrations() {
     console.error("[SEED] Inline migration device_categories failed:", err.message);
   }
   try {
-    await query(`
+    await query2(`
       CREATE TABLE IF NOT EXISTS vendor_category_rules (
         id serial PRIMARY KEY,
         match_keyword text NOT NULL,
@@ -48858,7 +46760,7 @@ async function applyInlineMigrations() {
         notes text
       )
     `);
-    await query(`CREATE INDEX IF NOT EXISTS vendor_category_rules_keyword_idx ON vendor_category_rules (match_keyword)`);
+    await query2(`CREATE INDEX IF NOT EXISTS vendor_category_rules_keyword_idx ON vendor_category_rules (match_keyword)`);
     console.log("[SEED] Inline migration: vendor_category_rules table ensured.");
   } catch (err) {
     console.error("[SEED] Inline migration vendor_category_rules failed:", err.message);
@@ -48888,11 +46790,11 @@ var CANONICAL_CATEGORIES = [
 ];
 async function seedDeviceCategories() {
   try {
-    const { rows } = await query(`SELECT COUNT(*) AS n FROM device_categories`);
+    const { rows } = await query2(`SELECT COUNT(*) AS n FROM device_categories`);
     const count = parseInt(rows[0].n, 10);
     if (count >= CANONICAL_CATEGORIES.length) return;
     for (const cat of CANONICAL_CATEGORIES) {
-      await query(
+      await query2(
         `INSERT INTO device_categories (name, sort_order, description)
          VALUES ($1, $2, $3)
          ON CONFLICT (name) DO UPDATE SET sort_order = EXCLUDED.sort_order, description = EXCLUDED.description`,
@@ -48940,14 +46842,14 @@ async function seedVendorCategoryRules() {
     let updated = 0;
     let inserted = 0;
     for (const rule of VENDOR_RULES) {
-      const upd = await query(
+      const upd = await query2(
         `UPDATE vendor_category_rules
          SET category=$2, subcategory=$3, vendor_label=$4, priority=$5, notes=$6
          WHERE match_keyword=$1`,
         [rule.matchKeyword, rule.category, rule.subcategory ?? null, rule.vendorLabel ?? null, rule.priority, rule.notes ?? null]
       );
       if ((upd.rowCount ?? 0) === 0) {
-        await query(
+        await query2(
           `INSERT INTO vendor_category_rules (match_keyword, category, subcategory, vendor_label, priority, notes)
            VALUES ($1, $2, $3, $4, $5, $6)`,
           [rule.matchKeyword, rule.category, rule.subcategory ?? null, rule.vendorLabel ?? null, rule.priority, rule.notes ?? null]
@@ -48974,12 +46876,12 @@ async function migrateOldPromptSlugs() {
     { oldSlug: "janus-email", newSlug: "janus-email-addendum" }
   ];
   for (const { oldSlug, newSlug } of migrations) {
-    const { rows: oldRows } = await query(
+    const { rows: oldRows } = await query2(
       `SELECT id, content FROM system_prompts WHERE slug = $1`,
       [oldSlug]
     );
     if (oldRows.length === 0) continue;
-    const { rows: newRows } = await query(
+    const { rows: newRows } = await query2(
       `SELECT id, content FROM system_prompts WHERE slug = $1`,
       [newSlug]
     );
@@ -48987,7 +46889,7 @@ async function migrateOldPromptSlugs() {
     const legacyContent = (LEGACY_PLACEHOLDER_CONTENT[oldSlug] ?? "").trim();
     const oldIsPlaceholder = oldContent === legacyContent;
     if (newRows.length === 0) {
-      await query(
+      await query2(
         `UPDATE system_prompts SET slug = $1, updated_at = NOW() WHERE slug = $2`,
         [newSlug, oldSlug]
       );
@@ -48997,7 +46899,7 @@ async function migrateOldPromptSlugs() {
       const newContent = (newRows[0].content ?? "").trim();
       const newIsPlaceholder = newContent === "" || newContent === legacyContent;
       if (!oldIsPlaceholder && newIsPlaceholder) {
-        await query(
+        await query2(
           `UPDATE system_prompts SET content = $1, updated_at = NOW() WHERE slug = $2`,
           [oldRows[0].content, newSlug]
         );
@@ -49007,7 +46909,7 @@ async function migrateOldPromptSlugs() {
       } else {
         console.log(`[SEED] "${oldSlug}" is a placeholder; "${newSlug}" already exists \u2014 no content change needed.`);
       }
-      await query(`DELETE FROM system_prompts WHERE slug = $1`, [oldSlug]);
+      await query2(`DELETE FROM system_prompts WHERE slug = $1`, [oldSlug]);
       console.log(`[SEED] Removed legacy slug "${oldSlug}" from DB.`);
     }
   }
@@ -49106,12 +47008,12 @@ When referencing Janus app sections, use exact routes as markdown links. Example
 
 ### Reply-All Threading Rule
 - When replying to a group email or a thread with multiple recipients: always Reply All.
-- Never drop recipients from a thread unless explicitly instructed by Tony or Lana.
+- Never drop recipients from a thread unless explicitly instructed by the household admin or family.
 - If a reply would expose sensitive info to the group, flag it: "This thread includes [names] \u2014 should I reply all or just to [recipient]?"
 
 ### Tone Selection
-- **Formal**: External parties, vendors, contractors, unknown recipients, and anyone Tony hasn't personally introduced.
-- **Semi-formal**: Staff members (Sandra, Jesse, Esmerelda, Rina) on routine operational matters.
+- **Formal**: External parties, vendors, contractors, unknown recipients, and anyone the household admin hasn't personally introduced.
+- **Semi-formal**: Staff members on routine operational matters.
 - **Direct**: Household family members.
 - When in doubt, default to semi-formal. It's always appropriate and never off-putting.
 
@@ -49121,11 +47023,11 @@ When referencing Janus app sections, use exact routes as markdown links. Example
 - Never ignore an attachment. If you can't read it, say so: "I see an attachment but couldn't parse it \u2014 can you confirm what it contains?"
 
 ### Triage Priority
-- **Urgent / respond now**: Security alerts, time-sensitive logistics, anything from Tony or Lana marked urgent.
+- **Urgent / respond now**: Security alerts, time-sensitive logistics, anything from the household admin marked urgent.
 - **Today**: Calendar invites, vendor coordination, staff requests.
 - **This week**: Research tasks, non-urgent follow-ups.
 - **No action needed**: Newsletters, receipts, automated notifications (archive after reading).
-- When in doubt, surface it to Tony with a one-line summary: what it is, who sent it, what they want.
+- When in doubt, surface it to the primary user with a one-line summary: what it is, who sent it, what they want.
 
 ### Brevity Rules (Non-Negotiable)
 - 1\u20132 short paragraphs max in the email body. Never pad a reply.
@@ -49165,7 +47067,7 @@ When referencing Janus app sections, use exact routes as markdown links. Example
     "janus-email-addendum": [LEGACY_PLACEHOLDER_CONTENT["janus-email"], ""]
   };
   for (const prompt of prompts) {
-    const { rows: existing } = await query(
+    const { rows: existing } = await query2(
       `SELECT id, content FROM system_prompts WHERE slug = $1`,
       [prompt.slug]
     );
@@ -49177,13 +47079,13 @@ When referencing Janus app sections, use exact routes as markdown links. Example
       const knownPlaceholders = (legacyContentsForNewSlugs[prompt.slug] ?? []).map((s3) => s3.trim());
       const isPlaceholder = knownPlaceholders.some((p) => currentContent === p);
       if (isPlaceholder) {
-        await query(
+        await query2(
           `UPDATE system_prompts SET label = $1, description = $2, content = $3, updated_at = NOW() WHERE slug = $4`,
           [prompt.label, prompt.description, prompt.content, prompt.slug]
         );
         console.log(`[SEED] Upgraded system prompt: "${prompt.slug}" (placeholder content replaced with enriched defaults).`);
       } else {
-        await query(
+        await query2(
           `UPDATE system_prompts SET label = $1, description = $2, updated_at = NOW() WHERE slug = $3`,
           [prompt.label, prompt.description, prompt.slug]
         );
@@ -49200,7 +47102,7 @@ async function seedHouseholdMembers() {
   ];
   let upserted = 0;
   for (const m of members) {
-    const result = await query(
+    const result = await query2(
       `INSERT INTO household_members (id, display_name, email, role, is_active, whatsapp_number, aliases, created_at, updated_at)
        VALUES ($1, $2, $3, $4, true, $5, $6, NOW(), NOW())
        ON CONFLICT (id) DO UPDATE SET
@@ -49218,7 +47120,7 @@ async function seedHouseholdMembers() {
   if (upserted > 0) {
     console.log(`[SEED] Household members seeded (${upserted} members upserted).`);
   }
-  const { rows } = await query(
+  const { rows } = await query2(
     `SELECT count(*)::int AS cnt FROM household_members WHERE id IN ($1,$2,$3,$4,$5,$6,$7,$8)`,
     members.map((m) => m.id)
   );
@@ -49235,13 +47137,13 @@ async function seedHouseholdPhoneNumbers() {
     { name: "Family Member", phone: "15550101", email: "member@example.com", role: "member" }
   ];
   for (const m of familyPhones) {
-    await query(
+    await query2(
       `UPDATE household_members SET whatsapp_number = $1
        WHERE email = $2 AND (whatsapp_number IS NULL OR whatsapp_number = '')`,
       [m.phone, m.email]
     );
   }
-  await query(
+  await query2(
     `UPDATE profiles SET phone_number = $1
      WHERE user_id = $2 AND (phone_number IS NULL OR phone_number = '')`,
     ["15550100", "google_sample_admin_uid"]
@@ -49254,14 +47156,14 @@ async function seedInvitedEmails() {
     "staff@example.com"
   ];
   for (const email of authorizedEmails) {
-    await query(
+    await query2(
       `INSERT INTO invited_emails (email, invited_by)
        SELECT $1, 'system'
        WHERE NOT EXISTS (SELECT 1 FROM invited_emails WHERE email = $1)`,
       [email]
     );
   }
-  const { rows } = await query(
+  const { rows } = await query2(
     `SELECT count(*)::int AS cnt FROM invited_emails WHERE email = ANY($1)`,
     [authorizedEmails]
   );
@@ -49269,13 +47171,13 @@ async function seedInvitedEmails() {
 }
 async function seedFamilyAutomations() {
   try {
-    const { rowCount: deletedPoiErrors } = await query(
+    const { rowCount: deletedPoiErrors } = await query2(
       `DELETE FROM system_audit_log
        WHERE edge_function = 'verkada-poi-sync'
          AND status = 'error'
          AND summary ILIKE '%not configured%'`
     );
-    const { rowCount: deletedCronErrors } = await query(
+    const { rowCount: deletedCronErrors } = await query2(
       `DELETE FROM system_audit_log
        WHERE edge_function = 'cron-trigger'
          AND status = 'error'
@@ -49289,7 +47191,7 @@ async function seedFamilyAutomations() {
   } catch (e) {
     console.warn("[SEED] Could not clean up stale audit-log rows:", e);
   }
-  const { rows } = await query("SELECT count(*)::int AS cnt FROM family_automations");
+  const { rows } = await query2("SELECT count(*)::int AS cnt FROM family_automations");
   if (rows[0]?.cnt > 0) {
     const newAutomations = [
       { name: "Gym Timer & Temperature", type: "gym-thermostat", schedule: "*/15 * * * *", desc: "AC on 6 AM\u20133 PM daily at 68\xB0F cool / 64\xB0F heat. Alerts if temp out of range." },
@@ -49304,9 +47206,9 @@ async function seedFamilyAutomations() {
       { name: "Door Locks & Battery Monitor", type: "ha-locks", schedule: "0 */4 * * *", desc: "Monitors Yale & Crestron door locks for low battery, offline status, and jammed locks via Home Assistant" }
     ];
     for (const a of newAutomations) {
-      const { rows: existing } = await query(`SELECT id FROM family_automations WHERE name = $1 LIMIT 1`, [a.name]);
+      const { rows: existing } = await query2(`SELECT id FROM family_automations WHERE name = $1 LIMIT 1`, [a.name]);
       if (existing.length === 0) {
-        await query(
+        await query2(
           `INSERT INTO family_automations (name, automation_type, schedule, is_active, description, config)
            VALUES ($1, $2, $3, $4, $5, $6)`,
           [a.name, a.type, a.schedule, true, a.desc, JSON.stringify(a.config ?? {})]
@@ -49318,7 +47220,7 @@ async function seedFamilyAutomations() {
   }
   console.log("[SEED] Seeding family_automations...");
   const automations = [
-    { name: "Getting Girls to School on Time", type: "school-broadcast", schedule: "50 6 * * 1-5", desc: "HW calendar sync + 6:50am & 7:30am wake-up broadcasts" },
+    { name: "Morning School & Family Wake-Up", type: "school-broadcast", schedule: "50 6 * * 1-5", desc: "School calendar sync + 6:50am & 7:30am wake-up broadcasts" },
     { name: "Morning Brief Email", type: "morning-email", schedule: "0 7 * * *", desc: "Weather, news, markets & calendar digest" },
     { name: "Morning Sauna", type: "morning-sauna", schedule: "MWF 8:30\u20139:00 AM \xB7 Tu/Th 8:50\u20139:20 AM PT", desc: "Runs the sauna at 190\xB0F for 30 minutes on weekday mornings using Home Assistant power and temperature helpers" },
     { name: "Tesla Battery Monitor", type: "tesla-battery", schedule: "*/30 * * * *", desc: "Alerts staff when range \u2264 100 mi & vehicle is at home" },
@@ -49343,7 +47245,7 @@ async function seedFamilyAutomations() {
     { name: "Door Locks & Battery Monitor", type: "ha-locks", schedule: "0 */4 * * *", desc: "Monitors Yale & Crestron door locks for low battery, offline status, and jammed locks via Home Assistant" }
   ];
   for (const a of automations) {
-    await query(
+    await query2(
       `INSERT INTO family_automations (name, automation_type, schedule, is_active, description, config)
        VALUES ($1, $2, $3, $4, $5, $6) ON CONFLICT DO NOTHING`,
       [a.name, a.type, a.schedule, true, a.desc, JSON.stringify(a.config ?? {})]

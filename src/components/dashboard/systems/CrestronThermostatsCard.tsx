@@ -15,6 +15,7 @@ import {
   AV_CLOSET_THRESHOLD_NOTE,
 } from '@shared/avCloset';
 import { useAvClosetReading } from '@/hooks/useAvClosetReading';
+import { sanitizeDeviceName } from '@/lib/nameSanitizer';
 
 type HvacMode = 'heat' | 'cool' | 'heat_cool' | 'auto' | 'off';
 
@@ -69,7 +70,7 @@ function deduplicateName(name: string): string {
       return words.slice(0, words.length - n).join(' ');
     }
   }
-  // Check trailing partial match (e.g. "Isla's Room Isla's")
+  // Check trailing partial match (e.g. "Bedroom 1 Bedroom")
   if (words.length >= 3) {
     const last = words[words.length - 1];
     if (words[0].startsWith(last) || last.startsWith(words[0])) {
@@ -96,7 +97,7 @@ function ThermostatRow({ entity, onRefresh }: { entity: HAEntity; onRefresh: () 
   const [editing, setEditing] = useState(false);
   const [editValue, setEditValue] = useState('');
 
-  const name = deduplicateName(smartTitleCase(friendlyName(entity)));
+  const name = sanitizeDeviceName(deduplicateName(smartTitleCase(friendlyName(entity))));
   const currentTemp = entity.attributes?.current_temperature as number | undefined;
   const targetTemp = entity.attributes?.temperature as number | undefined;
   const mode = (entity.state || 'off') as HvacMode;

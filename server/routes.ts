@@ -22,7 +22,6 @@ import weatherRoutes from './routes/weather';
 import monitoringRoutes from './routes/monitoring';
 import scrapingRoutes from './routes/scraping';
 import shoppingRoutes from './routes/shopping';
-import groceryRoutes from './routes/grocery';
 import adminRoutes from './routes/admin';
 import travelRoutes from './routes/travel';
 import dataRoutes from './routes/data';
@@ -69,7 +68,6 @@ const SUPABASE_COMPAT_MAP: Record<string, string> = {
   'entertainment-sync': '/api/entertainment-sync',
   'showtimes-proxy': '/api/showtimes-proxy',
   'ai-movie-recommender': '/api/ai-movie-recommender',
-  'grocery-order': '/api/grocery-order',
   'travel-email-scanner': '/api/travel-email-scanner',
   'trip-document-upload': '/api/trip-document-upload',
   'generac-proxy': '/api/generac',
@@ -113,7 +111,6 @@ export async function registerRoutes(app: Express): Promise<void> {
   app.use(scrapingRoutes);
   app.use(monitoringRoutes);
   app.use(energySavingsRoutes);
-  app.use(groceryRoutes);
   app.use(dataRoutes);
   app.use(updatesAutogenRoutes);
   app.use(computerAuthRoutes);

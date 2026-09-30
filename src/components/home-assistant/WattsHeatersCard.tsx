@@ -8,6 +8,8 @@ import { useHAEntities } from '@/hooks/useHAEntities';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
 
+import { sanitizeDeviceName } from '@/lib/nameSanitizer';
+
 // Exact entity IDs confirmed from Home Assistant Watts Home integration
 const WATTS_ENTITY_IDS = [
   'climate.floors',
@@ -17,8 +19,8 @@ const WATTS_ENTITY_IDS = [
 
 const DISPLAY_NAMES: Record<string, string> = {
   'climate.floors':      'Floors',
-  'climate.tonys_bench': "Tony's Bench",
-  'climate.lanas_bench': "Lana's Bench",
+  'climate.tonys_bench': 'Primary Bench 1',
+  'climate.lanas_bench': 'Primary Bench 2',
 };
 
 type HvacMode = 'heat' | 'off';
@@ -31,9 +33,10 @@ function getModeColor(mode: string): string {
 }
 
 function friendlyName(entity: HAEntity): string {
-  return DISPLAY_NAMES[entity.entity_id]
+  const raw = DISPLAY_NAMES[entity.entity_id]
     || (entity.attributes?.friendly_name as string)
     || entity.entity_id.replace('climate.', '');
+  return sanitizeDeviceName(raw);
 }
 
 // ── Graphical 24-hour schedule bar ───────────────────────────────────

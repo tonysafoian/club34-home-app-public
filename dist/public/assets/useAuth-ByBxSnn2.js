@@ -1,0 +1,1 @@
+import{o as e}from"./rolldown-runtime-CMxvf4Kt.js";import{p as t}from"./vendor-charts-BQ_N3654.js";var n=e(t(),1),r=(0,n.createContext)(void 0);function i(){let e=(0,n.useContext)(r);if(e===void 0)throw Error(`useAuth must be used within an AuthProvider`);return e}export{i as n,r as t};

@@ -9,7 +9,7 @@ import { MobileBottomNav } from '@/components/dashboard/MobileBottomNav';
 import { DashboardFooter } from '@/components/dashboard/DashboardFooter';
 
 import { toast } from '@/hooks/use-toast';
-import { broadcastAll, broadcastGirls, broadcastGoogleHome } from '@/lib/api/homeAssistant';
+import { broadcastAll, broadcastBedrooms, broadcastGoogleHome } from '@/lib/api/homeAssistant';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
@@ -20,7 +20,7 @@ import { useUserProfile } from '@/hooks/useUserProfile';
 import { useVoiceInput } from '@/hooks/useVoiceInput';
 
 type BroadcastStep = 'pick' | 'compose';
-type BroadcastAudience = 'all' | 'google-home' | 'girls';
+type BroadcastAudience = 'all' | 'google-home' | 'bedrooms';
 
 export default function HomePage() {
   const navigate = useNavigate();
@@ -48,8 +48,7 @@ export default function HomePage() {
   const pickAudience = (audience: BroadcastAudience) => {
     setBroadcastType(audience);
     setBroadcastMessage('');
-    // Girls broadcasts historically played at 0.9 — keep that as the default
-    setBroadcastVolume(audience === 'girls' ? 90 : 75);
+    setBroadcastVolume(audience === 'bedrooms' ? 85 : 75);
     setBroadcastStep('compose');
   };
 
@@ -70,7 +69,7 @@ export default function HomePage() {
       } else if (broadcastType === 'google-home') {
         await broadcastGoogleHome(message, volumeLevel);
       } else {
-        await broadcastGirls(message, volumeLevel);
+        await broadcastBedrooms(message, volumeLevel);
       }
       toast({ title: 'Broadcast sent!' });
       setBroadcastOpen(false);
@@ -125,12 +124,12 @@ export default function HomePage() {
               <span className="text-sm font-medium">Broadcast</span>
             </button>
             <button
-              onClick={() => navigate('/common-tasks/grocery')}
+              onClick={() => navigate('/family')}
               className="glass rounded-xl px-4 py-4 flex items-center gap-3 transition-transform active:scale-[0.98]"
-              data-testid="button-grocery"
+              data-testid="button-family"
             >
-              <ShoppingBasket className="h-5 w-5 text-primary" />
-              <span className="text-sm font-medium">Grocery Helper</span>
+              <Users className="h-5 w-5 text-primary" />
+              <span className="text-sm font-medium">Family Hub</span>
             </button>
           </div>
         </div>
@@ -173,13 +172,13 @@ export default function HomePage() {
                 <Button
                   variant="outline"
                   className="h-auto py-4 justify-start gap-3"
-                  onClick={() => pickAudience('girls')}
-                  data-testid="button-broadcast-girls"
+                  onClick={() => pickAudience('bedrooms')}
+                  data-testid="button-broadcast-bedrooms"
                 >
                   <Users className="h-5 w-5 text-primary" />
                   <div className="text-left">
-                    <div className="font-medium">Girls Only</div>
-                    <div className="text-xs text-muted-foreground">Isla & Emme's rooms</div>
+                    <div className="font-medium">Bedrooms</div>
+                    <div className="text-xs text-muted-foreground">Family bedroom speakers</div>
                   </div>
                 </Button>
               </div>
@@ -191,7 +190,7 @@ export default function HomePage() {
               <DialogHeader>
                 <DialogTitle>What should Janus say?</DialogTitle>
                 <DialogDescription>
-                  {broadcastType === 'all' ? 'Broadcast to everyone' : broadcastType === 'google-home' ? 'Broadcast to all Google Home speakers & displays' : 'Broadcast to the girls'}
+                  {broadcastType === 'all' ? 'Broadcast to everyone' : broadcastType === 'google-home' ? 'Broadcast to all Google Home speakers & displays' : 'Broadcast to bedrooms'}
                 </DialogDescription>
               </DialogHeader>
 
@@ -221,17 +220,17 @@ export default function HomePage() {
                     {broadcasting ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
                     Someone please get the door
                   </Button>
-                  <Button variant="secondary" disabled={broadcasting} onClick={() => sendBroadcast('Has anyone seen Milo?')} data-testid="button-quick-milo">
+                  <Button variant="secondary" disabled={broadcasting} onClick={() => sendBroadcast('Has anyone seen the pet?')} data-testid="button-quick-pet">
                     {broadcasting ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
-                    Has anyone seen Milo?
+                    Has anyone seen the pet?
                   </Button>
                   <Button variant="secondary" disabled={broadcasting} onClick={() => sendBroadcast('Someone please get the delivery at the door')} data-testid="button-quick-delivery">
                     {broadcasting ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
                     Someone please get the delivery at the door
                   </Button>
-                  <Button variant="secondary" disabled={broadcasting} onClick={() => sendBroadcast('A food order has arrived')} data-testid="button-quick-food">
+                  <Button variant="secondary" disabled={broadcasting} onClick={() => sendBroadcast('A delivery order has arrived')} data-testid="button-quick-food">
                     {broadcasting ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
-                    A food order has arrived
+                    A delivery order has arrived
                   </Button>
                   <div className="relative my-1">
                     <div className="absolute inset-0 flex items-center"><span className="w-full border-t" /></div>
@@ -240,15 +239,15 @@ export default function HomePage() {
                 </div>
               )}
 
-              {broadcastType === 'girls' && (
+              {broadcastType === 'bedrooms' && (
                 <div className="flex flex-col gap-2">
-                  <Button variant="secondary" disabled={broadcasting} onClick={() => sendBroadcast('Girls, come down')} data-testid="button-quick-comedown">
+                  <Button variant="secondary" disabled={broadcasting} onClick={() => sendBroadcast('Family, please come down')} data-testid="button-quick-comedown">
                     {broadcasting ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
-                    Girls, come down
+                    Family, please come down
                   </Button>
-                  <Button variant="secondary" disabled={broadcasting} onClick={() => sendBroadcast('Check your phones')} data-testid="button-quick-phones">
+                  <Button variant="secondary" disabled={broadcasting} onClick={() => sendBroadcast('Please check your phones')} data-testid="button-quick-phones">
                     {broadcasting ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
-                    Check your phones
+                    Please check your phones
                   </Button>
                   <div className="relative my-1">
                     <div className="absolute inset-0 flex items-center"><span className="w-full border-t" /></div>

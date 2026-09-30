@@ -52,15 +52,15 @@ interface RoutineDefinition {
 const ROUTINES: RoutineDefinition[] = [
   {
     id: 'school-broadcast',
-    title: 'Getting Girls to School on Time',
-    description: 'HW calendar sync + 6:50am & 7:30am wake-up broadcasts',
+    title: 'Morning School & Family Wake-Up',
+    description: 'School calendar sync + 6:50am & 7:30am wake-up broadcasts',
     icon: GraduationCap,
     frequency: 'Weekdays 6:50 AM & 7:30 AM',
     edgeFunction: 'school-morning-broadcast',
     trigger: 'Cron: weekdays at 6:50 AM & 7:30 AM PT',
-    actions: ['Check HW calendar', 'Add a rotating encouragement and practical weather guidance', 'Broadcast to bedroom speakers via HA'],
+    actions: ['Check school calendar', 'Add a rotating encouragement and practical weather guidance', 'Broadcast to bedroom speakers via HA'],
     category: 'morning',
-    automationName: 'Getting Girls to School on Time',
+    automationName: 'Morning School & Family Wake-Up',
   },
   {
     id: 'morning-email',
@@ -109,7 +109,7 @@ const ROUTINES: RoutineDefinition[] = [
     frequency: 'Every 30 min',
     edgeFunction: 'tesla-battery-monitor',
     trigger: 'Cron: every 30 minutes (shared with battery monitor)',
-    actions: ['Fetch drive_state from Tesla API', 'Detect driving start/stop transition', 'Reverse geocode location', 'WhatsApp Tony with location'],
+    actions: ['Fetch drive_state from Tesla API', 'Detect driving start/stop transition', 'Reverse geocode location', 'WhatsApp admin with location'],
     category: 'vehicles',
   },
   {
@@ -126,23 +126,23 @@ const ROUTINES: RoutineDefinition[] = [
   {
     id: 'spa-mode-alert',
     title: 'Spa Mode 12 Hour Alert',
-    description: 'Email Jesse, Sandra, and Tony when the pool has been left on SPA mode for more than 12 hours',
+    description: 'Email estate team and admin when the pool has been left on SPA mode for more than 12 hours',
     icon: Flame,
     frequency: 'Every 30 min',
     edgeFunction: 'spa-mode-monitor',
     trigger: 'Cron: every 30 minutes',
-    actions: ['Poll spa pump state from HA', 'Evaluate if pump has been on for >12 hours', 'Email Jesse, Sandra & Tony if threshold exceeded'],
+    actions: ['Poll spa pump state from HA', 'Evaluate if pump has been on for >12 hours', 'Email estate managers & admin if threshold exceeded'],
     category: 'home',
   },
   {
     id: 'package-arrival',
     title: 'Package Arrival Monitor',
-    description: 'WhatsApp Tony, email Sandra & Jesse, archive notification from inbox',
+    description: 'WhatsApp admin, email estate managers, archive notification from inbox',
     icon: Package,
     frequency: 'Every 5 min',
     edgeFunction: 'package-arrival-monitor',
     trigger: 'Cron: every 5 minutes',
-    actions: ['Search Gmail for unread package delivery emails', 'WhatsApp Tony with details', 'Email Sandra & Jesse', 'Archive email from inbox'],
+    actions: ['Search Gmail for unread package delivery emails', 'WhatsApp admin with details', 'Email estate managers', 'Archive email from inbox'],
     category: 'home',
   },
   {
@@ -170,7 +170,7 @@ const ROUTINES: RoutineDefinition[] = [
   {
     id: 'ha-server-health',
     title: 'HA Server Health Monitor',
-    description: 'Emails Tony when CPU or RAM stay critically high for 15+ minutes',
+    description: 'Emails administrator when CPU or RAM stay critically high for 15+ minutes',
     icon: Cpu,
     frequency: 'Every 5 min',
     edgeFunction: 'ha-server-health-monitor',
@@ -192,30 +192,30 @@ const ROUTINES: RoutineDefinition[] = [
   {
     id: 'ha-locks-monitor',
     title: 'Door Locks & Battery Monitor',
-    description: 'Monitors Yale & Crestron door locks for low battery (<20%), offline status, or jammed locks — alerts via WhatsApp',
+    description: 'Monitors door locks for low battery (<20%), offline status, or jammed locks — alerts via WhatsApp',
     icon: Lock,
     frequency: 'Every 4 hours',
     edgeFunction: 'ha-locks-monitor',
     trigger: 'Cron: every 4 hours',
     actions: [
       'Query all lock entities and battery telemetry from Home Assistant',
-      'Verify Crestron connection status and online availability',
+      'Verify connection status and online availability',
       'Evaluate battery percentage (<20% warning, <10% critical) if reported',
       'Detect jammed or offline lock states',
       'Deduplicate alerts within 24-hour window',
-      'Send WhatsApp alert to Tony if attention needed',
+      'Send WhatsApp alert to admin if attention needed',
     ],
     category: 'security',
   },
   {
     id: 'calendar-nav-tesla',
     title: 'Calendar Nav to Tesla',
-    description: 'Sends meeting locations to BeastX navigation 15 min before events',
+    description: 'Sends meeting locations to vehicle navigation 15 min before events',
     icon: CalendarClock,
     frequency: 'Every 5 min',
     edgeFunction: 'calendar-nav-tesla',
     trigger: 'Cron: every 5 minutes',
-    actions: ['Fetch Google Calendar events starting in 10-20 min', 'Filter events with location/address', 'Deduplicate via audit log', 'Wake BeastX Tesla', 'Send navigation_request with address', 'WhatsApp confirmation to Tony'],
+    actions: ['Fetch Google Calendar events starting in 10-20 min', 'Filter events with location/address', 'Deduplicate via audit log', 'Wake vehicle Tesla', 'Send navigation_request with address', 'WhatsApp confirmation to driver'],
     category: 'calendar',
   },
   {
@@ -252,15 +252,15 @@ const ROUTINES: RoutineDefinition[] = [
   {
     id: 'av-closet-temp-monitor',
     title: 'AV Closet Temperature Monitor',
-    description: 'Emails Tony, Sandra & Jesse over 90°F; WhatsApps Tony over 100°F.',
+    description: 'Emails admin & staff over 90°F; WhatsApps admin over 100°F.',
     icon: Thermometer,
     frequency: 'Every 10 min',
     edgeFunction: 'av-closet-temp-monitor',
     trigger: 'Cron: every 10 minutes (PT timezone)',
     actions: [
-      'Read the AV Closet Govee temperature sensor from HA',
-      'Email Tony, Sandra & Jesse if temp is above 90°F (2h dedup)',
-      'WhatsApp Tony from Janus if temp is above 100°F (2h dedup)',
+      'Read the AV Closet temperature sensor from HA',
+      'Email admin & staff if temp is above 90°F (2h dedup)',
+      'WhatsApp admin from Janus if temp is above 100°F (2h dedup)',
     ],
     category: 'thermostats',
   },
@@ -570,7 +570,7 @@ function ExclusionsCard({
         </CardTitle>
         <CardDescription className="text-xs">
           Lights whose name contains any of these words are skipped by this timer
-          (e.g. &quot;enzo&quot; keeps Enzo&apos;s bathroom on as long as he likes).
+          (e.g. &quot;powder&quot; keeps powder room on as long as needed).
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-3">
@@ -605,7 +605,7 @@ function ExclusionsCard({
               value={newTerm}
               onChange={(e) => setNewTerm(e.target.value)}
               onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); addTerm(); } }}
-              placeholder='Room or light name (e.g. "enzo" or "guest bath")'
+              placeholder='Room or light name (e.g. "powder" or "guest bath")'
               className="h-8 text-xs"
               disabled={saving || !automation}
               data-testid="input-new-exclusion"
@@ -897,16 +897,12 @@ const AUTOMATION_GROUPS: SectionGroup[] = [
     group: 'Common Tasks',
     items: [
       { id: 'amazon-order', label: 'Find Something on Amazon & Order', icon: ShoppingCart },
-      { id: 'food-delivery', label: 'Order Food for Home Delivery', icon: UtensilsCrossed },
-      { id: 'grocery-delivery', label: 'Order Groceries for Delivery', icon: Apple },
     ],
   },
 ];
 
 const COMMON_TASK_ROUTES: Record<string, string> = {
   'amazon-order': '/common-tasks/amazon',
-  'food-delivery': '/common-tasks/food',
-  'grocery-delivery': '/common-tasks/grocery',
 };
 
 export default function Automations() {

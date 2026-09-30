@@ -1,8 +1,8 @@
 export type SchoolBriefingSlot = "650am" | "730am";
 
-const WAKE_UP = "Good morning, Emme and Isla. It is time to get up and get ready for school.";
+const WAKE_UP = "Good morning! It is time to get up and get ready for the day.";
 const DEPARTURE =
-  "Emme and Isla, it is time to come downstairs. We're leaving in five minutes or less. Please bring everything you need for school.";
+  "Good morning, everyone. It is time to head downstairs. We're leaving in five minutes or less. Please bring everything you need.";
 const MAX_HEADLINE_WORDS = 11;
 const MAX_MARKET_WORDS = 20;
 const ENCOURAGEMENTS = [

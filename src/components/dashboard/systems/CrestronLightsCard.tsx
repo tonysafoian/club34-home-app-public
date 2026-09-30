@@ -18,6 +18,7 @@ import { useToast } from '@/hooks/use-toast';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiClient } from '@/lib/apiClient';
 import { useUserRole } from '@/hooks/useUserRole';
+import { sanitizeDeviceName, sanitizeRoomName } from '@/lib/nameSanitizer';
 
 // ── room parsing ─────────────────────────────────────────────────────
 function parseRoomAndDevice(entity: HAEntity): { room: string; device: string } {
@@ -32,20 +33,20 @@ function parseRoomAndDevice(entity: HAEntity): { room: string; device: string } 
       if (prefix.join(' ').toLowerCase() === nextChunk.join(' ').toLowerCase()) {
         const room = prefix.join(' ');
         const device = words.slice(prefixLen * 2).join(' ') || room;
-        return { room: smartTitleCase(room), device: smartTitleCase(device) };
+        return { room: sanitizeRoomName(smartTitleCase(room)), device: sanitizeDeviceName(smartTitleCase(device)) };
       }
     }
 
     if (words.length >= 2) {
-      return { room: smartTitleCase(words[0]), device: smartTitleCase(words.slice(1).join(' ')) };
+      return { room: sanitizeRoomName(smartTitleCase(words[0])), device: sanitizeDeviceName(smartTitleCase(words.slice(1).join(' '))) };
     }
 
-    return { room: smartTitleCase(friendly), device: smartTitleCase(friendly) };
+    return { room: sanitizeRoomName(smartTitleCase(friendly)), device: sanitizeDeviceName(smartTitleCase(friendly)) };
   }
 
   const id = entity.entity_id.replace(/^light\./, '');
   const parts = id.split('_');
-  return { room: smartTitleCase(parts[0] || 'Other'), device: smartTitleCase(parts.slice(1).join(' ') || id) };
+  return { room: sanitizeRoomName(smartTitleCase(parts[0] || 'Other')), device: sanitizeDeviceName(smartTitleCase(parts.slice(1).join(' ') || id)) };
 }
 
 /** Title-case that doesn't capitalize after apostrophes (Butler's not Butler'S) */

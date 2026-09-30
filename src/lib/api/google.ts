@@ -31,12 +31,7 @@ type CalendarEventsResponse = {
 type FamilyEventsResponse = {
   success: boolean;
   error?: string;
-  familyEvents?: {
-    tony: CalendarEventsResponse['events'];
-    lana: CalendarEventsResponse['events'];
-    isla: CalendarEventsResponse['events'];
-    emme: CalendarEventsResponse['events'];
-  };
+  familyEvents?: Record<string, CalendarEventsResponse['events']>;
 };
 
 async function callGoogleAuth(action: string, extra: Record<string, string> = {}): Promise<GoogleAuthResponse> {

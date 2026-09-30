@@ -17,8 +17,8 @@
  * Exclusions: each timer's family_automations row can carry an admin-editable
  * `config.excluded_terms` list (managed from the Automations page). Any light
  * whose entity_id or friendly name contains one of the terms (case-insensitive
- * substring) is skipped by that timer — e.g. the seeded "enzo" term keeps
- * Enzo's bathroom out of the 15-minute bathroom rule.
+ * substring) is skipped by that timer — e.g. the term "powder" keeps
+ * the powder room out of the 15-minute bathroom rule.
  *
  * How long a light has been on comes from HA's `last_changed` timestamp
  * (resets only when the on/off state flips, not on brightness changes).

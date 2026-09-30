@@ -2,11 +2,15 @@ import { createClient, type SupabaseClient } from "../utils/supabase.js";
 import { breakers } from "./breakers.js";
 
 export const PROJECT_ID = process.env.PROJECT_ID || "sample-project-id";
-export const TONY_EMAIL = process.env.ADMIN_EMAIL || "admin@example.com";
+export const ADMIN_EMAIL = process.env.ADMIN_EMAIL || "admin@example.com";
+export const TONY_EMAIL = ADMIN_EMAIL;
 export const JANUS_EMAIL = process.env.ASSISTANT_EMAIL || "assistant@example.com";
-export const MOM_EMAIL = process.env.MEMBER_EMAIL || "member@example.com";
-export const EMME_EMAIL = "member2@example.com";
-export const ISLA_EMAIL = "member3@example.com";
+export const MEMBER_EMAIL = process.env.MEMBER_EMAIL || "member@example.com";
+export const MOM_EMAIL = MEMBER_EMAIL;
+export const MEMBER2_EMAIL = process.env.MEMBER2_EMAIL || "member2@example.com";
+export const EMME_EMAIL = MEMBER2_EMAIL;
+export const MEMBER3_EMAIL = process.env.MEMBER3_EMAIL || "member3@example.com";
+export const ISLA_EMAIL = MEMBER3_EMAIL;
 export const HOME_LAT = Number(process.env.HOME_LAT) || 34.0522;
 export const HOME_LNG = Number(process.env.HOME_LNG) || -118.2437;
 export const GOOGLE_CLIENT_ID =

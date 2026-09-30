@@ -80,60 +80,6 @@ router.post('/api/amazon-order', requireAuth, async (req: any, res: any) => {
   }
 });
 
-router.post('/api/grocery-order', requireAuth, async (req: any, res: any) => {
-  try {
-    const bbKey = process.env.BROWSERBASE_API_KEY;
-    if (!bbKey) return res.status(500).json({ success: false, error: 'BROWSERBASE_API_KEY not configured' });
-    const { action, searchQuery, items } = req.body;
-
-    if (action === 'search') {
-      if (!searchQuery) return res.status(400).json({ success: false, error: 'searchQuery is required' });
-      const modelApiKey = process.env.GOOGLE_GENERATIVE_AI_API_KEY || process.env.GEMINI_API_KEY;
-      if (!modelApiKey) throw new Error('GOOGLE_GENERATIVE_AI_API_KEY not configured');
-      const session = await stagehandPost('/sessions/start', { model_name: 'google/gemini-2.5-flash', model_api_key: modelApiKey });
-      const sessionId = session.data?.session_id || session.session_id || session.id;
-      if (!sessionId) throw new Error('Failed to start browser session');
-      try {
-        const searchUrl = `https://www.amazon.com/s?k=${encodeURIComponent(searchQuery)}&i=amazonfresh`;
-        await stagehandPost(`/sessions/${sessionId}/navigate`, { url: searchUrl });
-        await new Promise(resolve => setTimeout(resolve, 3000));
-        const extractResult = await stagehandPost(`/sessions/${sessionId}/extract`, {
-          instruction: `Extract the first 10 grocery product results from this Amazon Fresh search page. For each product, extract: product name, price (with dollar sign), unit/size/weight info, and whether it appears to be in stock/available. Return as a JSON array of objects with keys: name, price, unit, store (set to "Amazon Fresh"), available (boolean).`,
-        });
-        await closeSession(sessionId);
-        let products: any[] = [];
-        const rawData = extractResult.data || extractResult;
-        if (typeof rawData === 'string') { try { const parsed = JSON.parse(rawData); products = Array.isArray(parsed) ? parsed : (parsed.products || []); } catch { products = []; } }
-        else if (Array.isArray(rawData)) products = rawData;
-        else if (rawData && typeof rawData === 'object') { products = rawData.products || rawData.items || rawData.results || []; if (!Array.isArray(products)) products = []; }
-        return res.json({ success: true, products, store: 'amazon-fresh', query: searchQuery, sessionReplay: `https://browserbase.com/sessions/${sessionId}` });
-      } catch (e) { await closeSession(sessionId); throw e; }
-    }
-
-    if (action === 'add_to_cart') {
-      if (!items || !Array.isArray(items)) return res.status(400).json({ success: false, error: 'items array is required' });
-      const db = storage;
-      for (const item of items) {
-        await db.query(
-          `INSERT INTO shopping_cart_items (user_id, product_name, price, quantity, platform, added_by, status, notes, product_url, image_url) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)`,
-          [req.user!.userId, item.name, item.price, item.quantity || 1, 'amazon-fresh', 'grocery-order', 'pending', item.unit || null, item.url || null, item.image_url || null]
-        );
-      }
-      logAudit('grocery-order', {
-        category: 'home', event_type: 'cart_items_added', severity: 'info',
-        actor_id: req.user?.userId || 'UNKNOWN', actor_name: req.user?.displayName || req.user?.email || 'UNKNOWN', actor_role: 'user',
-        channel: 'web', summary: `${items.length} grocery item${items.length !== 1 ? 's' : ''} added to cart from Amazon Fresh search`,
-        detail: { items_count: items.length, platform: 'amazon-fresh', query: searchQuery }, status: 'success',
-      });
-      return res.json({ success: true, itemsAdded: items.length });
-    }
-
-    res.status(400).json({ success: false, error: 'Invalid action. Use "search" or "add_to_cart".' });
-  } catch (error: any) {
-    console.error('Grocery order function error:', error);
-    res.status(500).json({ success: false, error: error.message });
-  }
-});
 
 router.get('/api/shopping-cart', requireAuth, async (req: any, res: any) => {
   try {

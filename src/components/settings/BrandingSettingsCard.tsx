@@ -144,7 +144,7 @@ export default function BrandingSettingsCard() {
               id="estateName"
               value={nameInput}
               onChange={(e) => setNameInput(e.target.value)}
-              placeholder="e.g. Villa Paradiso, Safoian Estate, Janus"
+              placeholder="e.g. Villa Paradiso, Oak Hill Estate, Janus"
               className="max-w-md bg-background"
             />
             <Button type="submit" variant="secondary" size="sm">

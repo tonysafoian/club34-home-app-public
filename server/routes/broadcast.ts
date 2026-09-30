@@ -19,14 +19,36 @@ import { checkRateLimit } from "../lib/rate-limiter.js";
 import { sanitizeErrorMessage } from "../lib/error-sanitizer.js";
 import { requireAuth, type AuthenticatedRequest } from "../middleware/auth.js";
 import { composeSchoolMorningAnnouncement } from "../services/schoolMorningBriefing.js";
+import { getEntityCache } from "../lib/haWebSocket.js";
 
 const router = Router();
 
-const GIRLS_SPEAKERS = [
-  "media_player.emme_s_room_speaker",
-  "media_player.isla_s_room_speaker",
-  "media_player.tonys_office_speaker",
-];
+export function getMorningSpeakers(): string[] {
+  if (process.env.JANUS_BROADCAST_SPEAKERS) {
+    return process.env.JANUS_BROADCAST_SPEAKERS.split(',').map((s) => s.trim()).filter(Boolean);
+  }
+  try {
+    const cache = getEntityCache();
+    if (cache.length > 0) {
+      const speakers = cache
+        .map((e) => e.entity_id)
+        .filter(
+          (id) =>
+            id.startsWith("media_player.") &&
+            (id.includes("speaker") || id.includes("bedroom") || id.includes("room")),
+        );
+      if (speakers.length > 0) return speakers;
+      const allMp = cache.map((e) => e.entity_id).filter((id) => id.startsWith("media_player."));
+      if (allMp.length > 0) return allMp;
+    }
+  } catch {}
+  return [
+    "media_player.bedroom_speaker",
+    "media_player.living_room_speaker",
+  ];
+}
+
+const GIRLS_SPEAKERS = getMorningSpeakers();
 
 const VOLUME = 0.9;
 const JANUS_VOICE_ID = "iLVmqjzCGGvqtMCk6vVQ"; // Janus – English with Italian accent (male)
@@ -104,10 +126,10 @@ async function maybeAlertSilentDropStreak(
 
     const alertPhone = await getAlertPhoneNumber();
     const alertMsg =
-      `🔇 Heads-up from Janus: the girls' school wake-up broadcast has shown a silent-drop risk on the last ` +
+      `🔇 Heads-up from Janus: the morning school wake-up broadcast has shown a silent-drop risk on the last ` +
       `${streak} mornings in a row (latest ${dateStr}). All speakers loaded the audio but stayed idle at ~8s, ` +
       `so Cast may be silently dropping the sound even though the broadcast reports "success". A speaker might ` +
-      `be broken — worth checking Emme's room, Isla's room, and the office speakers.`;
+      `be broken — worth checking bedroom and office speakers.`;
     const sent = await sendWhatsAppTo(alertPhone, alertMsg);
     if (sent) {
       console.log(
@@ -700,7 +722,7 @@ router.post("/school-morning", async (req: Request, res: Response) => {
     const { data: schoolAutoRows, error: schoolAutoErr } = await supabase
       .from("family_automations")
       .select("is_active")
-      .eq("name", "Getting Girls to School on Time");
+      .in("name", ["Morning School & Family Wake-Up", "Getting Girls to School on Time"]);
     if (schoolAutoErr) {
       logAudit("school-morning-broadcast", {
         category: "automation",
@@ -798,7 +820,7 @@ router.post("/school-morning", async (req: Request, res: Response) => {
     const forceSlot = rawForceSlot === "7am" ? "650am" : rawForceSlot === "735am" ? "730am" : rawForceSlot;
     if (forceSlot === "650am" || forceSlot === "730am") {
       console.log(`[broadcast] TEST OVERRIDE: forcing slot=${forceSlot}`);
-      const testMsg = "Girls, this is Janus running a broadcast system test. All good.";
+      const testMsg = "Family, this is Janus running a broadcast system test. All good.";
       const { success: testOk, errors: testErrors, ttsMethod: testMethod } = await broadcastToGirlsRooms(testMsg);
       return res.json({
         test: true,
@@ -905,8 +927,8 @@ router.post("/school-morning", async (req: Request, res: Response) => {
     const { data: automation } = await supabase
       .from("family_automations")
       .select("id")
-      .eq("name", "Getting Girls to School on Time")
-      .single();
+      .in("name", ["Morning School & Family Wake-Up", "Getting Girls to School on Time"])
+      .maybeSingle();
 
     if (automation) {
       await supabase.from("family_automation_logs").insert({
@@ -1035,7 +1057,7 @@ router.post("/test-morning", requireAuth, async (req: AuthenticatedRequest, res:
   const testMessage =
     typeof req.body?.message === "string" && req.body.message.trim().length > 0
       ? req.body.message.trim()
-      : "Girls, this is Janus running a broadcast system test. All systems are go.";
+      : "Family, this is Janus running a broadcast system test. All systems are go.";
 
   console.log(`[broadcast] Manual test broadcast triggered by ${actorId}: "${testMessage.slice(0, 80)}"`);
   const t0 = Date.now();

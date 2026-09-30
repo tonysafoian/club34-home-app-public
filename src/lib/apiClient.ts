@@ -162,7 +162,6 @@ const FUNCTION_ROUTE_MAP: Record<string, string> = {
   'media-sync': '/api/media-sync',
   'showtimes-proxy': '/api/showtimes-proxy',
   'ai-movie-recommender': '/api/ai-movie-recommender',
-  'grocery-order': '/api/grocery-order',
   'trip-document-upload': '/api/trip-document-upload',
   'generac-proxy': '/api/generac',
   'elevenlabs-voice': '/api/broadcast/elevenlabs-voice',

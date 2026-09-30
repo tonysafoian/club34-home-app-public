@@ -156,7 +156,7 @@ const CATEGORY_ICONS: Record<string, LucideIcon> = {
   'IoT Devices': Cpu,
   'Smart Gate Devices': DoorOpen,
   'Smart Sprinklers': Droplets,
-  "Tony's Systems": Wrench,
+  'Primary Systems': Wrench,
   'Unknown / Uncategorized': HelpCircle,
 };
 
@@ -503,7 +503,7 @@ export function DeviceEditPopover({
         <Input
           value={ownerValue}
           onChange={e => setOwnerValue(e.target.value)}
-          placeholder="e.g. Tony's iPhone, Guest — Jane…"
+          placeholder="e.g. Work Phone, Guest — Jane…"
           className="h-8 text-sm"
           data-testid="input-device-owner"
           onKeyDown={e => { if (e.key === 'Enter') handleSave(); if (e.key === 'Escape') onClose(); }}

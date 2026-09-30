@@ -1,0 +1,1 @@
+import{y as e}from"./index-BKD1Dlxj.js";function t(){let{role:t,isAdmin:n,loading:r}=e();return{role:t,isAdmin:n,loading:r}}export{t};

@@ -31,9 +31,6 @@ const Settings = lazy(() => import("./pages/Settings"));
 const Activity = lazy(() => import("./pages/Activity"));
 const Automations = lazy(() => import("./pages/Automations"));
 const AmazonOrder = lazy(() => import("./pages/AmazonOrder"));
-const GroceryOrder = lazy(() => import("./pages/GroceryOrder"));
-const GroceryOrderRunDetail = lazy(() => import("./pages/GroceryOrderRunDetail"));
-const FoodDeliveryOrder = lazy(() => import("./pages/FoodDeliveryOrder"));
 const Admin = lazy(() => import("./pages/Admin"));
 const ResetPassword = lazy(() => import("./pages/ResetPassword"));
 const Install = lazy(() => import("./pages/Install"));
@@ -166,9 +163,6 @@ const App = () => (
                 <Route path="/activity" element={<ProtectedRoute><Activity /></ProtectedRoute>} />
                 <Route path="/automations" element={<ProtectedRoute><Automations /></ProtectedRoute>} />
                 <Route path="/common-tasks/amazon" element={<ProtectedRoute><AmazonOrder /></ProtectedRoute>} />
-                <Route path="/common-tasks/grocery" element={<ProtectedRoute><GroceryOrder /></ProtectedRoute>} />
-                <Route path="/common-tasks/grocery/runs/:id" element={<ProtectedRoute><GroceryOrderRunDetail /></ProtectedRoute>} />
-                <Route path="/common-tasks/food" element={<ProtectedRoute><FoodDeliveryOrder /></ProtectedRoute>} />
                 <Route path="/admin" element={<ProtectedRoute><Admin /></ProtectedRoute>} />
                 {/* Legacy admin routes redirect to unified admin */}
                 <Route path="/admin/users" element={<Navigate to="/admin?section=users" replace />} />

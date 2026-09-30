@@ -35,7 +35,7 @@ function getEventIcon(entry: AuditEntry) {
     if (domain === 'media_player') return <Volume2 className="w-3.5 h-3.5 text-green-500 flex-shrink-0 mt-0.5" />;
     return <Zap className="w-3.5 h-3.5 text-primary flex-shrink-0 mt-0.5" />;
   }
-  if (entry.event_type === 'broadcast_all' || entry.event_type === 'broadcast_girls') return <Volume2 className="w-3.5 h-3.5 text-green-500 flex-shrink-0 mt-0.5" />;
+  if (entry.event_type === 'broadcast_all' || entry.event_type === 'broadcast_bedrooms' || entry.event_type === 'broadcast_girls') return <Volume2 className="w-3.5 h-3.5 text-green-500 flex-shrink-0 mt-0.5" />;
   return <Activity className="w-3.5 h-3.5 text-muted-foreground flex-shrink-0 mt-0.5" />;
 }
 

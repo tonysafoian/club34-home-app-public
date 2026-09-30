@@ -185,9 +185,11 @@ export async function broadcastAll(message: string, volume?: number) {
   return callProxy({ action: 'broadcast-all', message, ...(volume !== undefined && { volume }) });
 }
 
-export async function broadcastGirls(message: string, volume?: number) {
-  return callProxy({ action: 'broadcast-girls', message, ...(volume !== undefined && { volume }) });
+export async function broadcastBedrooms(message: string, volume?: number) {
+  return callProxy({ action: 'broadcast-bedrooms', message, ...(volume !== undefined && { volume }) });
 }
+
+export const broadcastGirls = broadcastBedrooms;
 
 export async function broadcastGoogleHome(message: string, volume?: number) {
   return callProxy({ action: 'broadcast-google-home', message, ...(volume !== undefined && { volume }) });

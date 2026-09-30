@@ -21,7 +21,7 @@ export const DEVICE_CATEGORIES = [
   'IoT Devices',
   'Smart Gate Devices',
   'Smart Sprinklers',
-  "Tony's Systems",
+  'Primary Systems',
   'Unknown / Uncategorized',
 ];
 
