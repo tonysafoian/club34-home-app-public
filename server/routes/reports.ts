@@ -17,11 +17,11 @@ import {
   base64url,
   authenticateRequest,
   enqueueFailedJob,
-  TONY_EMAIL,
+  ADMIN_EMAIL,
   JANUS_EMAIL,
-  MOM_EMAIL,
-  EMME_EMAIL,
-  ISLA_EMAIL,
+  MEMBER_EMAIL,
+  MEMBER2_EMAIL,
+  MEMBER3_EMAIL,
   HOME_LAT,
   HOME_LNG,
   type ServiceAccountKey,
@@ -571,7 +571,7 @@ async function fetchTomorrowsCalendar(
     const token = await getServiceToken(
       saKey,
       "https://www.googleapis.com/auth/calendar.readonly",
-      TONY_EMAIL,
+      ADMIN_EMAIL,
     );
     const now = new Date();
     const tomorrow = new Date(now.getTime() + 24 * 60 * 60 * 1000);
@@ -581,7 +581,7 @@ async function fetchTomorrowsCalendar(
     const offset = getLAOffset(tomorrow);
     const timeMin = `${laDate}T00:00:00${offset}`;
     const timeMax = `${laDate}T23:59:59${offset}`;
-    const url = `https://www.googleapis.com/calendar/v3/calendars/${TONY_EMAIL}/events?timeMin=${encodeURIComponent(timeMin)}&timeMax=${encodeURIComponent(timeMax)}&singleEvents=true&orderBy=startTime&maxResults=25`;
+    const url = `https://www.googleapis.com/calendar/v3/calendars/${ADMIN_EMAIL}/events?timeMin=${encodeURIComponent(timeMin)}&timeMax=${encodeURIComponent(timeMax)}&singleEvents=true&orderBy=startTime&maxResults=25`;
     const r = await fetchT(url, {
       headers: { Authorization: `Bearer ${token}` },
     });
@@ -645,7 +645,7 @@ router.post("/eod-summary", requireAuth, async (_req: Request, res: Response) =>
     });
 
     const [todayCal, tomorrowCal] = await Promise.all([
-      fetchTodaysCalendar(saKey, TONY_EMAIL, "Tony"),
+      fetchTodaysCalendar(saKey, ADMIN_EMAIL, "Primary"),
       fetchTomorrowsCalendar(saKey),
     ]);
 
@@ -730,7 +730,7 @@ router.post("/eod-summary", requireAuth, async (_req: Request, res: Response) =>
     const subject = `End of Day — ${dateStr}`;
     const sent = await sendGmailRaw(
       saKey,
-      TONY_EMAIL,
+      ADMIN_EMAIL,
       subject,
       summary,
       rawContext,
@@ -837,10 +837,10 @@ router.post("/weekly-planning", requireAuth, async (_req: Request, res: Response
     const calToken = await getServiceToken(
       saKey,
       "https://www.googleapis.com/auth/calendar.readonly",
-      TONY_EMAIL,
+      ADMIN_EMAIL,
     );
     const weekOffset = getLAOffset();
-    const calUrl = `https://www.googleapis.com/calendar/v3/calendars/${TONY_EMAIL}/events?timeMin=${monday}T00:00:00${weekOffset}&timeMax=${friday}T23:59:59${weekOffset}&singleEvents=true&orderBy=startTime&maxResults=50`;
+    const calUrl = `https://www.googleapis.com/calendar/v3/calendars/${ADMIN_EMAIL}/events?timeMin=${monday}T00:00:00${weekOffset}&timeMax=${friday}T23:59:59${weekOffset}&singleEvents=true&orderBy=startTime&maxResults=50`;
     const calRes = await fetchT(calUrl, {
       headers: { Authorization: `Bearer ${calToken}` },
     });
@@ -939,7 +939,7 @@ router.post("/weekly-planning", requireAuth, async (_req: Request, res: Response
     const subject = `Weekly Plan — ${nextWeekLabel}`;
     const sent = await sendGmailRaw(
       saKey,
-      TONY_EMAIL,
+      ADMIN_EMAIL,
       subject,
       summary,
       rawContext,
@@ -1218,8 +1218,8 @@ router.post("/executive-status", requireAuth, async (_req: Request, res: Respons
     }),
     runCheck("google_calendar", "Google Calendar", "Google Workspace", async () => {
       try {
-        const token = await getServiceToken(saKey, "https://www.googleapis.com/auth/calendar.readonly", TONY_EMAIL);
-        const r = await fetchT(`https://www.googleapis.com/calendar/v3/calendars/${TONY_EMAIL}/events?maxResults=1`, {
+        const token = await getServiceToken(saKey, "https://www.googleapis.com/auth/calendar.readonly", ADMIN_EMAIL);
+        const r = await fetchT(`https://www.googleapis.com/calendar/v3/calendars/${ADMIN_EMAIL}/events?maxResults=1`, {
           headers: { Authorization: `Bearer ${token}` },
         }, 10_000);
         if (!r.ok) return `Calendar HTTP ${r.status}`;
@@ -1228,7 +1228,7 @@ router.post("/executive-status", requireAuth, async (_req: Request, res: Respons
     }),
     runCheck("google_drive", "Google Drive", "Google Workspace", async () => {
       try {
-        const token = await getServiceToken(saKey, "https://www.googleapis.com/auth/drive.readonly", TONY_EMAIL);
+        const token = await getServiceToken(saKey, "https://www.googleapis.com/auth/drive.readonly", ADMIN_EMAIL);
         const r = await fetchT("https://www.googleapis.com/drive/v3/files?pageSize=1", {
           headers: { Authorization: `Bearer ${token}` },
         }, 10_000);
@@ -1276,12 +1276,12 @@ router.post("/executive-status", requireAuth, async (_req: Request, res: Respons
   );
   const text = `JANUS EXECUTIVE REPORT — ${runTime}\n\n${textLines.join("\n")}`;
 
-  const sent = await sendGmailRaw(saKey, TONY_EMAIL, subject, html, text);
+  const sent = await sendGmailRaw(saKey, ADMIN_EMAIL, subject, html, text);
 
   await logEmail(
     "executive_status",
     subject,
-    [TONY_EMAIL],
+    [ADMIN_EMAIL],
     html,
     sent ? "sent" : "error",
     sent ? undefined : "sendStatusEmail returned false",
@@ -1811,14 +1811,14 @@ router.post("/morning-weather", requireAuth, async (_req: Request, res: Response
 
     const CHILDREN = [
       {
-        name: "Emme",
+        name: "Student 1",
         recipients: ["member3@example.com", "member2@example.com"],
-        calendarEmail: EMME_EMAIL,
+        calendarEmail: MEMBER2_EMAIL,
       },
       {
-        name: "Isla",
+        name: "Student 2",
         recipients: ["member2@example.com", "member3@example.com"],
-        calendarEmail: ISLA_EMAIL,
+        calendarEmail: MEMBER3_EMAIL,
       },
     ];
     const CC_RECIPIENTS = ["admin@example.com"];
@@ -1922,8 +1922,8 @@ router.post("/morning-weather", requireAuth, async (_req: Request, res: Response
         fetchNewsRSS("world"),
         fetchCalendarEvents("admin@example.com", "Dad"),
         fetchCalendarEvents("member@example.com", "Mom"),
-        fetchCalendarEvents("member3@example.com", "Emme"),
-        fetchCalendarEvents("member2@example.com", "Isla"),
+        fetchCalendarEvents(MEMBER2_EMAIL, "Student 1"),
+        fetchCalendarEvents(MEMBER3_EMAIL, "Student 2"),
       ]);
 
     const news = { us: usNews, world: worldNews };
@@ -1943,11 +1943,11 @@ router.post("/morning-weather", requireAuth, async (_req: Request, res: Response
     const weatherSummary = weatherData ? formatWeatherForAI(weatherData) : "";
 
     const childCalendars: Record<string, any[]> = {
-      Emme: emmeEvents,
-      Isla: islaEvents,
+      "Student 1": emmeEvents,
+      "Student 2": islaEvents,
     };
 
-    console.log(`[Morning Email] Data fetched: weather ${weatherData ? "✓" : "✗"}, ${usNews.length} US / ${worldNews.length} world news, financial ${marketSnapshot ? "✓" : "✗"}, calendars (Dad:${dadEvents.length}, Mom:${momEvents.length}, Emme:${emmeEvents.length}, Isla:${islaEvents.length})`);
+    console.log(`[Morning Email] Data fetched: weather ${weatherData ? "✓" : "✗"}, ${usNews.length} US / ${worldNews.length} world news, financial ${marketSnapshot ? "✓" : "✗"}, calendars (Admin:${dadEvents.length}, Member:${momEvents.length}, Student1:${emmeEvents.length}, Student2:${islaEvents.length})`);
 
     const dataPromises = CHILDREN.map(child =>
       generateEmailData(

@@ -28,6 +28,7 @@ import {
   getBroadcastFallbackPhone,
 } from "../lib/helpers.js";
 import { ALL_TOOLS, executeTool } from "../handlers/chat.js";
+import { getMorningSpeakers } from "./broadcast.js";
 import { getZoneFlow } from "../lib/irrigationFlow.js";
 import type { RequestContext } from "../utils/tools/media-trips.js";
 import { fortigateRequest } from "./fortigate.js";
@@ -295,7 +296,7 @@ const ACTION_ENDPOINTS: EndpointDef[] = [
     description: "Broadcast a TTS message to Google Home speakers, with WhatsApp fallback if all speakers fail",
     body: { type: "object", required: ["message"], properties: {
       message: { type: "string" },
-      speakers: { type: "array<string>", description: "media_player.* entity IDs (defaults to the three girls' speakers)" },
+      speakers: { type: "array<string>", description: "media_player.* entity IDs (defaults to bedroom speakers)" },
       volume: { type: "number" },
       voice_id: { type: "string" },
       fallback_phone: { type: "string" },
@@ -752,11 +753,7 @@ router.post("/broadcast", validateBody("broadcast.send", "POST", "/broadcast"), 
   const targetSpeakers: string[] =
     Array.isArray(speakers) && speakers.length > 0
       ? speakers
-      : [
-          "media_player.emme_s_room_speaker",
-          "media_player.isla_s_room_speaker",
-          "media_player.lanas_closet_speaker",
-        ];
+      : getMorningSpeakers();
 
   const errors: string[] = [];
   let succeeded = 0;

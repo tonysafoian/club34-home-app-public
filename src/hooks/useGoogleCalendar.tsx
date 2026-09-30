@@ -140,12 +140,7 @@ export interface FamilyEvent {
   htmlLink?: string;
 }
 
-export interface FamilyEvents {
-  tony: FamilyEvent[];
-  lana: FamilyEvent[];
-  isla: FamilyEvent[];
-  emme: FamilyEvent[];
-}
+export type FamilyEvents = Record<string, FamilyEvent[]>;
 
 export function useFamilyCalendarEvents(timeMin: string, timeMax: string) {
   const { user } = useAuth();

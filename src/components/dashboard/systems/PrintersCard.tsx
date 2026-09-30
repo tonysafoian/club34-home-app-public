@@ -41,7 +41,7 @@ const OFFICE_PRINTERS: PrinterConfig[] = [
     ],
   },
   {
-    name: "Tony's Office",
+    name: "Main Office",
     statusEntity: 'sensor.brother_hl_l2460dw',
     cartridges: [
       { label: 'Black Toner', entity: 'sensor.brother_hl_l2460dw_bk', color: '#374151' },

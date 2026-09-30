@@ -69,7 +69,7 @@ const CHECK_LABELS: Record<string, string> = {
   janus_chat: 'Janus Chat',
   janus_whatsapp: 'Janus WhatsApp',
   janus_email: 'Janus Email',
-  gmail_tony: 'Gmail (Tony)',
+  gmail_tony: 'Gmail (Primary)',
   google_calendar: 'Google Calendar',
   google_drive: 'Google Drive',
   google_maps_routes: 'Maps Routes API',

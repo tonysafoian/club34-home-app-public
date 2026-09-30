@@ -119,7 +119,7 @@ function modeStyle(mode: string | null) {
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
 
-/** Strip HA's duplicate room names: "Gym Gym" → "Gym", "Isla's Room Isla's" → "Isla's Room" */
+/** Strip HA's duplicate room names: "Gym Gym" → "Gym", "Bedroom 1 Bedroom 1" → "Bedroom 1" */
 function cleanName(raw: string | null): string {
   if (!raw) return '';
   const parts = raw.trim().split(/\s+/);

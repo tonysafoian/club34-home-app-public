@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useMemo } from "react";
 import { Plane, Hotel, MapPin, Calendar, Users, Edit2, RefreshCw, Plus, Loader2, Car, ArrowRight, Timer, Trash2, CheckCircle2, Clock3, X, ChevronRight, Upload } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -12,6 +12,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { useTrips, useScanTravelEmails, useUpdateTrip, useDeleteTrip, useUploadTripDocument, useCreateTrip, type Trip, type TransferSegment, type FlightSegment, type HotelBooking, type ItineraryDay } from "@/hooks/useTrips";
+import { useHouseholdMembers } from "@/hooks/useHouseholdMembers";
 import { useAuth } from "@/hooks/useAuth";
 import { format, parseISO, differenceInDays, isPast } from "date-fns";
 
@@ -627,7 +628,7 @@ function TripEditSheet({ trip, open, onClose }: { trip: Trip; open: boolean; onC
           </div>
           <div className="space-y-1.5">
             <Label>Travelers (comma-separated)</Label>
-            <Input value={form.travelers} onChange={e => setForm(f => ({ ...f, travelers: e.target.value }))} placeholder="Tony, Lana, Emme, Isla" />
+            <Input value={form.travelers} onChange={e => setForm(f => ({ ...f, travelers: e.target.value }))} placeholder="Primary, Member 1, Member 2" />
           </div>
           <div className="space-y-1.5">
             <Label>Notes</Label>
@@ -677,10 +678,16 @@ function TripEditSheet({ trip, open, onClose }: { trip: Trip; open: boolean; onC
 // Create Trip Sheet
 // ─────────────────────────────────────────────────────────────────────────────
 
-const FAMILY_MEMBERS = ["Tony", "Lana", "Isla", "Emme"];
-
 function CreateTripSheet({ open, onClose }: { open: boolean; onClose: () => void }) {
   const createTrip = useCreateTrip();
+  const { data: householdMembers } = useHouseholdMembers();
+  const availableMembers = useMemo(() => {
+    if (householdMembers && householdMembers.length > 0) {
+      return householdMembers.filter(m => m.isActive).map(m => m.displayName);
+    }
+    return ["Primary", "Member 1", "Member 2"];
+  }, [householdMembers]);
+
   const [form, setForm] = useState({
     trip_name: "",
     destination: "",
@@ -768,10 +775,10 @@ function CreateTripSheet({ open, onClose }: { open: boolean; onClose: () => void
           <div className="space-y-1.5">
             <Label>Travelers</Label>
             <div className="flex flex-wrap gap-2">
-              {FAMILY_MEMBERS.map(name => (
+              {availableMembers.map(name => (
                 <button
                   key={name}
-                  data-testid={`toggle-traveler-${name.toLowerCase()}`}
+                  data-testid={`toggle-traveler-${name.toLowerCase().replace(/\s+/g, '-')}`}
                   type="button"
                   onClick={() => toggleTraveler(name)}
                   className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium border transition-colors ${

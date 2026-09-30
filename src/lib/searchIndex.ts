@@ -112,24 +112,7 @@ export const SEARCH_INDEX: SearchEntry[] = [
     keywords: ['tasks', 'common', 'amazon', 'order', 'shopping', 'buy', 'purchase'],
     icon: 'ShoppingCart',
   },
-  {
-    id: 'common-tasks-food',
-    title: 'Order Food for Home Delivery',
-    description: 'Browse restaurants and order food delivered to your door',
-    category: 'Page',
-    path: '/common-tasks/food',
-    keywords: ['tasks', 'common', 'food', 'delivery', 'restaurant', 'order', 'eat'],
-    icon: 'UtensilsCrossed',
-  },
-  {
-    id: 'common-tasks-grocery',
-    title: 'Order Groceries for Delivery',
-    description: 'Shop for groceries and schedule a delivery',
-    category: 'Page',
-    path: '/common-tasks/grocery',
-    keywords: ['tasks', 'common', 'grocery', 'groceries', 'delivery', 'shopping', 'food'],
-    icon: 'Apple',
-  },
+
   {
     id: 'admin',
     title: 'Admin Panel',
@@ -591,15 +574,7 @@ export const SEARCH_INDEX: SearchEntry[] = [
     keywords: ['amazon', 'order', 'buy', 'purchase', 'shop', 'cart', 'delivery'],
     icon: 'ShoppingCart',
   },
-  {
-    id: 'grocery-order',
-    title: 'Grocery Order',
-    description: 'Search and order groceries from Amazon Fresh via browser automation',
-    category: 'Action',
-    path: '/common-tasks/grocery',
-    keywords: ['grocery', 'groceries', 'instacart', 'food', 'produce', 'delivery', 'order', 'shop', 'milk', 'eggs', 'bread'],
-    icon: 'Apple',
-  },
+
   {
     id: 'shopping-cart',
     title: 'Shopping Cart',

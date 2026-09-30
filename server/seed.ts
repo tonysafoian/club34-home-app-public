@@ -403,12 +403,12 @@ When referencing Janus app sections, use exact routes as markdown links. Example
 
 ### Reply-All Threading Rule
 - When replying to a group email or a thread with multiple recipients: always Reply All.
-- Never drop recipients from a thread unless explicitly instructed by Tony or Lana.
+- Never drop recipients from a thread unless explicitly instructed by the household admin or family.
 - If a reply would expose sensitive info to the group, flag it: "This thread includes [names] — should I reply all or just to [recipient]?"
 
 ### Tone Selection
-- **Formal**: External parties, vendors, contractors, unknown recipients, and anyone Tony hasn't personally introduced.
-- **Semi-formal**: Staff members (Sandra, Jesse, Esmerelda, Rina) on routine operational matters.
+- **Formal**: External parties, vendors, contractors, unknown recipients, and anyone the household admin hasn't personally introduced.
+- **Semi-formal**: Staff members on routine operational matters.
 - **Direct**: Household family members.
 - When in doubt, default to semi-formal. It's always appropriate and never off-putting.
 
@@ -418,11 +418,11 @@ When referencing Janus app sections, use exact routes as markdown links. Example
 - Never ignore an attachment. If you can't read it, say so: "I see an attachment but couldn't parse it — can you confirm what it contains?"
 
 ### Triage Priority
-- **Urgent / respond now**: Security alerts, time-sensitive logistics, anything from Tony or Lana marked urgent.
+- **Urgent / respond now**: Security alerts, time-sensitive logistics, anything from the household admin marked urgent.
 - **Today**: Calendar invites, vendor coordination, staff requests.
 - **This week**: Research tasks, non-urgent follow-ups.
 - **No action needed**: Newsletters, receipts, automated notifications (archive after reading).
-- When in doubt, surface it to Tony with a one-line summary: what it is, who sent it, what they want.
+- When in doubt, surface it to the primary user with a one-line summary: what it is, who sent it, what they want.
 
 ### Brevity Rules (Non-Negotiable)
 - 1–2 short paragraphs max in the email body. Never pad a reply.
@@ -638,7 +638,7 @@ async function seedFamilyAutomations(): Promise<void> {
 
   console.log("[SEED] Seeding family_automations...");
   const automations: Array<{ name: string; type: string; schedule: string; desc: string; config?: Record<string, unknown> }> = [
-    { name: 'Getting Girls to School on Time', type: 'school-broadcast', schedule: '50 6 * * 1-5', desc: 'HW calendar sync + 6:50am & 7:30am wake-up broadcasts' },
+    { name: 'Morning School & Family Wake-Up', type: 'school-broadcast', schedule: '50 6 * * 1-5', desc: 'School calendar sync + 6:50am & 7:30am wake-up broadcasts' },
     { name: 'Morning Brief Email', type: 'morning-email', schedule: '0 7 * * *', desc: 'Weather, news, markets & calendar digest' },
     { name: 'Morning Sauna', type: 'morning-sauna', schedule: 'MWF 8:30–9:00 AM · Tu/Th 8:50–9:20 AM PT', desc: 'Runs the sauna at 190°F for 30 minutes on weekday mornings using Home Assistant power and temperature helpers' },
     { name: 'Tesla Battery Monitor', type: 'tesla-battery', schedule: '*/30 * * * *', desc: 'Alerts staff when range ≤ 100 mi & vehicle is at home' },

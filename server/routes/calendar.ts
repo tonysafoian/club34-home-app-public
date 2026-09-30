@@ -673,8 +673,8 @@ router.post("/hw-sync", async (req: Request, res: Response) => {
     const { data: automation } = await supabase
       .from("family_automations")
       .select("id")
-      .eq("name", "Getting Girls to School on Time")
-      .single();
+      .in("name", ["Morning School & Family Wake-Up", "Getting Girls to School on Time"])
+      .maybeSingle();
 
     if (automation) {
       await supabase.from("family_automation_logs").insert({

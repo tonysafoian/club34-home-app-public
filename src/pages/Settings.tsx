@@ -14,6 +14,7 @@ import GoogleServicesCard from '@/components/settings/GoogleServicesCard';
 import GoAccessGoogleCard from '@/components/settings/GoAccessGoogleCard';
 import PlatformCredentialsCard from '@/components/settings/PlatformCredentialsCard';
 import BrandingSettingsCard from '@/components/settings/BrandingSettingsCard';
+import HouseholdMembersCard from '@/components/settings/HouseholdMembersCard';
 import { hardReload } from '@/lib/errorReporter';
 
 export default function Settings() {
@@ -93,6 +94,9 @@ export default function Settings() {
       <main className="container py-6 space-y-6">
         {/* Estate Branding & Appearance Customizer */}
         <BrandingSettingsCard />
+
+        {/* Household & Family Members */}
+        <HouseholdMembersCard />
 
         {/* Home Assistant Configuration */}
         <Card>

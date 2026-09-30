@@ -1332,7 +1332,7 @@ interface NormalizedPoiSighting {
 
 // Build a case-insensitive label -> verkada_person_id map from the POI roster.
 // The alerts endpoint returns no person_id, so this lets us link a sighting's
-// label (e.g. "Isla") back to the canonical profile the roster sync populated.
+// label (e.g. "Family Member") back to the canonical profile the roster sync populated.
 export async function getPoiLabelIdMap(): Promise<Map<string, string>> {
   const map = new Map<string, string>();
   try {

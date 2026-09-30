@@ -1091,7 +1091,7 @@ export default function Time() {
       {!worker.active && (
         <div className="bg-red-500/20 border-b border-red-500/30 px-4 py-2 text-xs text-red-400 flex items-center gap-2">
           <AlertCircle className="h-3 w-3 shrink-0" />
-          Your account has been deactivated. Contact Tony for assistance.
+          Your account has been deactivated. Contact the administrator for assistance.
         </div>
       )}
 

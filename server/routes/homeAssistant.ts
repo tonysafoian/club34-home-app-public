@@ -477,12 +477,55 @@ function prettifyEntityId(id: string): string {
 }
 
 const JANUS_LOGO_URL = process.env.APP_LOGO_URL || '/icon.svg';
-const DISPLAY_DEVICES = [
-  "media_player.family_room_display",
-  "media_player.kitchen_display_1",
-  "media_player.gym_tv",
-  "media_player.kitchen_tv",
-];
+
+function resolveTargetSpeakers(target: 'all' | 'google-home' | 'bedrooms'): { speakers: string[]; tvs: string[]; displays: string[] } {
+  const cached = getEntityCache();
+  const allMediaPlayers = cached
+    .map(e => e.entity_id)
+    .filter(id => id.startsWith('media_player.'));
+
+  if (allMediaPlayers.length === 0) {
+    if (target === 'bedrooms') {
+      return { speakers: ['media_player.bedroom_speaker'], tvs: [], displays: [] };
+    }
+    return {
+      speakers: ['media_player.living_room_speaker', 'media_player.bedroom_speaker'],
+      tvs: ['media_player.living_room_tv'],
+      displays: ['media_player.kitchen_display'],
+    };
+  }
+
+  const tvs = allMediaPlayers.filter(id => id.includes('_tv') || id.includes('television'));
+  const displays = allMediaPlayers.filter(id => id.includes('display') || id.includes('hub'));
+
+  if (target === 'bedrooms') {
+    const bedroomSpeakers = allMediaPlayers.filter(id =>
+      (id.includes('bedroom') || id.includes('room') || id.includes('closet')) && !tvs.includes(id)
+    );
+    return {
+      speakers: bedroomSpeakers.length > 0 ? bedroomSpeakers : allMediaPlayers.filter(id => !tvs.includes(id)),
+      tvs: [],
+      displays: [],
+    };
+  }
+
+  if (target === 'google-home') {
+    const ghSpeakers = allMediaPlayers.filter(id =>
+      !tvs.includes(id) && (id.includes('speaker') || id.includes('display') || id.includes('google'))
+    );
+    return {
+      speakers: ghSpeakers.length > 0 ? ghSpeakers : allMediaPlayers.filter(id => !tvs.includes(id)),
+      tvs: [],
+      displays,
+    };
+  }
+
+  return {
+    speakers: allMediaPlayers,
+    tvs,
+    displays,
+  };
+}
 
 router.post('/', requireAuth, async (req: AuthenticatedRequest, res: Response) => {
   const authUser = getAuthUser(req);
@@ -969,17 +1012,7 @@ router.post('/', requireAuth, async (req: AuthenticatedRequest, res: Response) =
     }
 
     if (action === 'broadcast-all') {
-      const speakers = [
-        "media_player.bathroom_speaker", "media_player.emme_s_room_speaker",
-        "media_player.family_room_display", "media_player.glam_room_speaker",
-        "media_player.gym_speaker", "media_player.isla_s_room_speaker",
-        "media_player.kitchen_display_1", "media_player.lanas_closet_speaker",
-        "media_player.main_rack_speaker", "media_player.master_bedroom_speaker",
-        "media_player.playroom_speaker", "media_player.theater_reciever",
-        "media_player.tonys_office_speaker",
-        "media_player.gym_tv", "media_player.kitchen_tv"
-      ];
-      const tvs = ["media_player.gym_tv", "media_player.kitchen_tv"];
+      const { speakers, tvs, displays } = resolveTargetSpeakers('all');
 
       const requestedVolumeAll = Number.isFinite(body.volume) ? (body.volume as number) : 0.75;
       const volumeLevelAll = Math.min(1, Math.max(0, requestedVolumeAll));
@@ -991,11 +1024,13 @@ router.post('/', requireAuth, async (req: AuthenticatedRequest, res: Response) =
         callHA(HA_URL, HA_TOKEN, 'POST', '/api/services/media_player/volume_set', {
           entity_id: speakers, volume_level: volumeLevelAll,
         }),
-        callHA(HA_URL, HA_TOKEN, 'POST', '/api/services/media_player/play_media', {
-          entity_id: DISPLAY_DEVICES,
-          media_content_id: JANUS_LOGO_URL,
-          media_content_type: 'image/png',
-        }),
+        ...(displays.length > 0 ? [
+          callHA(HA_URL, HA_TOKEN, 'POST', '/api/services/media_player/play_media', {
+            entity_id: displays,
+            media_content_id: JANUS_LOGO_URL,
+            media_content_type: 'image/png',
+          })
+        ] : []),
       ]);
       await new Promise(r => setTimeout(r, 1500));
 
@@ -1007,11 +1042,13 @@ router.post('/', requireAuth, async (req: AuthenticatedRequest, res: Response) =
         options: { voice: 'iLVmqjzCGGvqtMCk6vVQ' },
       });
 
-      setTimeout(async () => {
-        try {
-          await callHA(HA_URL, HA_TOKEN, 'POST', '/api/services/media_player/turn_off', { entity_id: tvs });
-        } catch {}
-      }, 60_000);
+      if (tvs.length > 0) {
+        setTimeout(async () => {
+          try {
+            await callHA(HA_URL, HA_TOKEN, 'POST', '/api/services/media_player/turn_off', { entity_id: tvs });
+          } catch {}
+        }, 60_000);
+      }
 
       logAudit('home-assistant-proxy', {
         category: 'home', event_type: 'broadcast_all', severity: 'info',
@@ -1026,21 +1063,17 @@ router.post('/', requireAuth, async (req: AuthenticatedRequest, res: Response) =
       return;
     }
 
-    if (action === 'broadcast-girls') {
-      const speakers = [
-        "media_player.emme_s_room_speaker",
-        "media_player.isla_s_room_speaker",
-        "media_player.lanas_closet_speaker",
-      ];
+    if (action === 'broadcast-bedrooms' || action === 'broadcast-girls') {
+      const { speakers } = resolveTargetSpeakers('bedrooms');
 
-      const requestedVolumeGirls = Number.isFinite(body.volume) ? (body.volume as number) : 0.9;
-      const volumeLevelGirls = Math.min(1, Math.max(0, requestedVolumeGirls));
+      const requestedVolumeBedrooms = Number.isFinite(body.volume) ? (body.volume as number) : 0.85;
+      const volumeLevelBedrooms = Math.min(1, Math.max(0, requestedVolumeBedrooms));
 
       await callHA(HA_URL, HA_TOKEN, 'POST', '/api/services/media_player/turn_on', { entity_id: speakers });
       await new Promise(r => setTimeout(r, 3000));
 
       await callHA(HA_URL, HA_TOKEN, 'POST', '/api/services/media_player/volume_set', {
-        entity_id: speakers, volume_level: volumeLevelGirls,
+        entity_id: speakers, volume_level: volumeLevelBedrooms,
       });
       await new Promise(r => setTimeout(r, 1500));
 
@@ -1053,9 +1086,9 @@ router.post('/', requireAuth, async (req: AuthenticatedRequest, res: Response) =
       });
 
       logAudit('home-assistant-proxy', {
-        category: 'home', event_type: 'broadcast_girls', severity: 'info',
+        category: 'home', event_type: 'broadcast_bedrooms', severity: 'info',
         actor_id: userId, actor_name: actorName, channel: 'web',
-        summary: `Broadcast to girls' rooms (${speakers.length} speakers)`,
+        summary: `Broadcast to bedrooms (${speakers.length} speakers)`,
         detail: { message: body.message?.slice(0, 100) },
         duration_ms: Date.now() - t0,
         status: 'success',
@@ -1066,18 +1099,7 @@ router.post('/', requireAuth, async (req: AuthenticatedRequest, res: Response) =
     }
 
     if (action === 'broadcast-google-home') {
-      const speakers = [
-        "media_player.bathroom_speaker", "media_player.emme_s_room_speaker",
-        "media_player.family_room_display", "media_player.glam_room_speaker",
-        "media_player.gym_speaker", "media_player.isla_s_room_speaker",
-        "media_player.kitchen_display_1", "media_player.lanas_closet_speaker",
-        "media_player.main_rack_speaker", "media_player.master_bedroom_speaker",
-        "media_player.playroom_speaker", "media_player.tonys_office_speaker",
-      ];
-      const displayDevices = [
-        "media_player.family_room_display",
-        "media_player.kitchen_display_1",
-      ];
+      const { speakers, displays } = resolveTargetSpeakers('google-home');
 
       const requestedVolumeGH = Number.isFinite(body.volume) ? (body.volume as number) : 0.75;
       const volumeLevelGH = Math.min(1, Math.max(0, requestedVolumeGH));

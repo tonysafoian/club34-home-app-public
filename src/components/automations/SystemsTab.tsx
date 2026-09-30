@@ -86,8 +86,8 @@ const SELF_HEAL_RULES: Record<string, { title: string; suggestion: string }> = {
     suggestion: 'The WATI access token may be expired or the endpoint is wrong. Check WATI_API_ENDPOINT and WATI_ACCESS_TOKEN secrets.',
   },
   gmail_tony: {
-    title: 'Gmail (Tony) access failed',
-    suggestion: 'The Google Service Account may have lost domain-wide delegation. Check the service account in Google Admin Console and verify delegation for admin@example.com.',
+    title: 'Gmail (Primary) access failed',
+    suggestion: 'The Google Service Account may have lost domain-wide delegation. Check the service account in Google Admin Console and verify delegation.',
   },
   janus_email: {
     title: 'Gmail (Janus) access failed',
@@ -315,14 +315,14 @@ export function SystemsTab() {
   const jobs: ScheduledJob[] = [
     {
       name: 'morning-weather-email',
-      label: 'Morning brief → Emme & Isla',
+      label: 'Morning brief announcement',
       schedule: 'Daily 7am PT',
       lastRun: getLastEmail('morning_weather'),
       status: getLastEmail('morning_weather') ? 'ok' : 'unknown',
     },
     {
       name: 'executive-status-email',
-      label: 'Daily status report → Tony',
+      label: 'Daily status report',
       schedule: 'Daily 8am PT',
       lastRun: getLastEmail('executive_status'),
       status: getLastEmail('executive_status') ? 'ok' : 'unknown',
@@ -349,7 +349,7 @@ export function SystemsTab() {
     },
     {
       name: 'janus-email-poll',
-      label: 'Polls janus@ inbox + triages tony@ inbox',
+      label: 'Polls janus@ inbox + triages admin inbox',
       schedule: 'Every 1m',
       lastRun: lastEmailPoll ? new Date(lastEmailPoll.created_at) : null,
       status: lastEmailPoll ? 'ok' : 'unknown',
@@ -419,7 +419,7 @@ export function SystemsTab() {
     },
     {
       name: 'av-closet-temp-monitor',
-      label: 'AV Closet temp — email >90°F, WhatsApp Tony >100°F',
+      label: 'AV Closet temp — email >90°F, WhatsApp admin >100°F',
       schedule: 'Every 10m',
       lastRun: getAutomationLastRun('AV Closet Temperature Monitor'),
       status: getAutomationStatus('AV Closet Temperature Monitor'),
@@ -611,7 +611,7 @@ export function SystemsTab() {
                 Morning Broadcast
               </CardTitle>
               <CardDescription className="text-xs mt-0.5">
-                Trigger a test announcement to Emme's, Isla's, and Tony's office speakers. Bypasses the 6:50am/7:30am schedule and school-year checks.
+                Trigger a test announcement to bedroom and office speakers. Bypasses the 6:50am/7:30am schedule and school-year checks.
               </CardDescription>
             </div>
             <Button

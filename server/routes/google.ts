@@ -553,12 +553,27 @@ router.post("/calendar", async (req: Request, res: Response) => {
     }
 
     if (action === "list-family-events") {
-      const FAMILY = [
-        { key: "tony", email: "admin@example.com" },
-        { key: "lana", email: "member@example.com" },
-        { key: "isla", email: "member2@example.com" },
-        { key: "emme", email: "member3@example.com" },
-      ];
+      let FAMILY: { key: string; email: string }[] = [];
+      try {
+        const { rows } = await query(
+          `SELECT id, display_name, email FROM household_members WHERE is_active = true AND email IS NOT NULL ORDER BY created_at ASC`
+        );
+        if (rows && rows.length > 0) {
+          FAMILY = rows.map((r: any) => ({
+            key: r.id,
+            email: r.email,
+          }));
+        }
+      } catch (err) {
+        console.warn("[Google] Error fetching household_members for family events:", err);
+      }
+
+      if (FAMILY.length === 0) {
+        FAMILY = [
+          { key: "admin", email: process.env.ADMIN_EMAIL || "admin@example.com" },
+          { key: "member", email: process.env.MEMBER_EMAIL || "member@example.com" },
+        ];
+      }
 
       const params = new URLSearchParams({
         singleEvents: "true",

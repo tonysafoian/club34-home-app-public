@@ -4,13 +4,23 @@ import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { ChevronLeft, ChevronRight, Calendar } from 'lucide-react';
 import { useFamilyCalendarEvents, type FamilyEvent, type FamilyEvents } from '@/hooks/useGoogleCalendar';
+import { useHouseholdMembers } from '@/hooks/useHouseholdMembers';
 
-const FAMILY_MEMBERS = [
-  { key: 'tony', name: 'Tony', color: 'hsl(217 91% 60%)', bg: 'hsl(217 91% 60% / 0.15)' },
-  { key: 'lana', name: 'Lana', color: 'hsl(330 81% 60%)', bg: 'hsl(330 81% 60% / 0.15)' },
-  { key: 'isla', name: 'Isla', color: 'hsl(160 60% 45%)', bg: 'hsl(160 60% 45% / 0.15)' },
-  { key: 'emme', name: 'Emme', color: 'hsl(38 92% 50%)', bg: 'hsl(38 92% 50% / 0.15)' },
-] as const;
+const PALETTE = [
+  { color: 'hsl(217 91% 60%)', bg: 'hsl(217 91% 60% / 0.15)' },
+  { color: 'hsl(330 81% 60%)', bg: 'hsl(330 81% 60% / 0.15)' },
+  { color: 'hsl(160 60% 45%)', bg: 'hsl(160 60% 45% / 0.15)' },
+  { color: 'hsl(38 92% 50%)', bg: 'hsl(38 92% 50% / 0.15)' },
+  { color: 'hsl(280 80% 60%)', bg: 'hsl(280 80% 60% / 0.15)' },
+  { color: 'hsl(190 90% 45%)', bg: 'hsl(190 90% 45% / 0.15)' },
+];
+
+export interface CalendarMember {
+  key: string;
+  name: string;
+  color: string;
+  bg: string;
+}
 
 const HOUR_HEIGHT = 60; // px per hour
 const START_HOUR = 6;
@@ -36,13 +46,17 @@ interface PositionedEvent {
   isAllDay: boolean;
 }
 
-function getPositionedEvents(familyEvents: FamilyEvents | undefined, selectedDate: Date): { timed: PositionedEvent[]; allDay: PositionedEvent[] } {
+function getPositionedEvents(
+  familyEvents: FamilyEvents | undefined,
+  selectedDate: Date,
+  members: CalendarMember[]
+): { timed: PositionedEvent[]; allDay: PositionedEvent[] } {
   const timed: PositionedEvent[] = [];
   const allDay: PositionedEvent[] = [];
   const dayStart = startOfDay(selectedDate);
 
-  for (const member of FAMILY_MEMBERS) {
-    const events = familyEvents?.[member.key as keyof FamilyEvents] || [];
+  for (const member of members) {
+    const events = familyEvents?.[member.key] || [];
     for (const event of events) {
       const isAllDayEvent = !event.start?.dateTime;
       if (isAllDayEvent) {
@@ -178,10 +192,26 @@ export function FamilyCalendarView() {
   const timeMin = startOfDay(selectedDate).toISOString();
   const timeMax = endOfDay(selectedDate).toISOString();
 
+  const { data: householdMembers } = useHouseholdMembers();
+  const members: CalendarMember[] = useMemo(() => {
+    if (householdMembers && householdMembers.length > 0) {
+      return householdMembers.filter(m => m.isActive).map((m, idx) => ({
+        key: m.id,
+        name: m.displayName,
+        color: PALETTE[idx % PALETTE.length].color,
+        bg: PALETTE[idx % PALETTE.length].bg,
+      }));
+    }
+    return [
+      { key: "admin", name: "Primary", color: PALETTE[0].color, bg: PALETTE[0].bg },
+      { key: "member", name: "Family Member", color: PALETTE[1].color, bg: PALETTE[1].bg },
+    ];
+  }, [householdMembers]);
+
   const { data: familyEvents, isLoading } = useFamilyCalendarEvents(timeMin, timeMax);
   const today = isToday(selectedDate);
 
-  const { timed, allDay } = useMemo(() => getPositionedEvents(familyEvents, selectedDate), [familyEvents, selectedDate]);
+  const { timed, allDay } = useMemo(() => getPositionedEvents(familyEvents, selectedDate, members), [familyEvents, selectedDate, members]);
   const positioned = useMemo(() => assignColumns(timed), [timed]);
 
   const hours = Array.from({ length: TOTAL_HOURS }, (_, i) => START_HOUR + i);
@@ -218,7 +248,7 @@ export function FamilyCalendarView() {
 
       {/* Legend */}
       <div className="flex items-center gap-3 flex-wrap">
-        {FAMILY_MEMBERS.map(m => (
+        {members.map(m => (
           <div key={m.key} className="flex items-center gap-1.5">
             <div className="w-2.5 h-2.5 rounded-full shrink-0" style={{ backgroundColor: m.color }} />
             <span className="text-xs font-medium text-muted-foreground">{m.name}</span>

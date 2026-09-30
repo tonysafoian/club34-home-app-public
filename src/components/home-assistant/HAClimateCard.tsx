@@ -6,6 +6,7 @@ import { Thermometer, ChevronUp, ChevronDown, Loader2, Wind } from 'lucide-react
 import { useSharedHAEntities } from '@/hooks/useHAEntitiesContext';
 import { setClimateTemp, setClimateMode, HAEntity } from '@/lib/api/homeAssistant';
 import { useToast } from '@/hooks/use-toast';
+import { sanitizeDeviceName } from '@/lib/nameSanitizer';
 /** Collapse repeated prefix/suffix in friendly names, e.g. "Kitchen Kitchen" → "Kitchen", "Guest House Upstairs Guest House" → "Guest House Upstairs" */
 function deduplicateName(name: string): string {
   const words = name.split(' ');
@@ -21,7 +22,7 @@ function deduplicateName(name: string): string {
       return words.slice(0, words.length - n).join(' ');
     }
   }
-  // Check trailing partial match (e.g. "Isla's Room Isla's" where last word(s) partially repeat start)
+  // Check trailing partial match (e.g. "Bedroom 1 Bedroom" where last word(s) partially repeat start)
   if (words.length >= 3) {
     const last = words[words.length - 1];
     if (words[0].startsWith(last) || last.startsWith(words[0])) {

@@ -8,11 +8,19 @@ import { consumeSseTicket } from './auth.js';
 
 const router = Router();
 
-const TONY_EMAIL = 'admin@example.com';
+const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'admin@example.com';
 const GMAIL_API = 'https://gmail.googleapis.com/gmail/v1/users/me';
-const FAMILY_MEMBERS = ['Tony', 'Lana', 'Isla', 'Emme'];
-const HOME_BASE = 'Los Angeles, CA';
+const HOME_BASE = process.env.HOME_LOCATION || 'Los Angeles, CA';
 const EMAIL_BATCH_SIZE = 15;
+
+async function getFamilyMemberNames(): Promise<string[]> {
+  try {
+    const db = storage as any;
+    const { rows } = await db.query(`SELECT display_name FROM household_members WHERE is_active = true`);
+    if (rows && rows.length > 0) return rows.map((r: any) => r.display_name);
+  } catch {}
+  return ['Primary', 'Family Member'];
+}
 
 function fetchT(input: string | URL | Request, init?: RequestInit, timeoutMs = 30_000): Promise<globalThis.Response> {
   const controller = new AbortController();
@@ -45,7 +53,7 @@ async function getOAuthGmailToken(): Promise<string | null> {
     const { data: rows } = await serviceClient
       .from('google_tokens')
       .select('*')
-      .eq('google_email', TONY_EMAIL)
+      .eq('google_email', ADMIN_EMAIL)
       .limit(1);
     const tokenRow = Array.isArray(rows) ? rows[0] : rows;
     if (!tokenRow?.access_token) return null;
@@ -172,8 +180,9 @@ async function extractTripsFromBatch(
     .map((e, i) => `--- EMAIL ${i + 1} ---\nID: ${e.id}\nFrom: ${e.from}\nDate: ${e.date}\nSubject: ${e.subject}\n\n${e.body}`)
     .join('\n\n');
 
+  const familyNames = await getFamilyMemberNames();
   const systemPrompt = `You are a travel data extraction specialist for the household family based in ${HOME_BASE}.
-Family members: ${FAMILY_MEMBERS.join(', ')}.
+Family members: ${familyNames.join(', ')}.
 Today is ${today}.
 
 Given travel-related emails, extract structured trip info. Return a JSON array (not an object) of trips.
@@ -297,7 +306,7 @@ router.get('/api/travel-email-scanner/stream', (req: any, res: any, next: any) =
     if (saKeyRaw) {
       try {
         console.log('[Travel] SSE: attempting service account Gmail auth');
-        gmailToken = await getAccessToken(saKeyRaw, TONY_EMAIL, 'https://www.googleapis.com/auth/gmail.readonly');
+        gmailToken = await getAccessToken(saKeyRaw, ADMIN_EMAIL, 'https://www.googleapis.com/auth/gmail.readonly');
         console.log('[Travel] SSE: service account Gmail auth succeeded');
       } catch (saErr) {
         console.warn('[Travel] SSE: service account auth failed, trying OAuth fallback:', saErr);
@@ -306,7 +315,7 @@ router.get('/api/travel-email-scanner/stream', (req: any, res: any, next: any) =
       console.log('[Travel] SSE: GOOGLE_SERVICE_ACCOUNT_KEY not set, trying OAuth fallback');
     }
     if (!gmailToken) {
-      console.log('[Travel] SSE: attempting OAuth token retrieval for', TONY_EMAIL);
+      console.log('[Travel] SSE: attempting OAuth token retrieval for', ADMIN_EMAIL);
       gmailToken = await getOAuthGmailToken();
       if (gmailToken) {
         console.log('[Travel] SSE: OAuth token retrieved successfully');
@@ -523,11 +532,16 @@ router.post('/api/trips', requireAuth, async (req: any, res: any) => {
   }
 });
 
-const TRAVELER_EMAILS: Record<string, string> = { tony: 'admin@example.com', lana: 'member@example.com', isla: 'member2@example.com', emme: 'member3@example.com' };
-
-function resolveTravelerEmail(name: string): string | null {
+async function resolveTravelerEmail(name: string): Promise<string | null> {
   const lower = name.toLowerCase().trim();
-  for (const [key, email] of Object.entries(TRAVELER_EMAILS)) { if (lower.includes(key)) return email; }
+  try {
+    const db = storage as any;
+    const { rows } = await db.query(
+      `SELECT email FROM household_members WHERE is_active = true AND email IS NOT NULL AND (LOWER(display_name) LIKE $1 OR $2 = ANY(aliases)) LIMIT 1`,
+      [`%${lower}%`, lower]
+    );
+    if (rows && rows[0]?.email) return rows[0].email;
+  } catch {}
   return null;
 }
 

@@ -36,7 +36,7 @@ const SKILL_CATEGORIES: SkillCategory[] = [
     color: 'blue',
     skills: [
       { name: 'send_email', description: 'Send an email from assistant@example.com for longer or formal communications.', adminOnly: true, channels: ['chat', 'email', 'whatsapp'], params: [{ name: 'to', type: 'string', required: true, description: 'Recipient email address' }, { name: 'subject', type: 'string', required: true, description: 'Email subject line' }, { name: 'body', type: 'string', required: true, description: 'Email body (HTML supported)' }] },
-      { name: 'gmail_search', description: "Search Tony's Gmail inbox using Gmail search syntax (from:, is:unread, etc.).", adminOnly: true, channels: ['chat', 'email', 'whatsapp'], params: [{ name: 'query', type: 'string', required: true, description: 'Gmail search query' }, { name: 'max_results', type: 'number', required: false, description: 'Max results (default 10, max 20)' }] },
+      { name: 'gmail_search', description: "Search primary Gmail inbox using Gmail search syntax (from:, is:unread, etc.).", adminOnly: true, channels: ['chat', 'email', 'whatsapp'], params: [{ name: 'query', type: 'string', required: true, description: 'Gmail search query' }, { name: 'max_results', type: 'number', required: false, description: 'Max results (default 10, max 20)' }] },
       { name: 'send_whatsapp', description: 'Send a WhatsApp message via WATI. Works even if the recipient has not recently messaged Janus.', channels: ['chat', 'email', 'whatsapp'], params: [{ name: 'to', type: 'string', required: true, description: 'Phone number (international format)' }, { name: 'message', type: 'string', required: true, description: 'Message text' }] },
     ],
   },
