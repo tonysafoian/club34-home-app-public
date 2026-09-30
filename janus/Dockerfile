@@ -2,7 +2,7 @@ ARG BUILD_FROM=ghcr.io/home-assistant/alpine:3.19
 FROM ${BUILD_FROM}
 
 LABEL \
-    io.hass.version="1.0.5" \
+    io.hass.version="1.0.6" \
     io.hass.type="addon" \
     io.hass.arch="aarch64|amd64" \
     org.opencontainers.image.title="Janus" \
@@ -31,15 +31,18 @@ WORKDIR /app
 # Home Assistant executes docker build with the add-on subdirectory (janus/) as context.
 # Clone the repository directly so all pre-built bundles, migrations, and manifests are present.
 # BUILD_VERSION busts Docker layer caching on version bumps.
-ARG BUILD_VERSION="1.0.5"
+ARG BUILD_VERSION="1.0.6"
 ARG REPO_URL="https://github.com/tonysafoian/janus-home-app.git"
 RUN git clone --depth 1 -b main "${REPO_URL}" /tmp/repo && \
     cp -r /tmp/repo/* /app/ && \
     cp -r /tmp/repo/.* /app/ 2>/dev/null || true && \
     rm -rf /tmp/repo
 
-# Install production runtime dependencies only (fast, reliable, no compiler needed)
-RUN npm ci --omit=dev
+# Install production runtime dependencies with resilient timeouts under QEMU emulation
+RUN npm config set fetch-retry-maxtimeout 180000 && \
+    npm config set fetch-retries 5 && \
+    npm config set fetch-timeout 120000 && \
+    npm ci --omit=dev
 
 # Make startup script executable
 RUN chmod a+x /app/janus/run.sh
