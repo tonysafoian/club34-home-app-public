@@ -7,7 +7,8 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { ArrowLeft, Home, Loader2, CheckCircle2, XCircle, Eye, EyeOff, ExternalLink, RefreshCw, BookOpen } from 'lucide-react';
+import { ArrowLeft, Home, Loader2, CheckCircle2, XCircle, Eye, EyeOff, ExternalLink, RefreshCw, BookOpen, HelpCircle } from 'lucide-react';
+import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from '@/components/ui/accordion';
 import { Badge } from '@/components/ui/badge';
 import AmazonSettingsCard from '@/components/settings/AmazonSettingsCard';
 import GoogleServicesCard from '@/components/settings/GoogleServicesCard';
@@ -94,7 +95,7 @@ export default function Settings() {
       <main className="container py-6 space-y-6">
         {/* Getting Started & Configuration Guide Banner */}
         <Card className="border-primary/20 bg-gradient-to-r from-primary/10 via-card to-card">
-          <CardHeader className="pb-4">
+          <CardHeader className="pb-3">
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-xl bg-primary/15 flex items-center justify-center text-primary shrink-0">
@@ -114,12 +115,70 @@ export default function Settings() {
                 className="shrink-0"
               >
                 <Button variant="outline" size="sm" className="gap-1.5 w-full sm:w-auto">
-                  <span>View Step-by-Step Guide</span>
+                  <span>Full One-Pager Guide</span>
                   <ExternalLink className="h-3.5 w-3.5" />
                 </Button>
               </a>
             </div>
           </CardHeader>
+          <CardContent className="pt-0">
+            <Accordion type="single" collapsible className="w-full">
+              <AccordionItem value="faq-1" className="border-b-0 border-t border-border/50">
+                <AccordionTrigger className="text-xs font-medium text-muted-foreground hover:text-foreground py-2.5">
+                  <span className="flex items-center gap-2">
+                    <HelpCircle className="h-3.5 w-3.5 text-primary" />
+                    How do I get the free Google Gemini AI Key? (Takes 60 seconds)
+                  </span>
+                </AccordionTrigger>
+                <AccordionContent className="text-xs text-muted-foreground leading-relaxed pl-5 pb-3 space-y-1.5">
+                  <p>
+                    1. Go to <a href="https://aistudio.google.com" target="_blank" rel="noreferrer" className="text-primary underline">Google AI Studio</a> and sign in with any Google account.
+                  </p>
+                  <p>
+                    2. Click <strong>Get API key</strong> in the top navigation, then <strong>Create API key</strong>.
+                  </p>
+                  <p>
+                    3. Copy the key (starts with <code className="text-amber-400">AIzaSy...</code>).
+                  </p>
+                  <p>
+                    4. In Home Assistant, open <strong>Settings ➔ Add-ons ➔ Janus ➔ Configuration</strong> tab.
+                  </p>
+                  <p>
+                    5. Paste the key into <code className="text-amber-400">gemini_api_key</code>, click <strong>Save</strong>, and restart the Janus add-on!
+                  </p>
+                </AccordionContent>
+              </AccordionItem>
+
+              <AccordionItem value="faq-2" className="border-b-0 border-t border-border/50">
+                <AccordionTrigger className="text-xs font-medium text-muted-foreground hover:text-foreground py-2.5">
+                  <span className="flex items-center gap-2">
+                    <HelpCircle className="h-3.5 w-3.5 text-primary" />
+                    Do I need Google Sign-In or can I use Local Access Mode?
+                  </span>
+                </AccordionTrigger>
+                <AccordionContent className="text-xs text-muted-foreground leading-relaxed pl-5 pb-3 space-y-1.5">
+                  <p>
+                    <strong>Local Access Mode is all you need for 100% smart home control!</strong> All your lights, climate zones, locks, switches, floor plans, and Gemini voice AI work completely locally with zero cloud dependencies.
+                  </p>
+                  <p>
+                    Google Sign-In is completely optional and only needed if you want Janus to sync your family's Google Calendar for morning schedule digests.
+                  </p>
+                </AccordionContent>
+              </AccordionItem>
+
+              <AccordionItem value="faq-3" className="border-b-0 border-t border-border/50">
+                <AccordionTrigger className="text-xs font-medium text-muted-foreground hover:text-foreground py-2.5">
+                  <span className="flex items-center gap-2">
+                    <HelpCircle className="h-3.5 w-3.5 text-primary" />
+                    How do I add family members or rename the estate?
+                  </span>
+                </AccordionTrigger>
+                <AccordionContent className="text-xs text-muted-foreground leading-relaxed pl-5 pb-3">
+                  Use the <strong>Household & Family Members</strong> and <strong>Estate Branding & Appearance</strong> cards directly below on this page. Everything is 100% graphical — you never need to write YAML or edit configuration files.
+                </AccordionContent>
+              </AccordionItem>
+            </Accordion>
+          </CardContent>
         </Card>
 
         {/* Estate Branding & Appearance Customizer */}
