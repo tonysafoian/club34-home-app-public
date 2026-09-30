@@ -1,5 +1,15 @@
 # Changelog
 
+## 1.0.7
+
+- **Fix**: Add missing runtime dependencies `ajv` and `@octokit/request-error` to production `dependencies` in `package.json` so Node runtime resolves all required packages when installed via `npm ci --omit=dev`.
+
+## 1.0.6
+
+- **Fix**: Authorize Home Assistant supervisor internal Docker IP (`172.30.32.2`) in SSRF guard and use `/websocket` proxy endpoint for supervisor connections.
+- **UI**: Standardize generic hardware terms ('House Lights', 'Climate & Thermostats', 'Fireplaces & Switches', 'Security & Alarm', 'Pool & Spa') and add graceful empty states.
+- **Perf**: Move `vite-plugin-pwa` to `devDependencies` to eliminate heavy build dependencies in runtime container.
+
 ## 1.0.5
 
 - **Fix**: Support Home Assistant Ingress subpath routing (`/api/hassio_ingress/<token>/`) across React Router, API fetch client, and WebSocket connections so the web UI loads seamlessly inside Home Assistant.
