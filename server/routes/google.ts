@@ -173,8 +173,7 @@ router.post("/auth", async (req: Request, res: Response) => {
       const auth = await authenticateRequest(req.headers.authorization, req.cookies?.auth_token);
       if (auth.error) return res.status(401).json({ error: auth.error });
 
-      const state = auth.userId;
-      const authUrl =
+      let authUrl =
         `https://accounts.google.com/o/oauth2/v2/auth?` +
         `client_id=${encodeURIComponent(GOOGLE_CLIENT_ID)}` +
         `&redirect_uri=${encodeURIComponent(REDIRECT_URI)}` +
@@ -182,8 +181,11 @@ router.post("/auth", async (req: Request, res: Response) => {
         `&scope=${encodeURIComponent(SCOPES)}` +
         `&access_type=offline` +
         `&prompt=consent` +
-        `&hd=example.com` +
         `&state=${encodeURIComponent(state!)}`;
+
+      if (process.env.HOUSEHOLD_DOMAIN && process.env.HOUSEHOLD_DOMAIN !== "example.com") {
+        authUrl += `&hd=${encodeURIComponent(process.env.HOUSEHOLD_DOMAIN)}`;
+      }
 
       return res.json({ success: true, url: authUrl });
     }
