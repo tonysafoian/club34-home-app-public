@@ -1,0 +1,1 @@
+import{y as e}from"./index-Dy_tvZZZ.js";function t(){let{role:t,isAdmin:n,loading:r}=e();return{role:t,isAdmin:n,loading:r}}export{t};

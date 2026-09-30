@@ -15,7 +15,7 @@
 [![Docker Ready](https://img.shields.io/badge/Docker-Compose%20Ready-2496ed.svg)](docker-compose.yml)
 [![Home Assistant Add-on](https://img.shields.io/badge/Home%20Assistant-Add--on%20Available-41BDF5.svg?logo=home-assistant&logoColor=white)](docs/HOME_ASSISTANT_ADDON.md)
 
-[Home Assistant Add-on (1-Click)](docs/HOME_ASSISTANT_ADDON.md) • [5-Minute Quickstart](QUICKSTART.md) • [Executive Guide (Non-Technical / PDF)](docs/EXECUTIVE_GUIDE.md) • [System Architecture](ARCHITECTURE.md) • [Customization Guide](docs/CUSTOMIZATION.md) • [Mock Mode](docs/MOCK_MODE.md) • [Roadmap](ROADMAP.md)
+[Home Assistant Add-on (1-Click)](docs/HOME_ASSISTANT_ADDON.md) • [How to Configure & FAQ](docs/CONFIGURATION_GUIDE.md) • [5-Minute Quickstart](QUICKSTART.md) • [Executive Guide](docs/EXECUTIVE_GUIDE.md) • [System Architecture](ARCHITECTURE.md) • [Customization Guide](docs/CUSTOMIZATION.md) • [Mock Mode](docs/MOCK_MODE.md) • [Roadmap](ROADMAP.md)
 
 </div>
 

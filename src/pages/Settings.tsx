@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { ArrowLeft, Home, Loader2, CheckCircle2, XCircle, Eye, EyeOff, ExternalLink, RefreshCw } from 'lucide-react';
+import { ArrowLeft, Home, Loader2, CheckCircle2, XCircle, Eye, EyeOff, ExternalLink, RefreshCw, BookOpen } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import AmazonSettingsCard from '@/components/settings/AmazonSettingsCard';
 import GoogleServicesCard from '@/components/settings/GoogleServicesCard';
@@ -92,6 +92,36 @@ export default function Settings() {
 
       <ErrorBoundary name="settings">
       <main className="container py-6 space-y-6">
+        {/* Getting Started & Configuration Guide Banner */}
+        <Card className="border-primary/20 bg-gradient-to-r from-primary/10 via-card to-card">
+          <CardHeader className="pb-4">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-primary/15 flex items-center justify-center text-primary shrink-0">
+                  <BookOpen className="w-5 h-5" />
+                </div>
+                <div>
+                  <CardTitle className="text-base">First-Time Setup & Configuration Guide</CardTitle>
+                  <CardDescription>
+                    Step-by-step instructions for Gemini AI, Google Calendars, and household customization.
+                  </CardDescription>
+                </div>
+              </div>
+              <a
+                href="https://github.com/tonysafoian/janus-home-app/blob/main/docs/CONFIGURATION_GUIDE.md"
+                target="_blank"
+                rel="noreferrer"
+                className="shrink-0"
+              >
+                <Button variant="outline" size="sm" className="gap-1.5 w-full sm:w-auto">
+                  <span>View Step-by-Step Guide</span>
+                  <ExternalLink className="h-3.5 w-3.5" />
+                </Button>
+              </a>
+            </div>
+          </CardHeader>
+        </Card>
+
         {/* Estate Branding & Appearance Customizer */}
         <BrandingSettingsCard />
 
