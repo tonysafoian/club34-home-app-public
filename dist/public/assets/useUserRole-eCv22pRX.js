@@ -1,1 +1,0 @@
-import{y as e}from"./index-BXJRgXmp.js";function t(){let{role:t,isAdmin:n,loading:r}=e();return{role:t,isAdmin:n,loading:r}}export{t};

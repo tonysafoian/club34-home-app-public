@@ -217,20 +217,28 @@ export function IaqualinkCard() {
 
   return (
     <SystemCard
-      title="iAqualink"
+      title="Pool & Spa"
       icon={<Waves className="w-6 h-6 text-system-iaqualink" />}
-      status={loading ? 'warning' : connected ? 'online' : 'offline'}
+      status={loading ? 'warning' : connected ? 'online' : entities.size === 0 ? 'idle' : 'offline'}
       statusText={
-        loading ? 'Connecting…' : connected ? 'Connected via HA' : 'Offline'
+        loading ? 'Connecting…' : connected ? 'Connected via HA' : entities.size === 0 ? 'No pool detected' : 'Offline'
       }
       metrics={metrics}
       quickActions={quickActions}
       accentColor="bg-system-iaqualink/10"
     >
       {!loading && !connected ? (
-        <p className="text-sm text-muted-foreground text-center py-4">
-          Unable to reach Home Assistant. Check your HA connection settings.
-        </p>
+        <div className="flex flex-col items-center gap-3 py-8 px-4 text-center">
+          <div className="rounded-full bg-cyan-500/10 p-3">
+            <Waves className="h-6 w-6 text-cyan-400" />
+          </div>
+          <div>
+            <p className="text-sm font-semibold">No Pool Equipment Detected</p>
+            <p className="text-xs text-muted-foreground mt-1 max-w-sm">
+              No pool or spa controllers were found in Home Assistant. Connect an iAquaLink, Pentair, Hayward, or generic pool controller integration in HA to view equipment controls here.
+            </p>
+          </div>
+        </div>
       ) : (
         <div className="space-y-0.5">
           {freezeProtection && (

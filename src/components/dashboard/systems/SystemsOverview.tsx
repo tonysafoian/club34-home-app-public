@@ -64,7 +64,11 @@ export function SystemsOverview({ onNavigate }: { onNavigate: (section: string) 
   const lightsOn = allEntities.filter(e => e.entity_id.startsWith('light.') && e.state === 'on').length;
   const totalLights = allEntities.filter(e => e.entity_id.startsWith('light.')).length;
 
-  // Alarm.com – alarm control panel entities
+  // Climate — HVAC thermostats
+  const climateEntities = allEntities.filter(e => e.entity_id.startsWith('climate.') && !/pool|spa/i.test(e.entity_id));
+  const activeClimate = climateEntities.filter(e => e.state !== 'off' && e.state !== 'unavailable').length;
+
+  // Security – alarm control panel entities
   const alarmPanels = allEntities.filter(e => e.entity_id.startsWith('alarm_control_panel.'));
   const alarmArmed = alarmPanels.filter(e => e.state.startsWith('armed')).length;
   const alarmTriggered = alarmPanels.filter(e => e.state === 'triggered').length;
@@ -203,7 +207,7 @@ export function SystemsOverview({ onNavigate }: { onNavigate: (section: string) 
           icon={alarmTriggered > 0 ? ShieldAlert : Shield}
           title="Alarm"
           value={haLoading ? '…' : haUnavailable ? 'N/A' : alarmState}
-          subtitle={haLoading ? undefined : haUnavailable ? 'Not connected' : alarmPanels.length > 0 ? 'Alarm.com' : 'Not connected'}
+          subtitle={haLoading ? undefined : haUnavailable ? 'Not connected' : alarmPanels.length > 0 ? 'Home Assistant' : 'Not connected'}
           status={haUnavailable ? 'idle' : alarmTriggered > 0 ? 'error' : alarmArmed > 0 ? 'ok' : alarmPanels.length > 0 ? 'warning' : 'idle'}
           onClick={() => onNavigate('security')}
         />
@@ -219,11 +223,20 @@ export function SystemsOverview({ onNavigate }: { onNavigate: (section: string) 
 
         <GlanceTile
           icon={Lightbulb}
-          title="Lights"
+          title="House Lights"
           value={haLoading ? '…' : haUnavailable ? 'N/A' : `${lightsOn} On`}
           subtitle={haLoading ? undefined : haUnavailable ? 'Not connected' : `of ${totalLights}`}
           status={haUnavailable ? 'idle' : lightsOn > 0 ? 'warning' : 'ok'}
           onClick={() => onNavigate('lights')}
+        />
+
+        <GlanceTile
+          icon={Thermometer}
+          title="Climate"
+          value={haLoading ? '…' : haUnavailable ? 'N/A' : climateEntities.length > 0 ? `${activeClimate} Active` : 'None'}
+          subtitle={haLoading ? undefined : haUnavailable ? 'Not connected' : `${climateEntities.length} zones`}
+          status={haUnavailable ? 'idle' : activeClimate > 0 ? 'ok' : 'idle'}
+          onClick={() => onNavigate('thermostats')}
         />
 
         <GlanceTile
@@ -237,7 +250,8 @@ export function SystemsOverview({ onNavigate }: { onNavigate: (section: string) 
         <GlanceTile
           icon={Waves}
           title="Pool & Spa"
-          value={iaqualink.loading ? '…' : poolTemp ? `${poolTemp}°F` : 'N/A'}
+          value={iaqualink.loading ? '…' : poolTemp ? `${poolTemp}°F` : iaqualink.connected ? 'Standby' : 'None'}
+          subtitle={iaqualink.connected ? 'Equipment online' : 'Not configured'}
           status={iaqualink.connected ? 'ok' : 'idle'}
           onClick={() => onNavigate('pool-spa')}
         />

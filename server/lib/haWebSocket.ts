@@ -197,7 +197,10 @@ export function startHAWebSocket(): void {
     return;
   }
 
-  const wsUrl = HA_URL.replace(/^http(s?)/, 'ws$1').replace(/\/$/, '') + '/api/websocket';
+  const isSupervisor = HA_URL.includes('supervisor');
+  const wsUrl = isSupervisor
+    ? HA_URL.replace(/^http(s?)/, 'ws$1').replace(/\/$/, '') + '/websocket'
+    : HA_URL.replace(/^http(s?)/, 'ws$1').replace(/\/$/, '') + '/api/websocket';
   console.log(`[HA-WS] Connecting to ${wsUrl}`);
 
   try {
