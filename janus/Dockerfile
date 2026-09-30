@@ -38,11 +38,8 @@ RUN git clone --depth 1 -b main "${REPO_URL}" /tmp/repo && \
     cp -r /tmp/repo/.* /app/ 2>/dev/null || true && \
     rm -rf /tmp/repo
 
-# Install production runtime dependencies with resilient timeouts under QEMU emulation
-RUN npm config set fetch-retry-maxtimeout 180000 && \
-    npm config set fetch-retries 5 && \
-    npm config set fetch-timeout 120000 && \
-    npm ci --omit=dev
+# Install production runtime dependencies only (fast, pure backend, no build tools needed)
+RUN npm ci --omit=dev --no-audit --no-fund
 
 # Make startup script executable
 RUN chmod a+x /app/janus/run.sh
