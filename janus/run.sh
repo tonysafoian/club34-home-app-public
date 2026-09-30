@@ -10,7 +10,7 @@ GEMINI_KEY=$(jq -r '.gemini_api_key // empty' "$CONFIG_PATH" 2>/dev/null || true
 CUSTOM_DB_URL=$(jq -r '.database_url // empty' "$CONFIG_PATH" 2>/dev/null || true)
 
 echo "===================================================="
-echo " 🏛️ Starting Janus Home Automation (v1.0.5)"
+echo " 🏛️ Starting Janus Home Automation (v1.0.6)"
 echo "===================================================="
 
 # Set up database

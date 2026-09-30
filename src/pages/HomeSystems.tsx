@@ -51,7 +51,7 @@ const SYSTEMS_GROUPS: SectionGroup[] = [
   {
     group: 'Security',
     items: [
-      { id: 'security', label: 'Alarm.com', icon: Shield },
+      { id: 'security', label: 'Security & Alarm', icon: Shield },
       { id: 'security-activity', label: 'Activity', icon: Activity },
       { id: 'security-people', label: 'People Tracker', icon: Users },
       { id: 'security-cars', label: 'Car Tracker', icon: Car },
@@ -64,20 +64,20 @@ const SYSTEMS_GROUPS: SectionGroup[] = [
   {
     group: 'Lights',
     items: [
-      { id: 'lights', label: 'Lights', icon: Lightbulb },
+      { id: 'lights', label: 'House Lights', icon: Lightbulb },
       { id: 'govee', label: 'Govee', icon: Lightbulb },
     ],
   },
   {
     group: 'Fireplaces',
     items: [
-      { id: 'fireplaces', label: 'Fireplaces', icon: Flame },
+      { id: 'fireplaces', label: 'Fireplaces & Switches', icon: Flame },
     ],
   },
   {
     group: 'Thermostats',
     items: [
-      { id: 'thermostats', label: 'Thermostats', icon: Thermometer },
+      { id: 'thermostats', label: 'Climate & Thermostats', icon: Thermometer },
       { id: 'bath-heaters', label: 'Primary Bath Floors/Benches', icon: Thermometer },
     ],
   },

@@ -122,7 +122,7 @@ export function CrestronFireplacesCard() {
 
   return (
     <SystemCard
-      title="Fireplaces"
+      title="Fireplaces & Switches"
       icon={<Flame className="h-6 w-6 text-orange-400" />}
       status="online"
       statusText={activeCount > 0 ? `${activeCount} on` : `${FIREPLACES.length} fireplaces`}

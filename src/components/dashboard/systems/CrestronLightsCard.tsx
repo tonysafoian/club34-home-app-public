@@ -399,7 +399,7 @@ export function CrestronLightsCard() {
   return (
     <div className="space-y-4">
       <SystemCard
-        title="Home Lights"
+        title="House Lights"
         icon={<Lightbulb className="h-6 w-6 text-yellow-400" />}
         status={loading ? 'idle' : bridgeDown ? 'warning' : 'online'}
         statusText={
@@ -419,7 +419,7 @@ export function CrestronLightsCard() {
         {bridgeDown && isAdmin && (
           <div className="flex items-center justify-between gap-3 mb-4 px-3 py-2 rounded-lg border border-orange-500/30 bg-orange-500/10">
             <p className="text-sm text-orange-600 dark:text-orange-400 font-medium">
-              Crestron bridge is offline
+              Lighting bridge is offline
             </p>
             <Button
               size="sm"
@@ -434,7 +434,7 @@ export function CrestronLightsCard() {
               ) : (
                 <RotateCcw className="h-3.5 w-3.5 mr-1.5" />
               )}
-              Reload Crestron
+              Reload Lighting Bridge
             </Button>
           </div>
         )}
@@ -456,7 +456,7 @@ export function CrestronLightsCard() {
           </div>
         ) : entities.length === 0 ? (
           <p className="text-sm text-muted-foreground text-center py-4">
-            No light entities found in Home Assistant
+            No light entities found in Home Assistant. Pair your Hue, Lutron, or Zigbee integrations in Home Assistant to control lighting here.
           </p>
         ) : (
           <>

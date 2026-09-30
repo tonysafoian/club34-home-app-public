@@ -105,6 +105,15 @@ export function guardedLookup(
   options: LookupOptions,
   callback: LookupCallback,
 ): void {
+  // Home Assistant supervisor inside add-on network is explicitly permitted
+  if (
+    hostname.toLowerCase() === 'supervisor' &&
+    (Boolean(process.env.SUPERVISOR_TOKEN) || Boolean(process.env.HASSIO_TOKEN) || process.env.HA_ALLOWED_HOSTS?.includes('supervisor'))
+  ) {
+    lookupCb(hostname, options, callback);
+    return;
+  }
+
   if (hostname === 'localhost' || hostname.endsWith('.localhost')) {
     callback(Object.assign(new Error(`Blocked host: ${hostname}`), { code: 'EBLOCKED' }), '', 4);
     return;
@@ -147,7 +156,16 @@ const guardedAgent = new Agent({ connect: { lookup: guardedLookup } });
 export async function guardedFetch(url: string, init?: UndiciRequestInit): Promise<UndiciResponse> {
   // IP-literal hosts skip DNS entirely (net.connect performs no lookup for
   // them), so the dispatcher's guarded lookup never runs — block them here.
-  const hostname = new URL(url).hostname.replace(/^\[|\]$/g, '');
+  const hostname = new URL(url).hostname.replace(/^\[|\]$/g, '').toLowerCase();
+
+  // Allow supervisor directly through undiciFetch when running in HA add-on
+  if (
+    hostname === 'supervisor' &&
+    (Boolean(process.env.SUPERVISOR_TOKEN) || Boolean(process.env.HASSIO_TOKEN) || process.env.HA_ALLOWED_HOSTS?.includes('supervisor'))
+  ) {
+    return undiciFetch(url, init);
+  }
+
   if (
     hostname === 'localhost' ||
     hostname.endsWith('.localhost') ||

@@ -1,0 +1,1 @@
+import{y as e}from"./index-4Pmf3hDK.js";function t(){let{role:t,isAdmin:n,loading:r}=e();return{role:t,isAdmin:n,loading:r}}export{t};

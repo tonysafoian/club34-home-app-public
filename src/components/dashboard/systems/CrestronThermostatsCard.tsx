@@ -339,10 +339,10 @@ export function CrestronThermostatsCard() {
 
   return (
     <SystemCard
-      title="Thermostats"
+      title="Climate & Thermostats"
       icon={<Thermometer className="h-6 w-6 text-blue-400" />}
       status={loading ? 'idle' : hvacEntities.length === 0 ? 'idle' : 'online'}
-      statusText={loading ? 'Loading…' : hvacEntities.length === 0 ? 'No HVAC zones' : `${activeCount} active · ${hvacEntities.length} zones`}
+      statusText={loading ? 'Loading…' : hvacEntities.length === 0 ? 'No climate zones' : `${activeCount} active · ${hvacEntities.length} zones`}
       accentColor="bg-blue-500/10"
       defaultExpanded={true}
       metrics={[
@@ -362,9 +362,9 @@ export function CrestronThermostatsCard() {
                 <Thermometer className="h-6 w-6 text-blue-400" />
               </div>
               <div>
-                <p className="text-sm font-semibold">No HVAC Thermostats Found</p>
-                <p className="text-xs text-muted-foreground mt-1 max-w-xs">
-                  HVAC thermostats require a separate integration (Nest, Ecobee, Honeywell, etc.) in Home Assistant. The Crestron integration only exposes Pool and Spa climate controls.
+                <p className="text-sm font-semibold">No Climate Zones Found</p>
+                <p className="text-xs text-muted-foreground mt-1 max-w-sm">
+                  No thermostat entities were detected. Pair your Ecobee, Nest, Honeywell, or other climate integrations in Home Assistant to manage climate zones here.
                 </p>
               </div>
             </div>

@@ -7015,7 +7015,8 @@ function startHAWebSocket() {
     console.log("[HA-WS] HA_URL or HA_TOKEN not configured \u2014 skipping WebSocket connection");
     return;
   }
-  const wsUrl = HA_URL2.replace(/^http(s?)/, "ws$1").replace(/\/$/, "") + "/api/websocket";
+  const isSupervisor = HA_URL2.includes("supervisor");
+  const wsUrl = isSupervisor ? HA_URL2.replace(/^http(s?)/, "ws$1").replace(/\/$/, "") + "/websocket" : HA_URL2.replace(/^http(s?)/, "ws$1").replace(/\/$/, "") + "/api/websocket";
   console.log(`[HA-WS] Connecting to ${wsUrl}`);
   try {
     wsClient = new WebSocket(wsUrl);
@@ -19537,6 +19538,10 @@ function isBlockedIp(ip) {
   return true;
 }
 function guardedLookup(hostname, options, callback) {
+  if (hostname.toLowerCase() === "supervisor" && (Boolean(process.env.SUPERVISOR_TOKEN) || Boolean(process.env.HASSIO_TOKEN) || process.env.HA_ALLOWED_HOSTS?.includes("supervisor"))) {
+    lookupCb(hostname, options, callback);
+    return;
+  }
   if (hostname === "localhost" || hostname.endsWith(".localhost")) {
     callback(Object.assign(new Error(`Blocked host: ${hostname}`), { code: "EBLOCKED" }), "", 4);
     return;
@@ -19568,7 +19573,10 @@ function guardedLookup(hostname, options, callback) {
 }
 var guardedAgent = new Agent({ connect: { lookup: guardedLookup } });
 async function guardedFetch(url, init) {
-  const hostname = new URL(url).hostname.replace(/^\[|\]$/g, "");
+  const hostname = new URL(url).hostname.replace(/^\[|\]$/g, "").toLowerCase();
+  if (hostname === "supervisor" && (Boolean(process.env.SUPERVISOR_TOKEN) || Boolean(process.env.HASSIO_TOKEN) || process.env.HA_ALLOWED_HOSTS?.includes("supervisor"))) {
+    return undiciFetch(url, init);
+  }
   if (hostname === "localhost" || hostname.endsWith(".localhost") || net.isIP(hostname) !== 0 && isBlockedIp(hostname)) {
     throw new Error(`Blocked host: ${hostname}`);
   }
