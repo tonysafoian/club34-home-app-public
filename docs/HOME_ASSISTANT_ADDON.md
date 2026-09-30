@@ -28,6 +28,8 @@ Click the button below to automatically add this repository and navigate to the 
 7. Enable **Show in sidebar**.
 8. Click **Start**, then click **Open Web UI**.
 
+> 📘 **Next Steps**: For a non-technical step-by-step guide on setting up your free Gemini AI key, connecting Google Calendars, and adding your family members without code, see the **[Configuration & FAQ Guide](CONFIGURATION_GUIDE.md)**.
+
 ---
 
 ## 🌟 Why Run Janus inside Home Assistant?
