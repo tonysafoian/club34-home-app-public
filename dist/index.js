@@ -8763,9 +8763,20 @@ router.post("/api/auth/demo", async (req, res) => {
   setAuthCookie(res, token);
   res.json({ ok: true, user, token });
 });
+router.get("/api/auth/config", (_req, res) => {
+  const googleConfigured = Boolean(process.env.GOOGLE_CLIENT_ID || GOOGLE_CLIENT_ID);
+  const appleConfigured = Boolean(process.env.APPLE_CLIENT_ID || process.env.VITE_APPLE_CLIENT_ID);
+  const demoEnabled = process.env.ENABLE_DEMO_LOGIN !== "false";
+  res.json({ googleConfigured, appleConfigured, demoEnabled });
+});
 router.get("/api/auth/google", (req, res) => {
   const clientId = process.env.GOOGLE_CLIENT_ID || GOOGLE_CLIENT_ID;
   if (!clientId) {
+    if (req.accepts("html")) {
+      const errorUrl = `${getBaseUrl(req)}/auth?error=google_not_configured`;
+      htmlRedirect(res, errorUrl);
+      return;
+    }
     res.status(500).json({ error: "Google OAuth not configured" });
     return;
   }

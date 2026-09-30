@@ -21,10 +21,12 @@ LOG_LEVEL=$(jq -r '.log_level // "info"' "$CONFIG_PATH" 2>/dev/null || echo "inf
 ENABLE_DEMO_LOGIN=$(jq -r '.enable_demo_login // true' "$CONFIG_PATH" 2>/dev/null || echo "true")
 ENABLE_MOCK_MODE=$(jq -r '.enable_mock_mode // false' "$CONFIG_PATH" 2>/dev/null || echo "false")
 GEMINI_KEY=$(jq -r '.gemini_api_key // empty' "$CONFIG_PATH" 2>/dev/null || true)
+GOOGLE_ID=$(jq -r '.google_client_id // empty' "$CONFIG_PATH" 2>/dev/null || true)
+GOOGLE_SECRET=$(jq -r '.google_client_secret // empty' "$CONFIG_PATH" 2>/dev/null || true)
 CUSTOM_DB_URL=$(jq -r '.database_url // empty' "$CONFIG_PATH" 2>/dev/null || true)
 
 echo "===================================================="
-echo " 🏛️ Starting Janus Home Automation (v1.0.8)"
+echo " 🏛️ Starting Janus Home Automation (v1.0.11)"
 echo "===================================================="
 
 # Set up database
@@ -67,6 +69,14 @@ fi
 
 if [ -n "$GEMINI_KEY" ]; then
     export GEMINI_API_KEY="$GEMINI_KEY"
+fi
+
+if [ -n "$GOOGLE_ID" ]; then
+    export GOOGLE_CLIENT_ID="$GOOGLE_ID"
+fi
+
+if [ -n "$GOOGLE_SECRET" ]; then
+    export GOOGLE_CLIENT_SECRET="$GOOGLE_SECRET"
 fi
 
 export PORT=5080

@@ -10,15 +10,33 @@ Follow this quick step-by-step guide to activate your free AI voice assistant, c
 
 ## ⚡ Quick Checklist
 
-- [ ] **Step 1:** Get your free Google Gemini API Key (takes 60 seconds).
-- [ ] **Step 2:** Paste the key into the Janus Add-on settings in Home Assistant.
-- [ ] **Step 3:** Open Janus and connect your Google Account (for calendar & morning briefs).
-- [ ] **Step 4:** Add your family members and household staff on the Settings page.
-- [ ] **Step 5:** Personalize your estate name and color theme.
+- [ ] **Step 1: Sign in with Local Access Mode** (Click "Enter Local Access Mode" — instant access to all your lights & devices).
+- [ ] **Step 2: Get your free Google Gemini API Key** (takes 60 seconds at aistudio.google.com).
+- [ ] **Step 3: Paste the key into Home Assistant** (Janus Add-on ➔ Configuration tab).
+- [ ] **Step 4: Personalize your household** (Add family members & change estate branding under Settings).
+- [ ] **Step 5 (Optional): Connect Google Calendar** (For morning schedule digests).
 
 ---
 
-## 1. Get Your Free Google Gemini AI Key (Voice & Reasoning)
+## 🔑 1. Logging In: Local Access vs Google Sign-In
+
+When you launch Janus, you will see the login screen:
+
+### 🏠 Enter Local Access Mode (Recommended)
+- **Click "Enter Local Access Mode".**
+- Because Janus runs directly inside your private Home Assistant instance, this gives you **instant, full administrative control** over your smart home.
+- All your lights, thermostats, locks, scenes, and media players are automatically discovered.
+- **No external accounts or passwords required.**
+
+### 🌐 Google Sign-In (Optional Cloud Feature)
+- **Google Sign-In is completely optional.**
+- It is only needed if you want Janus to read your family Google Calendar and Gmail to generate spoken morning briefings.
+- If you click "Sign in with Google" before configuring Google OAuth, Janus will explain that it is optional and invite you to use Local Access Mode.
+- *(See Section 5 below if you want to set up Google Calendar sync).*
+
+---
+
+## 2. Get Your Free Google Gemini AI Key (Voice & Reasoning)
 
 Janus uses Google's latest Gemini AI models to provide natural voice conversations, understand your spoken requests, and deliver morning household briefings. Google provides a **generous free tier** that is more than enough for everyday household use.
 
@@ -30,7 +48,7 @@ Janus uses Google's latest Gemini AI models to provide natural voice conversatio
 
 ---
 
-## 2. Add the API Key to Home Assistant
+## 3. Add the API Key to Home Assistant
 
 Once you have copied your key:
 
@@ -43,19 +61,6 @@ Once you have copied your key:
 7. Click the **Restart** button on the add-on to apply the change.
 
 > **💡 That's it!** Janus now has its full voice AI brain activated.
-
----
-
-## 3. Connect Google Services (Family Calendars & Morning Briefs)
-
-Janus can review your family schedule and generate an intelligent daily morning executive digest (meetings, school runs, weather, and household reminders):
-
-1. Open Janus from the **Home Assistant sidebar** (or click **Open Web UI** on the Janus add-on page).
-2. Click the **Settings** gear icon in the top right (or navigate to `/settings`).
-3. Scroll down to the **Google Services** card.
-4. Click **Connect Google Account**.
-5. Follow Google's standard authorization prompt to approve access to Google Calendar.
-6. Once redirected back, the card will display a green **Connected as your-email@gmail.com** badge.
 
 ---
 
@@ -76,7 +81,22 @@ Janus allows you to add everyone in your home so the AI knows who is who when yo
 
 ---
 
-## 5. Personalize Your Estate Branding & Colors
+## 5. (Optional) Connect Google Calendar & Google OAuth
+
+If you want Janus to incorporate your Google Calendar into your morning briefs:
+
+1. Go to the [Google Cloud Console](https://console.cloud.google.com/).
+2. Create a project named **Janus Home**.
+3. Under **APIs & Services** ➔ **Enabled APIs**, enable **Google Calendar API**.
+4. Under **Credentials**, click **Create Credentials** ➔ **OAuth client ID** (Application type: *Web application*).
+5. Copy the **Client ID** and **Client Secret**.
+6. In Home Assistant, open **Settings** ➔ **Add-ons** ➔ **Janus** ➔ **Configuration**.
+7. Enter your `google_client_id` and `google_client_secret`, then click **Save** and **Restart**.
+8. In Janus, go to **Settings** ➔ **Google Services** and click **Connect Google Account**.
+
+---
+
+## 6. Personalize Your Estate Branding & Colors
 
 Give Janus the look and feel of your home:
 
@@ -93,7 +113,7 @@ Give Janus the look and feel of your home:
 
 ---
 
-## 6. Smart Home Devices & Multi-Room Audio
+## 7. Smart Home Devices & Multi-Room Audio
 
 - **Smart Home Devices**: Click **Systems** in the top navigation bar. All lights, climate thermostats, smart switches, and sensors paired with Home Assistant appear here automatically. You can toggle them, adjust temperatures, or run scenes directly.
 - **Audio Speakers**: Janus automatically scans your Home Assistant network for Sonos, Apple AirPlay/HomePods, and Google Cast media players. Spoken voice announcements and morning briefings can be directed to any individual room or the entire house.
