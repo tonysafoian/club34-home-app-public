@@ -122,6 +122,17 @@ Give Janus the look and feel of your home:
 
 ## ❓ Frequently Asked Questions (FAQ)
 
+### Can I sign in with Google, and what features does it unlock?
+**Yes!** While Local Access Mode is all you need for 100% smart home control (lights, climate, locks, switches, scenes, and Gemini Voice AI), connecting your Google Account unlocks executive lifestyle features:
+1. **Spoken Morning Executive Briefings**: Janus reads your day's schedule from your Google Calendar, cross-references weather, and delivers a personalized voice briefing.
+2. **AI Voice Schedule Awareness**: You can ask Janus voice queries like *"What does my schedule look like today?"*, *"When is my next meeting?"*, or *"Do I have time for lunch at noon?"*.
+3. **Live Family Schedule Deck**: Displays your personal and family calendars right on the Janus Command Deck with automatic conflict alerts.
+4. **Package & Delivery Tracking**: Scans Gmail for Amazon, UPS, and FedEx delivery tracking updates and shows them on your dashboard.
+5. **One-Tap Single Sign-On (SSO)**: Family members can sign into Janus on iPhones, iPads, and laptops with one tap using their standard Google / Gmail account.
+
+### Why does Google Sign-In require my own Google Cloud Client ID?
+Google's OAuth 2.0 security policy strictly prohibits third-party self-hosted applications on private local networks from using a single shared login secret. Google requires that your specific Home Assistant domain be registered under a free Web Application Client ID in Google Cloud. This is the exact same requirement Home Assistant itself enforces for its official Google Assistant and Google Calendar integrations. Follow Section 5 above to set this up in about 3 minutes.
+
 ### Do I ever need to write YAML or code to make changes?
 **No.** All family members, estate names, color themes, and connected accounts are configured directly in the Janus graphical interface.
 

@@ -170,6 +170,29 @@ export default function Settings() {
                 <AccordionTrigger className="text-xs font-medium text-muted-foreground hover:text-foreground py-2.5">
                   <span className="flex items-center gap-2">
                     <HelpCircle className="h-3.5 w-3.5 text-primary" />
+                    Can I sign in with Google, and what features does it unlock?
+                  </span>
+                </AccordionTrigger>
+                <AccordionContent className="text-xs text-muted-foreground leading-relaxed pl-5 pb-3 space-y-1.5">
+                  <p>
+                    <strong>Yes!</strong> While Local Access Mode is all you need to control your smart home, connecting your Google account unlocks:
+                  </p>
+                  <ul className="list-disc pl-4 space-y-1">
+                    <li><strong>Morning Briefings:</strong> Spoken daily schedule synthesis with calendar, weather, and alerts.</li>
+                    <li><strong>Voice AI Schedule Awareness:</strong> Ask Janus <em>"What's on my calendar today?"</em> or <em>"When is my next meeting?"</em>.</li>
+                    <li><strong>Package Tracking:</strong> Scans Gmail for arriving Amazon, UPS, and FedEx deliveries.</li>
+                    <li><strong>One-Tap SSO:</strong> Log in seamlessly across all family iPhones, iPads, and browsers.</li>
+                  </ul>
+                  <p className="pt-1">
+                    To enable it, follow Section 5 of the <a href="https://github.com/tonysafoian/janus-home-app/blob/main/docs/CONFIGURATION_GUIDE.md" target="_blank" rel="noreferrer" className="text-primary underline">Setup Guide</a> to generate free Google Cloud credentials and enter them in your Janus Add-on settings.
+                  </p>
+                </AccordionContent>
+              </AccordionItem>
+
+              <AccordionItem value="faq-4" className="border-b-0 border-t border-border/50">
+                <AccordionTrigger className="text-xs font-medium text-muted-foreground hover:text-foreground py-2.5">
+                  <span className="flex items-center gap-2">
+                    <HelpCircle className="h-3.5 w-3.5 text-primary" />
                     How do I add family members or rename the estate?
                   </span>
                 </AccordionTrigger>
