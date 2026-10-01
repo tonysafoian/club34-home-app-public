@@ -81,18 +81,55 @@ Janus allows you to add everyone in your home so the AI knows who is who when yo
 
 ---
 
-## 5. (Optional) Connect Google Calendar & Google OAuth
+## 5. (Optional) Step-by-Step Google Cloud Console Setup (Calendar, Gmail & Single Sign-On)
 
-If you want Janus to incorporate your Google Calendar into your morning briefs:
+If you want Janus to incorporate your Google Calendar and Gmail into morning briefings:
 
-1. Go to the [Google Cloud Console](https://console.cloud.google.com/).
-2. Create a project named **Janus Home**.
-3. Under **APIs & Services** ➔ **Enabled APIs**, enable **Google Calendar API**.
-4. Under **Credentials**, click **Create Credentials** ➔ **OAuth client ID** (Application type: *Web application*).
-5. Copy the **Client ID** and **Client Secret**.
-6. In Home Assistant, open **Settings** ➔ **Add-ons** ➔ **Janus** ➔ **Configuration**.
-7. Enter your `google_client_id` and `google_client_secret`, then click **Save** and **Restart**.
-8. In Janus, go to **Settings** ➔ **Google Services** and click **Connect Google Account**.
+### Part A: Create a Free Project in Google Cloud
+1. Go to **[Google Cloud Console](https://console.cloud.google.com/)** and sign in with your Google account.
+2. Click the project dropdown at the top-left and select **New Project**.
+3. Project Name: Enter **Janus Home** and click **Create**. Ensure this new project is selected in the top bar.
+
+### Part B: Enable the APIs
+1. In the top search bar, search for **Google Calendar API** and click **Enable**.
+2. Search for **Gmail API** and click **Enable** (optional, for package delivery tracking).
+
+### Part C: Configure the OAuth Consent Screen
+*(Google requires this before generating credentials)*
+1. Go to the left navigation menu (☰) ➔ **APIs & Services** ➔ **OAuth consent screen**.
+2. User Type: Select **External** and click **Create**.
+3. App Information:
+   - **App name**: `Janus`
+   - **User support email**: Select your email address.
+   - **Developer contact information**: Enter your email address.
+   - Click **Save and Continue**.
+4. Scopes: Click **Save and Continue** (no special scopes needed here; Janus requests them dynamically).
+5. Test Users:
+   - Click **+ Add Users**, enter your Google / Gmail address (and any family member emails who will log in), and click **Add**.
+   - Click **Save and Continue**, then return to the Dashboard.
+
+### Part D: Create OAuth 2.0 Client Credentials
+1. Go to **APIs & Services** ➔ **Credentials**.
+2. Click **+ Create Credentials** at the top ➔ select **OAuth client ID**.
+3. **Application type**: Select **Web application**.
+4. **Name**: `Janus Web Client`.
+5. **Authorized redirect URIs**: Click **+ Add URI** and enter your Home Assistant callback URL:
+   - If using Nabu Casa: `https://<your-unique-id>.ui.nabu.casa/auth/google/callback`
+   - If using DuckDNS or custom domain: `https://<your-domain>/auth/google/callback`
+   - If testing locally: `http://localhost:8123/auth/google/callback`
+6. Click **Create**. A modal will pop up with your **Client ID** and **Client Secret**. Copy both values.
+
+### Part E: Enter Credentials in Home Assistant
+1. In Home Assistant, navigate to **Settings** ➔ **Add-ons** ➔ **Janus**.
+2. Click on the **Configuration** tab.
+3. Paste the values into:
+   - `google_client_id`
+   - `google_client_secret`
+4. Click **Save** in the bottom right, then click **Restart** on the add-on.
+
+### Part F: Connect Your Account
+1. Open Janus.
+2. You can now tap **Sign in with Google** directly on the login screen, OR go to **Settings ➔ Google Services** and click **Connect Google Account**!
 
 ---
 
