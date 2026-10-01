@@ -3,6 +3,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { AuthPage } from '@/components/auth/AuthPage';
 import { Loader2 } from 'lucide-react';
 import { JanusLogo } from '@/components/brand/JanusLogo';
+import { resolveAppPath } from '@/lib/ingress';
 
 function BrandedSplash() {
   return (
@@ -60,7 +61,7 @@ export function TimeAdminRoute({ children }: { children: ReactNode }) {
 
   // Workers are redirected to their own time page
   if (isWorker && !isAdmin) {
-    window.location.href = '/time';
+    window.location.href = resolveAppPath('/time');
     return <BrandedSplash />;
   }
 

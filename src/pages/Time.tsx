@@ -23,6 +23,7 @@ import {
   DollarSign, LogOut, User, CalendarDays, Plus, AlertCircle
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { resolveAppPath } from '@/lib/ingress';
 
 // ── Types ──────────────────────────────────────────────────────────────────
 
@@ -1026,7 +1027,7 @@ export default function Time() {
     )
       .then((d) => {
         if (d.isAdmin) {
-          window.location.href = '/time/admin';
+          window.location.href = resolveAppPath('/time/admin');
           return;
         }
         setWorker(d.worker);
