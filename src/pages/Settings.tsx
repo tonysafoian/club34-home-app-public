@@ -183,9 +183,16 @@ export default function Settings() {
                     <li><strong>Package Tracking:</strong> Scans Gmail for arriving Amazon, UPS, and FedEx deliveries.</li>
                     <li><strong>One-Tap SSO:</strong> Log in seamlessly across all family iPhones, iPads, and browsers.</li>
                   </ul>
-                  <p className="pt-1">
-                    To enable it, follow Section 5 of the <a href="https://github.com/tonysafoian/janus-home-app/blob/main/docs/CONFIGURATION_GUIDE.md" target="_blank" rel="noreferrer" className="text-primary underline">Setup Guide</a> to generate free Google Cloud credentials and enter them in your Janus Add-on settings.
-                  </p>
+                  <div className="pt-2 border-t border-border/40 mt-2 space-y-1">
+                    <p className="font-semibold text-foreground">Quick Setup Steps (Takes ~3 min):</p>
+                    <ol className="list-decimal pl-4 space-y-1 text-[11px]">
+                      <li>In <a href="https://console.cloud.google.com" target="_blank" rel="noreferrer" className="text-primary underline">Google Cloud Console</a>, create a free project named <em>Janus Home</em>.</li>
+                      <li>Search for and enable both <strong>Google Calendar API</strong> and <strong>Gmail API</strong>.</li>
+                      <li>Go to <strong>OAuth consent screen</strong>, choose <strong>External</strong>, and add your email under Test Users.</li>
+                      <li>Go to <strong>Credentials</strong> ➔ Create <strong>OAuth client ID</strong> (Web application) and add redirect URI: <code className="text-amber-400">https://&lt;your-ha-url&gt;/auth/google/callback</code>.</li>
+                      <li>In Home Assistant, open <strong>Settings ➔ Add-ons ➔ Janus ➔ Configuration</strong>, paste <code className="text-amber-400">google_client_id</code> and <code className="text-amber-400">google_client_secret</code>, then click Save and Restart.</li>
+                    </ol>
+                  </div>
                 </AccordionContent>
               </AccordionItem>
 
