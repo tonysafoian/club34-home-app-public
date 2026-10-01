@@ -8,6 +8,7 @@ import { useUserRole } from '@/hooks/useUserRole';
 import { useAuth } from '@/hooks/useAuth';
 import janusIcon from '@/assets/janus-icon.png';
 import ReactMarkdown from 'react-markdown';
+import { resolveAppPath } from '@/lib/ingress';
 
 import {
   type Msg,
@@ -464,7 +465,7 @@ export default function JanusFullscreen() {
         <div className="text-center space-y-4">
           <img src={janusIcon} alt="Janus" className="w-16 h-16 mx-auto rounded-full" />
           <p className="text-white/60 text-sm">Sign in to use Janus</p>
-          <Button variant="outline" onClick={() => window.location.href = '/'}>Sign In</Button>
+          <Button variant="outline" onClick={() => window.location.href = resolveAppPath('/')}>Sign In</Button>
         </div>
       </div>
     );

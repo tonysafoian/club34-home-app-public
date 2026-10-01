@@ -3,6 +3,7 @@ import { useSearchParams } from 'react-router-dom';
 import { Loader2, CheckCircle2, XCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { fetchWithAuth, setStoredToken } from '@/lib/api/fetchWithAuth';
+import { resolveAppPath } from '@/lib/ingress';
 
 export default function AuthGoogleCallback() {
   const [searchParams] = useSearchParams();
@@ -37,7 +38,7 @@ export default function AuthGoogleCallback() {
           }
           setStatus('success');
           setTimeout(() => {
-            window.location.href = '/';
+            window.location.href = resolveAppPath('/');
           }, 1000);
         } else {
           setStatus('error');
@@ -72,7 +73,7 @@ export default function AuthGoogleCallback() {
             <XCircle className="h-12 w-12 text-destructive mx-auto" data-testid="icon-error" />
             <h2 className="text-lg font-semibold" data-testid="text-status">Sign In Failed</h2>
             <p className="text-sm text-muted-foreground">{errorMsg}</p>
-            <Button onClick={() => (window.location.href = '/')} variant="outline" className="mt-4" data-testid="button-retry">
+            <Button onClick={() => (window.location.href = resolveAppPath('/'))} variant="outline" className="mt-4" data-testid="button-retry">
               Try Again
             </Button>
           </>

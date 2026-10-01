@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback, ReactNode } from 'react';
 import { clearStoredToken } from '@/lib/api/fetchWithAuth';
 import { apiClient } from '@/lib/apiClient';
 import { AuthContext, AuthUser } from '@/hooks/useAuth';
+import { resolveAppPath } from '@/lib/ingress';
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<AuthUser | null>(null);
@@ -28,7 +29,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     } finally {
       clearStoredToken();
       setUser(null);
-      window.location.href = '/';
+      // Use resolveAppPath to prevent breaking out to Home Assistant root in Ingress
+      window.location.href = resolveAppPath('/');
     }
   };
 

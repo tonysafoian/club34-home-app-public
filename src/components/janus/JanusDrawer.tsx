@@ -638,7 +638,7 @@ export function JanusDrawer() {
             <X className="h-6 w-6 text-primary-foreground" />
           </div> :
 
-        <img alt="Janus" className="w-full h-full object-cover rounded-full p-1" src="/icon.svg" />
+        <img alt="Janus" className="w-full h-full object-cover rounded-full p-1" src={janusIcon} />
         }
       </button>
 
