@@ -26,7 +26,7 @@ GOOGLE_SECRET=$(jq -r '.google_client_secret // empty' "$CONFIG_PATH" 2>/dev/nul
 CUSTOM_DB_URL=$(jq -r '.database_url // empty' "$CONFIG_PATH" 2>/dev/null || true)
 
 echo "===================================================="
-echo " 🏛️ Starting Janus Home Automation (v1.0.12)"
+echo " 🏛️ Starting Janus Home Automation (v1.0.13)"
 echo "===================================================="
 
 # Set up database

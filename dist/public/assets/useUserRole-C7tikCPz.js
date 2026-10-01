@@ -1,0 +1,1 @@
+import{I as e}from"./index-Bj9Kb5i7.js";function t(){let{role:t,isAdmin:n,loading:r}=e();return{role:t,isAdmin:n,loading:r}}export{t};
